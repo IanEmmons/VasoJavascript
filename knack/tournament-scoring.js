@@ -325,7 +325,7 @@ function Presenter(ranksViewId, nextButtonViewId) {
 		} else {
 			console.log(`Next button anchor "div#${this.nextButtonViewId} a" does not exist`);
 		}
-		$(`div#${this.nextButtonViewId} a`).css( "border", "3px double red" );
+		$(`div#${this.nextButtonViewId} a`).css('border', '3px double red');
 		$(`div#${this.nextButtonViewId} a`).on('click', function() {
 			console.log('In OnClick handler');
 			alert('In OnClick handler');
