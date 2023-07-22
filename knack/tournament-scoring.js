@@ -50,7 +50,6 @@ function KnackAppInfo(appName) {
 		this.statusFieldId = 'field_1700_raw';
 
 		this.presenterGrid = 'view_1353';
-		this.presenterNextButton = 'view_1368';
 		this.rawTeamNameFieldId = 'field_1202_raw';
 	} else if (appName === 'DivA Scoring App') {
 		this.apiKey = '';
@@ -76,12 +75,20 @@ function KnackAppInfo(appName) {
 		this.rankFieldId = 'field_1737';
 		this.rawRankFieldId = 'field_1737_raw';
 		this.statusFieldId = 'field_1731_raw';
+
+		this.presenterGrid = 'view_1442';
+		this.iconViewId = 'view_1440';
+		this.teamNameFieldId = 'field_1202';
+		this.rawTeamNameFieldId = 'field_1202_raw';
+		this.iconFieldId = 'field_1712';
+		//this.iconFieldId = 'field_1703.field_1712';
+		//this.iconFieldId = 'field_1703.field_1712:thumb_1';
 	}
 }
 
-const appInfo = new KnackAppInfo('Stand-Alone Scoring App');
+//const appInfo = new KnackAppInfo('Stand-Alone Scoring App');
 //const appInfo = new KnackAppInfo('DivA Scoring App');
-//const appInfo = new KnackAppInfo('DivBC Scoring App');
+const appInfo = new KnackAppInfo('DivBC Scoring App');
 
 function RankUpdater(scoresViewId) {
 	this.scoresViewId = scoresViewId;
@@ -269,9 +276,49 @@ RankUpdater.hookView(appInfo.lockScoresScoringGrid, appInfo.lockScoresSubmitForm
 
 // ====================================================================
 
-function Presenter(ranksViewId, nextButtonViewId) {
+function Presenter(ranksViewId, iconViewId) {
 	this.ranksViewId = ranksViewId;
-	this.nextButtonViewId = nextButtonViewId;
+	this.iconViewId = iconViewId;
+	this.medals = null;
+	this.numRanksShowing = 0;
+
+	this.setTeamNameVisibilities = function() {
+		for (let i = 0; i < this.medals.length; ++i) {
+			const viewId = this.ranksViewId;
+			const medal = this.medals[i];
+			const teamFieldId = appInfo.teamNameFieldId;
+			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${teamFieldId} > span`);
+			if (i < this.medals.length - this.numRanksShowing) {
+				spanElement.hide();
+			} else {
+				spanElement.show();
+			}
+		}
+	}.bind(this);
+
+	this.onClickIcon = function() {
+		console.log('In icon click handler');
+		++this.numRanksShowing;
+		this.setTeamNameVisibilities();
+		return false;
+	}.bind(this);
+
+	this.hookIconClickEvent = function() {
+		const icon = Knack.models[this.iconViewId].attributes[appInfo.iconFieldId];
+		if (!icon) {
+			console.log('ERROR: Unable to read icon field from view model:');
+			console.log(Knack.models[this.iconViewId]);
+			return;
+		}
+		const regexMatch = icon.match(/^<span id="([0-9a-zA-Z]+)"/);
+		if (!regexMatch) {
+			console.log(`ERROR: Unable to hook icon's click event. icon = '${icon}'`);
+			return;
+		}
+		const iconId = regexMatch[1];
+		$(`div#${this.iconViewId} span#${iconId} > img`).on('click', this.onClickIcon);
+		console.log('Hooked icon click event');
+	}.bind(this);
 
 	this.getMedalList = function() {
 		const models = Knack.models[this.ranksViewId].data.models;
@@ -304,10 +351,23 @@ function Presenter(ranksViewId, nextButtonViewId) {
 		return medals;
 	}.bind(this);
 
-	this.replaceRankWithMedalLabel = function(medals) {
-		for (let i = 0; i < medals.length; ++i) {
-			$(`div#${appInfo.presenterGrid} tr#${medals[i].id} > td.${appInfo.rankFieldId} > span`).text(`${medalLabels[medals[i].rank]}`);
+	this.initializeDisplay = function() {
+		// Hide the table page navigation and table header:
+		$(`div#${this.ranksViewId} thead`).hide();
+		$(`div#${this.ranksViewId} div.kn-records-nav`).hide();
+
+		// Replace ranks numbers with place names:
+		for (let i = 0; i < this.medals.length; ++i) {
+			const viewId = this.ranksViewId;
+			const medal = this.medals[i];
+			const rankFieldId = appInfo.rankFieldId;
+			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
+			spanElement.text(`${medalLabels[medal.rank]}`);
 		}
+
+		// Hide the team names:
+		this.numRanksShowing = 0;
+		this.setTeamNameVisibilities();
 	}.bind(this);
 
 	this.nextButtonClickHandler = function(event) {
@@ -318,33 +378,15 @@ function Presenter(ranksViewId, nextButtonViewId) {
 	}.bind(this);
 
 	this.eventHandler = function(/*event,*/ view /*, record*/) {
-		if ($(`div#${this.nextButtonViewId} a`)) {
-			console.log(`Next button anchor "div#${this.nextButtonViewId} a" exists`);
-			console.log('href attribute: ' + $(`div#${this.nextButtonViewId} a`).attr('href'));
-			console.log('class attribute: ' + $(`div#${this.nextButtonViewId} a`).attr('class'));
-		} else {
-			console.log(`Next button anchor "div#${this.nextButtonViewId} a" does not exist`);
-		}
-		$(`div#${this.nextButtonViewId} a`).css('border', '3px double red');
-		$(`div#${this.nextButtonViewId} a`).on('click', function() {
-			console.log('In OnClick handler');
-			alert('In OnClick handler');
-			return false;
-		});
-
-		const medals = this.getMedalList();
-
-		$(`div#${appInfo.presenterGrid} thead`).hide();
-		$(`div#${appInfo.presenterGrid} div.kn-records-nav`).hide();
-
-		//dumpObject(Knack, 'Knack');
-		this.replaceRankWithMedalLabel(medals);
+		this.hookIconClickEvent();
+		this.medals = this.getMedalList();
+		this.initializeDisplay();
 	}.bind(this);
 }
 
-Presenter.hookView = function(ranksViewId, nextButtonViewId) {
-	const presenter = new Presenter(ranksViewId, nextButtonViewId);
+Presenter.hookView = function(ranksViewId, iconViewId) {
+	const presenter = new Presenter(ranksViewId, iconViewId);
 	$(document).on(`knack-view-render.${ranksViewId}`, presenter.eventHandler);
 };
 
-Presenter.hookView(appInfo.presenterGrid, appInfo.presenterNextButton);
+Presenter.hookView(appInfo.presenterGrid, appInfo.iconViewId);
