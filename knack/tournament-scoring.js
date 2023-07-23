@@ -36,22 +36,7 @@ function dumpObject(obj, label) {
 }
 
 function KnackAppInfo(appName) {
-	if (appName === 'Stand-Alone Scoring App') {
-		this.apiKey = '651feb26-737e-46ce-8f15-85b929680839';
-		this.esScoringGrid = 'view_1323';
-		this.scoremasterScoringGrid = 'view_1338';
-		this.lockScoresScoringGrid = 'view_1356';
-		this.lockScoresSubmitForm = 'view_1347';
-		this.putRanksResultReport = 'view_1364';
-		this.rawScoreTableId = 'object_92';
-		this.adjScoreFieldId = 'field_1719_raw';
-		this.rankFieldId = 'field_1725';
-		this.rawRankFieldId = 'field_1725_raw';
-		this.statusFieldId = 'field_1700_raw';
-
-		this.presenterGrid = 'view_1353';
-		this.rawTeamNameFieldId = 'field_1202_raw';
-	} else if (appName === 'DivA Scoring App') {
+	if (appName === 'DivA Scoring App') {
 		this.apiKey = '';
 		this.esScoringGrid = '';
 		this.scoremasterScoringGrid = '';
@@ -63,6 +48,15 @@ function KnackAppInfo(appName) {
 		this.rankFieldId = '';
 		this.rawRankFieldId = '';
 		this.statusFieldId = '';
+
+		this.eventListSceneId = '';
+		this.presenterGrid = '';
+		this.iconViewId = '';
+		this.nextBtnViewId = '';
+		this.teamNameFieldId = '';
+		this.rawTeamNameFieldId = '';
+		this.iconFieldId = '';
+		this.rawIconFieldId = '';
 	} else if (appName === 'DivBC Scoring App') {
 		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
 		this.esScoringGrid = 'view_1375';
@@ -76,17 +70,17 @@ function KnackAppInfo(appName) {
 		this.rawRankFieldId = 'field_1737_raw';
 		this.statusFieldId = 'field_1731_raw';
 
+		this.eventListSceneId = 'scene_587';
 		this.presenterGrid = 'view_1442';
 		this.iconViewId = 'view_1440';
+		this.nextBtnViewId = 'view_1470';
 		this.teamNameFieldId = 'field_1202';
 		this.rawTeamNameFieldId = 'field_1202_raw';
 		this.iconFieldId = 'field_1712';
-		//this.iconFieldId = 'field_1703.field_1712';
-		//this.iconFieldId = 'field_1703.field_1712:thumb_1';
+		this.rawIconFieldId = 'field_1712_raw';
 	}
 }
 
-//const appInfo = new KnackAppInfo('Stand-Alone Scoring App');
 //const appInfo = new KnackAppInfo('DivA Scoring App');
 const appInfo = new KnackAppInfo('DivBC Scoring App');
 
@@ -276,11 +270,36 @@ RankUpdater.hookView(appInfo.lockScoresScoringGrid, appInfo.lockScoresSubmitForm
 
 // ====================================================================
 
-function Presenter(ranksViewId, iconViewId) {
+function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 	this.ranksViewId = ranksViewId;
 	this.iconViewId = iconViewId;
+	this.nextBtnViewId = nextBtnViewId;
+	this.eventListSceneId = eventListSceneId;
 	this.medals = null;
 	this.numRanksShowing = 0;
+
+	this.eventListSceneEventHandler = function(/*event, view, record*/) {
+		// Remove the background image:
+		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
+		mainDiv.css('background-image', '');
+		mainDiv.css('background-repeat', '');
+		mainDiv.css('background-size', '');
+		mainDiv.css('background-position', '');
+	}.bind(this);
+
+	this.iconEventHandler = function(/*event, view, record*/) {
+		// Add the background image:
+		const eventIconUrl = Knack.models[this.iconViewId].attributes[appInfo.rawIconFieldId];
+		const backgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
+		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
+		mainDiv.css('background-image', `url("${eventIconUrl}"), url("${backgroundUrl}")`);
+		mainDiv.css('background-repeat', 'no-repeat, no-repeat');
+		mainDiv.css('background-size', '150px 150px, contain');
+		mainDiv.css('background-position', 'top 40px right 50px, top left');
+
+		// Hide Knack's icon:
+		$(`div#${this.iconViewId} div.${appInfo.iconFieldId}_thumb_1`).hide();
+	}.bind(this);
 
 	this.setTeamNameVisibilities = function() {
 		for (let i = 0; i < this.medals.length; ++i) {
@@ -296,35 +315,24 @@ function Presenter(ranksViewId, iconViewId) {
 		}
 	}.bind(this);
 
-	this.onClickIcon = function() {
-		console.log('In icon click handler');
+	this.nextBtnClickHandler = function() {
+		if (!this.medals) {
+			return;
+		}
 		++this.numRanksShowing;
 		this.setTeamNameVisibilities();
 		return false;
 	}.bind(this);
 
-	this.hookIconClickEvent = function() {
-		const icon = Knack.models[this.iconViewId].attributes[appInfo.iconFieldId];
-		if (!icon) {
-			console.log('ERROR: Unable to read icon field from view model:');
-			console.log(Knack.models[this.iconViewId]);
-			return;
-		}
-		const regexMatch = icon.match(/^<span id="([0-9a-zA-Z]+)"/);
-		if (!regexMatch) {
-			console.log(`ERROR: Unable to hook icon's click event. icon = '${icon}'`);
-			return;
-		}
-		const iconId = regexMatch[1];
-		$(`div#${this.iconViewId} span#${iconId} > img`).on('click', this.onClickIcon);
-		console.log('Hooked icon click event');
+	this.nextBtnRenderHandler = function(/*event, view, record*/) {
+		$(`div#${this.nextBtnViewId} svg`).on('click', this.nextBtnClickHandler);
 	}.bind(this);
 
 	this.getMedalList = function() {
 		const models = Knack.models[this.ranksViewId].data.models;
 
-		console.log('Presentation grid row models:');
-		console.log(models);
+		//console.log('Presentation grid row models:');
+		//console.log(models);
 
 		let minRank = Number.MAX_SAFE_INTEGER;
 		let maxRank = Number.MIN_SAFE_INTEGER;
@@ -346,12 +354,14 @@ function Presenter(ranksViewId, iconViewId) {
 			medals[medalInfo.rank - minRank] = medalInfo;
 		}
 
-		console.log('Medal array:');
-		console.log(medals);
+		//console.log('Medal array:');
+		//console.log(medals);
 		return medals;
 	}.bind(this);
 
-	this.initializeDisplay = function() {
+	this.gridEventHandler = function(/*event, view, record*/) {
+		this.medals = this.getMedalList();
+
 		// Hide the table page navigation and table header:
 		$(`div#${this.ranksViewId} thead`).hide();
 		$(`div#${this.ranksViewId} div.kn-records-nav`).hide();
@@ -369,24 +379,14 @@ function Presenter(ranksViewId, iconViewId) {
 		this.numRanksShowing = 0;
 		this.setTeamNameVisibilities();
 	}.bind(this);
-
-	this.nextButtonClickHandler = function(event) {
-		event.preventDefault();
-		console.log('In OnClick handler');
-		alert('In OnClick handler');
-		return false;
-	}.bind(this);
-
-	this.eventHandler = function(/*event,*/ view /*, record*/) {
-		this.hookIconClickEvent();
-		this.medals = this.getMedalList();
-		this.initializeDisplay();
-	}.bind(this);
 }
 
-Presenter.hookView = function(ranksViewId, iconViewId) {
-	const presenter = new Presenter(ranksViewId, iconViewId);
-	$(document).on(`knack-view-render.${ranksViewId}`, presenter.eventHandler);
+Presenter.hookView = function(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
+	const presenter = new Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId);
+	$(document).on(`knack-view-render.${ranksViewId}`, presenter.gridEventHandler);
+	$(document).on(`knack-view-render.${iconViewId}`, presenter.iconEventHandler);
+	$(document).on(`knack-view-render.${nextBtnViewId}`, presenter.nextBtnRenderHandler);
+	$(document).on(`knack-scene-render.${eventListSceneId}`, presenter.eventListSceneEventHandler);
 };
 
-Presenter.hookView(appInfo.presenterGrid, appInfo.iconViewId);
+Presenter.hookView(appInfo.presenterGrid, appInfo.iconViewId, appInfo.nextBtnViewId, appInfo.eventListSceneId);
