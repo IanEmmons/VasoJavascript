@@ -1,64 +1,17 @@
 'use strict';
 
-const medalLabels = [
-	'Zeroth Place:',
-	'First Place:',
-	'Second Place:',
-	'Third Place:',
-	'Fourth Place:',
-	'Fifth Place:',
-	'Sixth Place:',
-	'Seventh Place:',
-	'Eighth Place:',
-	'Ninth Place:',
-	'Tenth Place:',
-	'Eleventh Place:',
-	'Twelfth Place:',
-];
-
-function sleep(timeInMillis) {
-	return new Promise(resolve => setTimeout(resolve, timeInMillis));
-}
-
-function dumpObject(obj, label) {
-	console.log(`${label} functions:`);
-	console.log(Object.getOwnPropertyNames(obj).filter(
-		(p) => typeof obj[p] === 'function'));
-
-	console.log(`${label} objects and arrays:`);
-	console.log(Object.getOwnPropertyNames(obj).filter(
-		(p) => typeof obj[p] === 'object'));
-
-	console.log(`${label} other:`);
-	console.log(Object.getOwnPropertyNames(obj)
-		.filter((p) => !['function', 'object'].includes(typeof obj[p]))
-		.map((p) => `${p} = ${obj[p]}`));
-}
+// Presentation of gold medal bids
+// Ranking schools within a tournament
+// Who goes to states?
+// Who goes to states with exhibition status?
+// School trophy presentation
 
 function KnackAppInfo(appName) {
 	if (appName === 'DivA Scoring App') {
-		this.apiKey = '';
-		this.esScoringGrid = '';
-		this.scoremasterScoringGrid = '';
-		this.lockScoresScoringGrid = '';
-		this.lockScoresSubmitForm = '';
-		this.putRanksResultReport = '';
-		this.rawScoreTableId = '';
-		this.adjScoreFieldId = '';
-		this.rankFieldId = '';
-		this.rawRankFieldId = '';
-		this.statusFieldId = '';
-
-		this.eventListSceneId = '';
-		this.presenterGrid = '';
-		this.iconViewId = '';
-		this.nextBtnViewId = '';
-		this.teamNameFieldId = '';
-		this.rawTeamNameFieldId = '';
-		this.iconFieldId = '';
-		this.rawIconFieldId = '';
 	} else if (appName === 'DivBC Scoring App') {
 		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
+
+		// RankUpdater
 		this.esScoringGrid = 'view_1375';
 		this.scoremasterScoringGrid = 'view_1363';
 		this.lockScoresScoringGrid = 'view_1380';
@@ -67,17 +20,18 @@ function KnackAppInfo(appName) {
 		this.rawScoreTableId = 'object_95';
 		this.adjScoreFieldId = 'field_1736_raw';
 		this.rankFieldId = 'field_1737';
-		this.rawRankFieldId = 'field_1737_raw';
+		this.rawRankFieldId = this.rankFieldId + '_raw';
 		this.statusFieldId = 'field_1731_raw';
 
+		// Presenter
 		this.eventListSceneId = 'scene_587';
 		this.presenterGrid = 'view_1442';
 		this.iconViewId = 'view_1440';
 		this.nextBtnViewId = 'view_1470';
 		this.teamNameFieldId = 'field_1202';
-		this.rawTeamNameFieldId = 'field_1202_raw';
+		this.rawTeamNameFieldId = this.teamNameFieldId + '_raw';
 		this.iconFieldId = 'field_1712';
-		this.rawIconFieldId = 'field_1712_raw';
+		this.rawIconFieldId = this.iconFieldId + '_raw';
 	}
 }
 
@@ -132,7 +86,6 @@ function RankUpdater(scoresViewId) {
 	this.computeScoreInfoMap = function() {
 		const models = Knack.models[this.scoresViewId].data.models;
 		const numTeams = models.length;
-		console.log(`Number of teams: ${numTeams}`);
 		console.log('Grid row models:');
 		console.log(models);
 
@@ -167,6 +120,10 @@ function RankUpdater(scoresViewId) {
 		}
 	}.bind(this);
 
+	this.sleep = function(timeInMillis) {
+		return new Promise(resolve => setTimeout(resolve, timeInMillis));
+	}
+
 	this.putRankToDatabase = async function(id, newRank) {
 		const url = `https://api.knack.com/v1/objects/${appInfo.rawScoreTableId}/records/${id}`;
 		const options = {
@@ -196,7 +153,7 @@ function RankUpdater(scoresViewId) {
 		//const result = await response.json();
 		//console.log(`Success: ${JSON.stringify(result)}`);
 
-		return sleep(100);	// milliseconds
+		return this.sleep(100);	// milliseconds
 	}.bind(this);
 
 	this.putRanksToDatabase = async function(scoreInfoMap) {
@@ -241,8 +198,6 @@ function RankUpdater(scoresViewId) {
 						<br/><br/>Error message: ${error.message}`);
 				});
 		} else {
-			//dumpObject(Knack, 'Knack');
-			//dumpObject(Knack.app, 'Knack.app');
 			this.updateTeamRanks(scoreInfoMap);
 		}
 		if (view.key === appInfo.lockScoresScoringGrid) {
@@ -270,13 +225,25 @@ RankUpdater.hookView(appInfo.lockScoresScoringGrid, appInfo.lockScoresSubmitForm
 
 // ====================================================================
 
-function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
-	this.ranksViewId = ranksViewId;
-	this.iconViewId = iconViewId;
-	this.nextBtnViewId = nextBtnViewId;
-	this.eventListSceneId = eventListSceneId;
+function Presenter() {
 	this.medals = null;
 	this.numRanksShowing = 0;
+
+	this.medalLabels = [
+		'Zeroth Place:',
+		'First Place:',
+		'Second Place:',
+		'Third Place:',
+		'Fourth Place:',
+		'Fifth Place:',
+		'Sixth Place:',
+		'Seventh Place:',
+		'Eighth Place:',
+		'Ninth Place:',
+		'Tenth Place:',
+		'Eleventh Place:',
+		'Twelfth Place:',
+	];
 
 	this.eventListSceneEventHandler = function(/*event, view, record*/) {
 		// Remove the background image:
@@ -289,7 +256,7 @@ function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 
 	this.iconEventHandler = function(/*event, view, record*/) {
 		// Add the background image:
-		const eventIconUrl = Knack.models[this.iconViewId].attributes[appInfo.rawIconFieldId];
+		const eventIconUrl = Knack.models[appInfo.iconViewId].attributes[appInfo.rawIconFieldId];
 		const backgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
 		mainDiv.css('background-image', `url("${eventIconUrl}"), url("${backgroundUrl}")`);
@@ -298,12 +265,12 @@ function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 		mainDiv.css('background-position', 'top 40px right 50px, top left');
 
 		// Hide Knack's icon:
-		$(`div#${this.iconViewId} div.${appInfo.iconFieldId}_thumb_1`).hide();
+		$(`div#${appInfo.iconViewId} div.${appInfo.iconFieldId}_thumb_1`).hide();
 	}.bind(this);
 
 	this.setTeamNameVisibilities = function() {
 		for (let i = 0; i < this.medals.length; ++i) {
-			const viewId = this.ranksViewId;
+			const viewId = appInfo.presenterGrid;
 			const medal = this.medals[i];
 			const teamFieldId = appInfo.teamNameFieldId;
 			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${teamFieldId} > span`);
@@ -325,37 +292,49 @@ function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 	}.bind(this);
 
 	this.nextBtnRenderHandler = function(/*event, view, record*/) {
-		$(`div#${this.nextBtnViewId} svg`).on('click', this.nextBtnClickHandler);
+		$(`div#${appInfo.nextBtnViewId} svg`).on('click', this.nextBtnClickHandler);
 	}.bind(this);
 
 	this.getMedalList = function() {
-		const models = Knack.models[this.ranksViewId].data.models;
+		const models = Knack.models[appInfo.presenterGrid].data.models;
 
-		//console.log('Presentation grid row models:');
-		//console.log(models);
+		console.log('Presentation grid row models:');
+		console.log(models);
 
 		let minRank = Number.MAX_SAFE_INTEGER;
 		let maxRank = Number.MIN_SAFE_INTEGER;
 		for (let i = 0; i < models.length; ++i) {
-			minRank = Math.min(minRank, models[i].attributes[appInfo.rawRankFieldId]);
-			maxRank = Math.max(maxRank, models[i].attributes[appInfo.rawRankFieldId]);
+			const rawRank = models[i].attributes[appInfo.rawRankFieldId];
+			const rank = Number(rawRank);
+			if (rawRank && rank != NaN) {
+				minRank = Math.min(minRank, rank);
+				maxRank = Math.max(maxRank, rank);
+			}
+		}
+
+		if (minRank === Number.MAX_SAFE_INTEGER) {
+			return Array(0);
 		}
 
 		const medals = Array(maxRank - minRank + 1);
 		for (let i = 0; i < models.length; ++i) {
-			const medalInfo = {
-				id: models[i].attributes.id,
-				rank: models[i].attributes[appInfo.rawRankFieldId],
-				teamName: models[i].attributes[appInfo.rawTeamNameFieldId],
-			};
-			if (medals[medalInfo.rank - minRank]) {
-				throw 'Two teams have the same medal position';
+			const rawRank = models[i].attributes[appInfo.rawRankFieldId];
+			const rank = Number(rawRank);
+			if (rawRank && rank != NaN) {
+				const medalInfo = {
+					id: models[i].attributes.id,
+					rank: rank,
+					teamName: models[i].attributes[appInfo.rawTeamNameFieldId],
+				};
+				if (medals[medalInfo.rank - minRank]) {
+					throw 'Two teams have the same medal position';
+				}
+				medals[medalInfo.rank - minRank] = medalInfo;
 			}
-			medals[medalInfo.rank - minRank] = medalInfo;
 		}
 
-		//console.log('Medal array:');
-		//console.log(medals);
+		console.log('Medal array:');
+		console.log(medals);
 		return medals;
 	}.bind(this);
 
@@ -363,16 +342,16 @@ function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 		this.medals = this.getMedalList();
 
 		// Hide the table page navigation and table header:
-		$(`div#${this.ranksViewId} thead`).hide();
-		$(`div#${this.ranksViewId} div.kn-records-nav`).hide();
+		$(`div#${appInfo.presenterGrid} thead`).hide();
+		$(`div#${appInfo.presenterGrid} div.kn-records-nav`).hide();
 
 		// Replace ranks numbers with place names:
 		for (let i = 0; i < this.medals.length; ++i) {
-			const viewId = this.ranksViewId;
+			const viewId = appInfo.presenterGrid;
 			const medal = this.medals[i];
 			const rankFieldId = appInfo.rankFieldId;
 			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
-			spanElement.text(`${medalLabels[medal.rank]}`);
+			spanElement.text(`${this.medalLabels[medal.rank]}`);
 		}
 
 		// Hide the team names:
@@ -381,12 +360,12 @@ function Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
 	}.bind(this);
 }
 
-Presenter.hookView = function(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId) {
-	const presenter = new Presenter(ranksViewId, iconViewId, nextBtnViewId, eventListSceneId);
-	$(document).on(`knack-view-render.${ranksViewId}`, presenter.gridEventHandler);
-	$(document).on(`knack-view-render.${iconViewId}`, presenter.iconEventHandler);
-	$(document).on(`knack-view-render.${nextBtnViewId}`, presenter.nextBtnRenderHandler);
-	$(document).on(`knack-scene-render.${eventListSceneId}`, presenter.eventListSceneEventHandler);
+Presenter.hookView = function() {
+	const presenter = new Presenter();
+	$(document).on(`knack-view-render.${appInfo.presenterGrid}`, presenter.gridEventHandler);
+	$(document).on(`knack-view-render.${appInfo.iconViewId}`, presenter.iconEventHandler);
+	$(document).on(`knack-view-render.${appInfo.nextBtnViewId}`, presenter.nextBtnRenderHandler);
+	$(document).on(`knack-scene-render.${appInfo.eventListSceneId}`, presenter.eventListSceneEventHandler);
 };
 
-Presenter.hookView(appInfo.presenterGrid, appInfo.iconViewId, appInfo.nextBtnViewId, appInfo.eventListSceneId);
+Presenter.hookView();
