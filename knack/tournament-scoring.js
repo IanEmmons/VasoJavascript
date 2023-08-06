@@ -8,46 +8,51 @@
 
 function KnackAppInfo(appName) {
 	if (appName === 'DivA Scoring App') {
+		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
 	} else if (appName === 'DivBC Scoring App') {
 		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
-
-		// RankUpdater
-		this.esScoringGrid = 'view_1375';
-		this.scoremasterScoringGrid = 'view_1363';
-		this.lockScoresScoringGrid = 'view_1380';
-		this.lockScoresSubmitForm = 'view_1382';
-		this.putRanksResultReport = 'view_1381';
-		this.rawScoreTableId = 'object_95';
-		this.adjScoreFieldId = 'field_1736_raw';
-		this.rankFieldId = 'field_1737';
-		this.rawRankFieldId = this.rankFieldId + '_raw';
-		this.statusFieldId = 'field_1731_raw';
-
-		// Presenter
-		this.eventListSceneId = 'scene_587';
-		this.presenterGrid = 'view_1442';
-		this.iconViewId = 'view_1440';
-		this.nextBtnViewId = 'view_1470';
-		this.teamNameFieldId = 'field_1202';
-		this.rawTeamNameFieldId = this.teamNameFieldId + '_raw';
-		this.iconFieldId = 'field_1712';
-		this.rawIconFieldId = this.iconFieldId + '_raw';
 	}
+
+	// RankUpdater
+	this.esScoringGrid = 'view_1375';
+	this.scoremasterScoringGrid = 'view_1363';
+	this.lockScoresScoringGrid = 'view_1380';
+	this.lockScoresSubmitForm = 'view_1382';
+	this.putRanksResultReport = 'view_1381';
+	this.rawScoreTableId = 'object_95';
+	this.tierAdjScoreFieldId = 'field_1736';
+	this.rankFieldId = 'field_1737';
+	this.statusFieldId = 'field_1731';
+
+	// Presenter
+	this.eventListSceneId = 'scene_587';
+	this.presenterGrid = 'view_1442';
+	this.iconViewId = 'view_1440';
+	this.nextBtnViewId = 'view_1470';
+	this.teamNameFieldId = 'field_1202';
+	this.iconFieldId = 'field_1712';
+
+	// Computed values:
+	this.rawRankFieldId = this.rankFieldId + '_raw';
+	this.rawTierAdjScoreFieldId = this.tierAdjScoreFieldId + '_raw';
+	this.rawStatusFieldId = this.statusFieldId + '_raw';
+	this.rawTeamNameFieldId = this.teamNameFieldId + '_raw';
+	this.rawIconFieldId = this.iconFieldId + '_raw';
 }
 
-//const appInfo = new KnackAppInfo('DivA Scoring App');
-const appInfo = new KnackAppInfo('DivBC Scoring App');
+const appInfo = new KnackAppInfo('DivA Scoring App');
+//const appInfo = new KnackAppInfo('DivBC Scoring App');
 
 function RankUpdater(scoresViewId) {
 	this.scoresViewId = scoresViewId;
 
 	this.createScoreInfo = function(scoreInfoMap, model) {
-		const statusField = model.attributes[appInfo.statusFieldId];
+		const statusField = model.attributes[appInfo.rawStatusFieldId];
 		const status = (statusField.length > 0)
 			? statusField[0].identifier
 			: '';
 		const scoreInfo = {
-				adjScore: model.attributes[appInfo.adjScoreFieldId],
+				adjScore: model.attributes[appInfo.rawTierAdjScoreFieldId],
 				status: status,
 				oldRank: model.attributes[appInfo.rawRankFieldId],
 				newRank: -1,
@@ -94,7 +99,7 @@ function RankUpdater(scoresViewId) {
 			(model) => this.createScoreInfo(scoreInfoMap, model));
 
 		const sortedScores = models.slice()
-			.map((model) => model.attributes[appInfo.adjScoreFieldId])
+			.map((model) => model.attributes[appInfo.rawTierAdjScoreFieldId])
 			.sort((lhs, rhs) => (rhs - lhs));
 		for (const [id, scoreInfo] of scoreInfoMap) {
 			this.setRank(scoreInfo, numTeams, sortedScores);
