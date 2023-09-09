@@ -6,9 +6,21 @@
 // Who goes to states with exhibition status?
 // School trophy presentation
 
-function KnackAppInfo(appName) {
-	if (appName === 'DivA Scoring App') {
+function KnackAppInfo() {
+	this.isDivA = function() {
+		return false;
+		//return true;
+	}.bind(this);
+
+	this.isDivBC = function() {
+		return !this.isDivA();
+	}.bind(this);
+
+	if (this.isDivA()) {
 		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
+
+		// Event RankUpdater
+		this.lockEventFinalizeView = 'view_1531';
 
 		// Presenter
 		this.presenterUpperLevelSceneIds = [
@@ -17,10 +29,22 @@ function KnackAppInfo(appName) {
 
 		// Event Presenter
 		this.presenterEventGrid = 'view_1442';
-		this.presenterEventIconViewId = 'view_1440';
 		this.presenterEventNextBtnViewId = 'view_1470';
-	} else if (appName === 'DivBC Scoring App') {
+		this.presenterEventAwardSceneId = 'scene_589';
+		this.presenterEventIconViewId = 'view_1440';
+	} else if (this.isDivBC()) {
 		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
+
+		// Event RankUpdater
+		this.lockEventFinalizeView = 'view_1609';
+
+		// Div. B Overview RankUpdater
+		this.overviewBTeamGrid = 'view_1578';
+		this.overviewBSchoolGrid = 'view_1384';
+		this.overviewBLockSceneId = 'scene_624';
+		this.overviewBLockGrid = 'view_1585';
+		this.overviewBSubmitForm = 'view_1586';
+		this.overviewBFinalizeView = 'view_1629';
 
 		// Presenter
 		this.presenterUpperLevelSceneIds = [
@@ -38,13 +62,11 @@ function KnackAppInfo(appName) {
 		this.presenterSchoolBGrid = 'view_1549';
 		this.presenterSchoolBNextBtnViewId = 'view_1553';
 		this.presenterSchoolBAwardSceneId = 'scene_611';
-		this.presenterSchoolBIconViewId = '';
 
 		// School Winners C Presenter
 		this.presenterSchoolCGrid = 'view_1551';
 		this.presenterSchoolCNextBtnViewId = 'view_1554';
 		this.presenterSchoolCAwardSceneId = 'scene_612';
-		this.presenterSchoolCIconViewId = '';
 
 		// School Winners BC Presenter
 		this.presenterSchoolBCGrid = 'view_1555 view_1556';
@@ -54,51 +76,71 @@ function KnackAppInfo(appName) {
 	}
 
 	// RankUpdater
-	this.rawScoreTableId = 'object_95';
-	this.esScoringSceneId = 'scene_560';
 	this.esScoringGrid = 'view_1375';
-	this.scoremasterEventSceneId = 'scene_550';
 	this.scoremasterEventGrid = 'view_1363';
 	this.lockEventSceneId = 'scene_563';
 	this.lockEventGrid = 'view_1380';
 	this.lockEventSubmitForm = 'view_1382';
-	this.lockEventFinalizeView = 'view_1609';
-	this.tierAdjScoreFieldId = 'field_1736';
-	this.rankFieldId = 'field_1737';
-	this.statusFieldId = 'field_1731';
+
+	this.eventScoreTableId = 'object_95';			// 'Raw Scores' table
+	this.eventAdjScoreFieldId = 'field_1736';		// 'Raw Scores/Tier Adjusted Score' column
+	this.eventRankFieldId = 'field_1737';			// 'Raw Scores/Rank' column
+	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
+
+	this.teamScoreTableId = 'object_80';			// 'Teams' table
+	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
+	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
+
+	this.schoolBScoreTableId = 'object_5';			// 'School' table
+	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
+	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
+
+	this.schoolCScoreTableId = 'object_5';			// 'School' table
+	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
+	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
 
 	// Presenter
 	this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
-	this.teamNameFieldId = 'field_1202';
-	this.iconFieldId = 'field_1712';
-
-	// Computed values:
-	this.rawRankFieldId = this.rankFieldId + '_raw';
-	this.rawTierAdjScoreFieldId = this.tierAdjScoreFieldId + '_raw';
-	this.rawStatusFieldId = this.statusFieldId + '_raw';
-	this.rawTeamNameFieldId = this.teamNameFieldId + '_raw';
-	this.rawIconFieldId = this.iconFieldId + '_raw';
+	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
+	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column
+	this.eventIconFieldId = 'field_1712';
 }
 
-//const appInfo = new KnackAppInfo('DivA Scoring App');
-const appInfo = new KnackAppInfo('DivBC Scoring App');
+const appInfo = new KnackAppInfo();
 
-function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
-	this.sceneId = sceneId;
+function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
+		scoreFieldId, rankFieldId, statusFieldId, tableId, isInEventMode) {
 	this.gridId = gridId;
+	this.sceneId = sceneId;
 	this.lockSubmitForm = lockSubmitForm;
 	this.finalizeBtnViewId = finalizeBtnViewId;
+	this.scoreFieldId = scoreFieldId;
+	this.rawScoreFieldId = this.scoreFieldId + '_raw';
+	this.rankFieldId = rankFieldId;
+	this.rawRankFieldId = this.rankFieldId + '_raw';
+	this.statusFieldId = statusFieldId;
+	this.rawStatusFieldId = this.statusFieldId + '_raw';
+	this.tableId = tableId;
+	this.isInEventMode = isInEventMode;
 	this.scoreInfoMap = null;
+	this.rankStorageInProgress = false;
+
+	this.getStatus = function(model) {
+		if (this.statusFieldId) {
+			const statusField = model.attributes[this.rawStatusFieldId];
+			return (statusField.length > 0)
+				? statusField[0].identifier
+				: '';
+		} else {
+			return '';
+		}
+	}.bind(this);
 
 	this.createScoreInfo = function(scoreInfoMap, model) {
-		const statusField = model.attributes[appInfo.rawStatusFieldId];
-		const status = (statusField.length > 0)
-			? statusField[0].identifier
-			: '';
 		const scoreInfo = {
-				adjScore: model.attributes[appInfo.rawTierAdjScoreFieldId],
-				status: status,
-				oldRank: model.attributes[appInfo.rawRankFieldId],
+				adjScore: model.attributes[this.rawScoreFieldId],
+				status: this.getStatus(model),
+				oldRank: model.attributes[this.rawRankFieldId],
 				newRank: -1,
 			};
 		scoreInfoMap.set(model.attributes.id, scoreInfo);
@@ -127,9 +169,9 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 			(model) => this.createScoreInfo(scoreInfoMap, model));
 
 		const sortedScores = models.slice()
-			.map((model) => model.attributes[appInfo.rawTierAdjScoreFieldId])
-			.sort((lhs, rhs) => (rhs - lhs));
-		for (const [id, scoreInfo] of scoreInfoMap) {
+			.map((model) => model.attributes[this.rawScoreFieldId])
+			.sort((lhs, rhs) => this.isInEventMode ? (rhs - lhs) : (lhs - rhs));
+		for (const [, scoreInfo] of scoreInfoMap) {
 			this.setRank(scoreInfo, numTeams, sortedScores);
 		}
 
@@ -158,14 +200,14 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 		const numTeams = scoreInfoMap.size;
 
 		const rankHistogram = new Map();
-		for (const [id, scoreInfo] of scoreInfoMap) {
+		for (const [, scoreInfo] of scoreInfoMap) {
 			this.incrementRankCount(rankHistogram, scoreInfo.newRank);
 		}
 
 		for (const [id, scoreInfo] of scoreInfoMap) {
 			const bgColor = this.getBgColor(scoreInfo.newRank, numTeams, rankHistogram);
-			$(`div#${gridId} tr#${id} > td.${appInfo.rankFieldId}`).css('background', bgColor);
-			$(`div#${gridId} tr#${id} > td.${appInfo.rankFieldId} > span`).text(`${scoreInfo.newRank}`);
+			$(`div#${gridId} tr#${id} > td.${this.rankFieldId}`).css('background', bgColor);
+			$(`div#${gridId} tr#${id} > td.${this.rankFieldId} > span`).text(`${scoreInfo.newRank}`);
 		}
 	}.bind(this);
 
@@ -187,7 +229,7 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 	}.bind(this);
 
 	this.putRankToDatabase = async function(id, newRank) {
-		const url = `https://api.knack.com/v1/objects/${appInfo.rawScoreTableId}/records/${id}`;
+		const url = `https://api.knack.com/v1/objects/${this.tableId}/records/${id}`;
 		const options = {
 			method: 'PUT',
 			mode: 'cors',
@@ -200,7 +242,7 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 				'Accept': 'application/json',
 			},
 			body: JSON.stringify({
-				[appInfo.rankFieldId]: newRank,
+				[this.rankFieldId]: newRank,
 			}),
 		};
 		const response = await fetch(url, options);
@@ -228,18 +270,24 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 	}.bind(this);
 
 	this.finalizeBtnClickHandler = function() {
+		if (this.rankStorageInProgress) {
+			return false;
+		}
 		$(`#${this.lockSubmitForm} div#kn-input-`).show();	// Result report - Please Wait
 		this.setSpinner();
+		this.rankStorageInProgress = true;
 		this.putRanksToDatabase(this.scoreInfoMap)
 			.then(() => {
 				console.log('Database updates for ranking succeeded');
 				$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('Success!');
+				const label = this.isInEventMode ? 'event' : 'tournament';
 				$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
-					The event scores have been finalized. Press the button to<br/>
-					lock the event and return to the ScoreMaster home page.`);
+					The scores and ranks have been finalized. Press the button to<br/>
+					lock the ${label} and submit it for presentation.`);
 				$(`div#${this.finalizeBtnViewId}`).hide();		// Finalize button
 				$(`#${this.lockSubmitForm} div.kn-submit`).show();	// Submit button
 				this.cancelSpinner();
+				this.rankStorageInProgress = false;
 			})
 			.catch((error) => {
 				console.error(`PUT failure: ${error.message}`);
@@ -248,6 +296,7 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 					Please wait a moment or two and press the Finalize button again.
 					<br/><br/>Error message: ${error.message}`);
 				this.cancelSpinner();
+				this.rankStorageInProgress = false;
 			});
 		return false;
 	}.bind(this);
@@ -258,35 +307,58 @@ function RankUpdater(sceneId, gridId, lockSubmitForm, finalizeBtnViewId) {
 	}.bind(this);
 
 	this.sceneRenderHandler = function(/* event, view, record*/) {
-		if (this.lockSubmitForm && this.finalizeBtnViewId) {
-			$(`#${this.gridId}`).hide();	// Scores table needed only to force data retrieval
-			$(`#${this.lockSubmitForm} div#kn-input-`).hide();	// Result report
-			$(`#${this.lockSubmitForm} div.kn-submit`).hide();	// Submit button
-			$(`div#${this.finalizeBtnViewId} svg`).on('click', this.finalizeBtnClickHandler);
-		}
+		$(`#${this.gridId}`).hide();	// Scores table needed only to force data retrieval
+		$(`#${this.lockSubmitForm} div#kn-input-`).hide();	// Result report
+		$(`#${this.lockSubmitForm} div.kn-submit`).hide();	// Submit button
+		$(`div#${this.finalizeBtnViewId} svg`).on('click', this.finalizeBtnClickHandler);
 	}.bind(this);
 
-	$(document).on(`knack-scene-render.${this.sceneId}`, this.sceneRenderHandler);
+	if (this.sceneId && this.lockSubmitForm && this.finalizeBtnViewId) {
+		$(document).on(`knack-scene-render.${this.sceneId}`, this.sceneRenderHandler);
+	}
 	$(document).on(`knack-view-render.${this.gridId}`, this.rankUpdateHandler);
 	$(document).on(`knack-cell-update.${this.gridId}`, this.rankUpdateHandler);
 }
 
-const esUpdater = new RankUpdater(appInfo.esScoringSceneId, appInfo.esScoringGrid, '', '');
-const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventSceneId,
-	appInfo.scoremasterEventGrid, '', '');
-const lockEventUpdater = new RankUpdater(appInfo.lockEventSceneId, appInfo.lockEventGrid,
-	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView);
+const esUpdater = new RankUpdater(appInfo.esScoringGrid, '', '', '',
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId, '', true);
+const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventGrid, '', '', '',
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId, '', true);
+const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEventSceneId,
+	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId,
+	appInfo.eventScoreTableId, true);
+
+const overviewBTeamUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewBTeamGrid, '', '', '',
+	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false);
+const overviewBSchoolUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewBSchoolGrid, '', '', '',
+	appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '', '', false);
+const overviewBLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewBLockGrid, appInfo.overviewBLockSceneId,
+	appInfo.overviewBSubmitForm, appInfo.overviewBFinalizeView,
+	appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '',
+	appInfo.schoolBScoreTableId, false);
 
 
 
 // ====================================================================
 
-function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLevelSceneIds) {
+function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLevelSceneIds,
+		iconFieldId, awardeeNameFieldId, rankFieldId) {
 	this.awardGrid = awardGrid;
 	this.nextBtnViewId = nextBtnViewId;
 	this.awardSceneId = awardSceneId;
 	this.iconViewId = iconViewId;
 	this.upperLevelSceneIds = upperLevelSceneIds;
+	this.iconFieldId = iconFieldId;
+	this.rawIconFieldId = this.iconFieldId + '_raw';
+	this.awardeeNameFieldId = awardeeNameFieldId;
+	this.rawAwardeeNameFieldId = this.awardeeNameFieldId + '_raw';
+	this.rankFieldId = rankFieldId;
+	this.rawRankFieldId = this.rankFieldId + '_raw';
+
 	this.medals = null;
 	this.numRanksShowing = 0;
 
@@ -316,13 +388,13 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 
 	this.awardSceneRenderHandler = function(/*event, view, record*/) {
 		if (this.iconViewId) {
-			const eventIconUrl = Knack.models[this.iconViewId].attributes[appInfo.rawIconFieldId];
+			const eventIconUrl = Knack.models[this.iconViewId].attributes[this.rawIconFieldId];
 			const cssImageValue = `url("${eventIconUrl}"), url("${appInfo.awardBackgroundUrl}")`;
 			this.setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, contain',
 				'top 40px right 50px, top left');
 
 			// Hide Knack's icon:
-			$(`div#${this.iconViewId} div.${appInfo.iconFieldId}_thumb_1`).hide();
+			$(`div#${this.iconViewId} div.${this.iconFieldId}_thumb_1`).hide();
 		} else {
 			const cssImageValue = `url("${appInfo.awardBackgroundUrl}")`;
 			this.setBackground(cssImageValue, 'no-repeat', 'contain', 'top left');
@@ -337,8 +409,8 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		for (let i = 0; i < this.medals.length; ++i) {
 			const viewId = this.awardGrid;
 			const medal = this.medals[i];
-			const teamFieldId = appInfo.teamNameFieldId;
-			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${teamFieldId} > span`);
+			const awardeeFieldId = this.awardeeNameFieldId;
+			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
 			if (i < this.medals.length - this.numRanksShowing) {
 				spanElement.hide();
 			} else {
@@ -369,7 +441,7 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		let minRank = Number.MAX_SAFE_INTEGER;
 		let maxRank = Number.MIN_SAFE_INTEGER;
 		for (let i = 0; i < models.length; ++i) {
-			const rawRank = models[i].attributes[appInfo.rawRankFieldId];
+			const rawRank = models[i].attributes[this.rawRankFieldId];
 			const rank = Number(rawRank);
 			if (rawRank && !isNaN(rank)) {
 				minRank = Math.min(minRank, rank);
@@ -383,13 +455,13 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 
 		const medals = Array(maxRank - minRank + 1);
 		for (let i = 0; i < models.length; ++i) {
-			const rawRank = models[i].attributes[appInfo.rawRankFieldId];
+			const rawRank = models[i].attributes[this.rawRankFieldId];
 			const rank = Number(rawRank);
 			if (rawRank && !isNaN(rank)) {
 				const medalInfo = {
 					id: models[i].attributes.id,
 					rank: rank,
-					teamName: models[i].attributes[appInfo.rawTeamNameFieldId],
+					awardeeName: models[i].attributes[this.rawAwardeeNameFieldId],
 				};
 				if (medals[medalInfo.rank - minRank]) {
 					throw 'Two teams have the same medal position';
@@ -414,7 +486,7 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		for (let i = 0; i < this.medals.length; ++i) {
 			const viewId = this.awardGrid;
 			const medal = this.medals[i];
-			const rankFieldId = appInfo.rankFieldId;
+			const rankFieldId = this.rankFieldId;
 			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
 			spanElement.text(`${this.medalLabels[medal.rank]}`);
 		}
@@ -437,10 +509,13 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 
 const eventPresenter = new Presenter(appInfo.presenterEventGrid,
 	appInfo.presenterEventNextBtnViewId, appInfo.presenterEventAwardSceneId,
-	appInfo.presenterEventIconViewId, appInfo.presenterUpperLevelSceneIds);
-const schoolBPresenter = new Presenter(appInfo.presenterSchoolBGrid,
-	appInfo.presenterSchoolBNextBtnViewId, appInfo.presenterSchoolBAwardSceneId,
-	appInfo.presenterSchoolBIconViewId, null);
-const schoolCPresenter = new Presenter(appInfo.presenterSchoolCGrid,
-	appInfo.presenterSchoolCNextBtnViewId, appInfo.presenterSchoolCAwardSceneId,
-	appInfo.presenterSchoolCIconViewId, null);
+	appInfo.presenterEventIconViewId, appInfo.presenterUpperLevelSceneIds,
+	appInfo.eventIconFieldId, appInfo.teamNameFieldId, appInfo.eventRankFieldId);
+const schoolBPresenter = appInfo.isDivA() ? null : new Presenter(
+	appInfo.presenterSchoolBGrid, appInfo.presenterSchoolBNextBtnViewId,
+	appInfo.presenterSchoolBAwardSceneId, '', null, '',
+	appInfo.schoolNameFieldId, appInfo.schoolBRankFieldId);
+const schoolCPresenter = appInfo.isDivA() ? null : new Presenter(
+	appInfo.presenterSchoolCGrid, appInfo.presenterSchoolCNextBtnViewId,
+	appInfo.presenterSchoolCAwardSceneId, '', null, '',
+	appInfo.schoolNameFieldId, appInfo.schoolCRankFieldId);
