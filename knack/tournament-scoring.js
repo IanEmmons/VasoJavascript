@@ -46,6 +46,14 @@ function KnackAppInfo() {
 		this.overviewBSubmitForm = 'view_1586';
 		this.overviewBFinalizeView = 'view_1629';
 
+		// Div. C Overview RankUpdater
+		this.overviewCTeamGrid = 'view_1581';
+		this.overviewCSchoolGrid = 'view_1387';
+		this.overviewCLockSceneId = 'scene_629';
+		this.overviewCLockGrid = 'view_1633';
+		this.overviewCSubmitForm = 'view_1634';
+		this.overviewCFinalizeView = 'view_1635';
+
 		// Presenter
 		this.presenterUpperLevelSceneIds = [
 			'scene_587',	// Tournament selection scene
@@ -87,16 +95,14 @@ function KnackAppInfo() {
 	this.eventRankFieldId = 'field_1737';			// 'Raw Scores/Rank' column
 	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
 
-	this.teamScoreTableId = 'object_80';			// 'Teams' table
+	this.teamTableId = 'object_80';					// 'Teams' table
 	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
 	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
 
-	this.schoolBScoreTableId = 'object_5';			// 'School' table
+	this.schoolTableId = 'object_5';					// 'School' table
 	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
-	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
-
-	this.schoolCScoreTableId = 'object_5';			// 'School' table
 	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
+	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
 	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
 
 	// Presenter
@@ -339,7 +345,19 @@ const overviewBLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewBLockGrid, appInfo.overviewBLockSceneId,
 	appInfo.overviewBSubmitForm, appInfo.overviewBFinalizeView,
 	appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '',
-	appInfo.schoolBScoreTableId, false);
+	appInfo.schoolTableId, false);
+
+const overviewCTeamUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewCTeamGrid, '', '', '',
+	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false);
+const overviewCSchoolUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewCSchoolGrid, '', '', '',
+	appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '', '', false);
+const overviewCLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
+	appInfo.overviewCLockGrid, appInfo.overviewCLockSceneId,
+	appInfo.overviewCSubmitForm, appInfo.overviewCFinalizeView,
+	appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '',
+	appInfo.schoolTableId, false);
 
 
 
