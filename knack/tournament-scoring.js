@@ -1,10 +1,8 @@
 'use strict';
 
-// Presentation of gold medal bids
-// Ranking schools within a tournament
-// Who goes to states?
-// Who goes to states with exhibition status?
-// School trophy presentation
+// Presenting gold bids (at regionals)
+// Presenting who goes to states (at regionals)
+// Presenting state medals with exhibition teams included
 
 function KnackAppInfo() {
 	this.isDivA = function() {
@@ -15,73 +13,6 @@ function KnackAppInfo() {
 	this.isDivBC = function() {
 		return !this.isDivA();
 	}.bind(this);
-
-	if (this.isDivA()) {
-		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
-
-		// Event RankUpdater
-		this.lockEventFinalizeView = 'view_1531';
-
-		// Presenter
-		this.presenterUpperLevelSceneIds = [
-			'scene_587',	// Event selection scene
-		];
-
-		// Event Presenter
-		this.presenterEventGrid = 'view_1442';
-		this.presenterEventNextBtnViewId = 'view_1470';
-		this.presenterEventAwardSceneId = 'scene_589';
-		this.presenterEventIconViewId = 'view_1440';
-	} else if (this.isDivBC()) {
-		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
-
-		// Event RankUpdater
-		this.lockEventFinalizeView = 'view_1609';
-
-		// Div. B Overview RankUpdater
-		this.overviewBTeamGrid = 'view_1578';
-		this.overviewBSchoolGrid = 'view_1384';
-		this.overviewBLockSceneId = 'scene_624';
-		this.overviewBLockGrid = 'view_1585';
-		this.overviewBSubmitForm = 'view_1586';
-		this.overviewBFinalizeView = 'view_1629';
-
-		// Div. C Overview RankUpdater
-		this.overviewCTeamGrid = 'view_1581';
-		this.overviewCSchoolGrid = 'view_1387';
-		this.overviewCLockSceneId = 'scene_629';
-		this.overviewCLockGrid = 'view_1633';
-		this.overviewCSubmitForm = 'view_1634';
-		this.overviewCFinalizeView = 'view_1635';
-
-		// Presenter
-		this.presenterUpperLevelSceneIds = [
-			'scene_587',	// Tournament selection scene
-			'scene_605'		// Event selection scene
-		];
-
-		// Event Presenter
-		this.presenterEventGrid = 'view_1522';
-		this.presenterEventNextBtnViewId = 'view_1545';
-		this.presenterEventAwardSceneId = 'scene_606';
-		this.presenterEventIconViewId = 'view_1521';
-
-		// School Winners B Presenter
-		this.presenterSchoolBGrid = 'view_1549';
-		this.presenterSchoolBNextBtnViewId = 'view_1553';
-		this.presenterSchoolBAwardSceneId = 'scene_611';
-
-		// School Winners C Presenter
-		this.presenterSchoolCGrid = 'view_1551';
-		this.presenterSchoolCNextBtnViewId = 'view_1554';
-		this.presenterSchoolCAwardSceneId = 'scene_612';
-
-		// School Winners BC Presenter
-		this.presenterSchoolBCGrid = 'view_1555 view_1556';
-		this.presenterSchoolBCNextBtnViewId = 'view_1558';
-		this.presenterSchoolBCAwardSceneId = 'scene_613';
-		this.presenterSchoolBCIconViewId = '';
-	}
 
 	// RankUpdater
 	this.esScoringGrid = 'view_1375';
@@ -105,11 +36,98 @@ function KnackAppInfo() {
 	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
 	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
 
-	// Presenter
+	// Award Background
 	this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
+	this.eventIconFieldId = 'field_1712';
+
+	// Presenter
 	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
 	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column
-	this.eventIconFieldId = 'field_1712';
+
+	if (this.isDivA()) {
+		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
+
+		// Event RankUpdater
+		this.lockEventFinalizeView = 'view_1531';
+
+		// Award Background
+		this.presenterTournamentSelectionSceneId = '';
+		this.presenterEventSelectionSceneId = 'scene_587';
+		this.presenterEventAwardSceneId = 'scene_589';
+		this.presenterEventIconViewId = 'view_1440';
+		this.presenterSchoolBAwardSceneId = '';
+		this.presenterSchoolCAwardSceneId = '';
+		this.presenterSchoolBCAwardSceneId = '';
+
+		// Event Presenter
+		this.presenterEventGrid = {
+			awardGrid: 'view_1442',
+			rankFieldId: this.eventRankFieldId,
+		};
+		this.presenterEventNextBtnViewId = 'view_1470';
+	} else if (this.isDivBC()) {
+		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
+
+		// Event RankUpdater
+		this.lockEventFinalizeView = 'view_1609';
+
+		// Div. B Overview RankUpdater
+		this.overviewBTeamGrid = 'view_1578';
+		this.overviewBSchoolGrid = 'view_1384';
+		this.overviewBLockSceneId = 'scene_624';
+		this.overviewBLockGrid = 'view_1585';
+		this.overviewBSubmitForm = 'view_1586';
+		this.overviewBFinalizeView = 'view_1629';
+
+		// Div. C Overview RankUpdater
+		this.overviewCTeamGrid = 'view_1581';
+		this.overviewCSchoolGrid = 'view_1387';
+		this.overviewCLockSceneId = 'scene_629';
+		this.overviewCLockGrid = 'view_1633';
+		this.overviewCSubmitForm = 'view_1634';
+		this.overviewCFinalizeView = 'view_1635';
+
+		// Award Background
+		this.presenterTournamentSelectionSceneId = 'scene_587';
+		this.presenterEventSelectionSceneId = 'scene_605';
+		this.presenterEventAwardSceneId = 'scene_606';
+		this.presenterEventIconViewId = 'view_1521';
+		this.presenterSchoolBAwardSceneId = 'scene_611';
+		this.presenterSchoolCAwardSceneId = 'scene_612';
+		this.presenterSchoolBCAwardSceneId = 'scene_613';
+
+		// Event Presenter
+		this.presenterEventGrid = {
+			awardGrid: 'view_1522',
+			rankFieldId: this.eventRankFieldId,
+		};
+		this.presenterEventNextBtnViewId = 'view_1545';
+
+		// School Winners B Presenter
+		this.presenterSchoolBGrid = {
+			awardGrid: 'view_1549',
+			rankFieldId: this.schoolBRankFieldId,
+		};
+		this.presenterSchoolBNextBtnViewId = 'view_1553';
+
+		// School Winners C Presenter
+		this.presenterSchoolCGrid = {
+			awardGrid: 'view_1551',
+			rankFieldId: this.schoolCRankFieldId,
+		};
+		this.presenterSchoolCNextBtnViewId = 'view_1554';
+
+		// School Winners BC Presenter
+		this.presenterSchoolBCGridLeft = {
+			awardGrid: 'view_1555',
+			rankFieldId: this.schoolBRankFieldId,
+		};
+		this.presenterSchoolBCGridRight = {
+			awardGrid: 'view_1556',
+			rankFieldId: this.schoolCRankFieldId,
+		};
+		this.presenterSchoolBCNextBtnViewId = 'view_1558';
+	}
 }
 
 const appInfo = new KnackAppInfo();
@@ -134,9 +152,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.getStatus = function(model) {
 		if (this.statusFieldId) {
 			const statusField = model.attributes[this.rawStatusFieldId];
-			return (statusField.length > 0)
-				? statusField[0].identifier
-				: '';
+			return (statusField.length > 0) ? statusField[0].identifier : '';
 		} else {
 			return '';
 		}
@@ -363,22 +379,72 @@ const overviewCLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 
 // ====================================================================
 
-function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLevelSceneIds,
-		iconFieldId, awardeeNameFieldId, rankFieldId) {
-	this.awardGrid = awardGrid;
-	this.nextBtnViewId = nextBtnViewId;
+function AwardBackground(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
 	this.awardSceneId = awardSceneId;
 	this.iconViewId = iconViewId;
-	this.upperLevelSceneIds = upperLevelSceneIds;
 	this.iconFieldId = iconFieldId;
 	this.rawIconFieldId = this.iconFieldId + '_raw';
-	this.awardeeNameFieldId = awardeeNameFieldId;
-	this.rawAwardeeNameFieldId = this.awardeeNameFieldId + '_raw';
-	this.rankFieldId = rankFieldId;
-	this.rawRankFieldId = this.rankFieldId + '_raw';
+	this.backgroundUrl = backgroundUrl;
 
-	this.medals = null;
-	this.numRanksShowing = 0;
+	this.setBackground = function(image, repeat, size, position) {
+		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
+		mainDiv.css('background-image', image);
+		mainDiv.css('background-repeat', repeat);
+		mainDiv.css('background-size', size);
+		mainDiv.css('background-position', position);
+	}.bind(this);
+
+	this.awardSceneRenderHandler = function(/*event, view, record*/) {
+		if (this.iconViewId && this.backgroundUrl) {
+			const eventIconUrl = Knack.models[this.iconViewId].attributes[this.rawIconFieldId];
+			const cssImageValue = `url("${eventIconUrl}"), url("${this.backgroundUrl}")`;
+			this.setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, contain',
+				'top 40px right 50px, top left');
+
+			// Hide Knack's icon:
+			$(`div#${this.iconViewId} div.${this.iconFieldId}_thumb_1`).hide();
+		} else if (this.backgroundUrl) {
+			const cssImageValue = `url("${this.backgroundUrl}")`;
+			this.setBackground(cssImageValue, 'no-repeat', 'contain', 'top left');
+		} else {
+			this.setBackground('', '', '', '');
+		}
+	}.bind(this);
+
+	if (this.awardSceneId) {
+		$(document).on(`knack-scene-render.${this.awardSceneId}`, this.awardSceneRenderHandler);
+	}
+}
+
+const eventAwardBackground = new AwardBackground(appInfo.presenterEventAwardSceneId,
+	appInfo.presenterEventIconViewId, appInfo.eventIconFieldId, appInfo.awardBackgroundUrl);
+const schoolBAwardBackground = new AwardBackground(appInfo.presenterSchoolBAwardSceneId,
+	'', '', appInfo.awardBackgroundUrl);
+const schoolCAwardBackground = new AwardBackground(appInfo.presenterSchoolCAwardSceneId,
+	'', '', appInfo.awardBackgroundUrl);
+const schoolBCAwardBackground = new AwardBackground(appInfo.presenterSchoolBCAwardSceneId,
+	'', '', appInfo.awardBackgroundUrl);
+const tournamentSelectionAwardBackground = new AwardBackground(
+	appInfo.presenterTournamentSelectionSceneId, '', '', '');
+const eventSelectionAwardBackground = new AwardBackground(
+	appInfo.presenterEventSelectionSceneId, '', '', '');
+
+
+
+// ====================================================================
+
+// Each item in gridDefinitions should be an object of this form:
+//    {
+//       awardGrid: '';
+//       rankFieldId: '';
+//    }
+// The Presenter will add the fields 'medals' and 'numRanksShowing'
+// to this structure dynamically.
+
+function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions) {
+	this.nextBtnViewId = nextBtnViewId;
+	this.awardeeNameFieldId = awardeeNameFieldId;
+	this.gridDefinitions = gridDefinitions;
 
 	this.medalLabels = [
 		'Zeroth Place:',
@@ -396,52 +462,51 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		'Twelfth Place:',
 	];
 
-	this.setBackground = function(image, repeat, size, position) {
-		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
-		mainDiv.css('background-image', image);
-		mainDiv.css('background-repeat', repeat);
-		mainDiv.css('background-size', size);
-		mainDiv.css('background-position', position);
-	}.bind(this);
-
-	this.awardSceneRenderHandler = function(/*event, view, record*/) {
-		if (this.iconViewId) {
-			const eventIconUrl = Knack.models[this.iconViewId].attributes[this.rawIconFieldId];
-			const cssImageValue = `url("${eventIconUrl}"), url("${appInfo.awardBackgroundUrl}")`;
-			this.setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, contain',
-				'top 40px right 50px, top left');
-
-			// Hide Knack's icon:
-			$(`div#${this.iconViewId} div.${this.iconFieldId}_thumb_1`).hide();
-		} else {
-			const cssImageValue = `url("${appInfo.awardBackgroundUrl}")`;
-			this.setBackground(cssImageValue, 'no-repeat', 'contain', 'top left');
-		}
-	}.bind(this);
-
-	this.eventListSceneEventHandler = function(/*event, view, record*/) {
-		this.setBackground('', '', '', '');
-	}.bind(this);
-
 	this.setTeamNameVisibilities = function() {
-		for (let i = 0; i < this.medals.length; ++i) {
-			const viewId = this.awardGrid;
-			const medal = this.medals[i];
-			const awardeeFieldId = this.awardeeNameFieldId;
-			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
-			if (i < this.medals.length - this.numRanksShowing) {
-				spanElement.hide();
-			} else {
-				spanElement.show();
+		for (let i = 0; i < this.gridDefinitions.length; ++i) {
+			let gridDef = this.gridDefinitions[i];
+			for (let j = 0; j < gridDef.medals.length; ++j) {
+				const medal = gridDef.medals[j];
+				const viewId = gridDef.awardGrid;
+				const awardeeFieldId = this.awardeeNameFieldId;
+				const spanElement = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
+				if (j < gridDef.medals.length - gridDef.numRanksShowing) {
+					spanElement.hide();
+				} else {
+					spanElement.show();
+				}
 			}
 		}
 	}.bind(this);
 
 	this.nextBtnClickHandler = function() {
-		if (!this.medals) {
-			return;
+		// Bail out if gridRenderHandler() has not run already:
+		for (let i = 0; i < this.gridDefinitions.length; ++i) {
+			let gridDef = this.gridDefinitions[i];
+			if (!gridDef.medals) {
+				return;
+			}
 		}
-		++this.numRanksShowing;
+
+		// Find the minimum number of ranks showing across all grids:
+		let minNumRanksShowing = Number.MAX_SAFE_INTEGER;
+		for (let i = 0; i < this.gridDefinitions.length; ++i) {
+			let gridDef = this.gridDefinitions[i];
+			minNumRanksShowing = Math.min(minNumRanksShowing,
+				gridDef.numRanksShowing);
+		}
+
+		// Increment the number of ranks showing in the first
+		// list that has the minimum number of ranks showing:
+		for (let i = 0; i < this.gridDefinitions.length; ++i) {
+			let gridDef = this.gridDefinitions[i];
+			if (gridDef.numRanksShowing === minNumRanksShowing) {
+				++(gridDef.numRanksShowing);
+				break;
+			}
+		}
+
+		// Now make the visibilities right:
 		this.setTeamNameVisibilities();
 		return false;
 	}.bind(this);
@@ -450,16 +515,27 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		$(`div#${this.nextBtnViewId} svg`).on('click', this.nextBtnClickHandler);
 	}.bind(this);
 
-	this.getMedalList = function() {
-		const models = Knack.models[this.awardGrid].data.models;
+	this.getGridDefForView = function(view) {
+		for (let i = 0; i < this.gridDefinitions.length; ++i) {
+			let gridDef = this.gridDefinitions[i];
+			if (gridDef.awardGrid === view.key) {
+				return gridDef;
+			}
+		}
+		return null;
+	}.bind(this);
 
-		console.log('Presentation grid row models:');
+	this.getMedalList = function(gridDef) {
+		const rawRankFieldId = gridDef.rankFieldId + '_raw';
+		const models = Knack.models[gridDef.awardGrid].data.models;
+
+		console.log(`Presentation grid row models (awardGrid ${gridDef.awardGrid}):`);
 		console.log(models);
 
 		let minRank = Number.MAX_SAFE_INTEGER;
 		let maxRank = Number.MIN_SAFE_INTEGER;
 		for (let i = 0; i < models.length; ++i) {
-			const rawRank = models[i].attributes[this.rawRankFieldId];
+			const rawRank = models[i].attributes[rawRankFieldId];
 			const rank = Number(rawRank);
 			if (rawRank && !isNaN(rank)) {
 				minRank = Math.min(minRank, rank);
@@ -468,72 +544,69 @@ function Presenter(awardGrid, nextBtnViewId, awardSceneId, iconViewId, upperLeve
 		}
 
 		if (minRank === Number.MAX_SAFE_INTEGER) {
-			return Array(0);
+			gridDef.medals = Array(0);
+			return;
 		}
 
-		const medals = Array(maxRank - minRank + 1);
+		gridDef.medals = Array(maxRank - minRank + 1);
 		for (let i = 0; i < models.length; ++i) {
-			const rawRank = models[i].attributes[this.rawRankFieldId];
+			const rawRank = models[i].attributes[rawRankFieldId];
 			const rank = Number(rawRank);
 			if (rawRank && !isNaN(rank)) {
-				const medalInfo = {
-					id: models[i].attributes.id,
-					rank: rank,
-					awardeeName: models[i].attributes[this.rawAwardeeNameFieldId],
-				};
-				if (medals[medalInfo.rank - minRank]) {
+				if (gridDef.medals[rank - minRank]) {
 					throw 'Two teams have the same medal position';
 				}
-				medals[medalInfo.rank - minRank] = medalInfo;
+				gridDef.medals[rank - minRank] = {
+					id: models[i].attributes.id,
+					rank: rank,
+				};
 			}
 		}
 
-		console.log('Medal array:');
-		console.log(medals);
-		return medals;
+		console.log(`Medal array for awardGrid ${gridDef.awardGrid}:`);
+		console.log(gridDef.medals);
 	}.bind(this);
 
-	this.gridRenderHandler = function(/*event, view, record*/) {
-		this.medals = this.getMedalList();
+	this.gridRenderHandler = function(event, view, record) {
+		let gridDef = this.getGridDefForView(view);
+
+		// Get the medal data:
+		this.getMedalList(gridDef);
 
 		// Hide the table page navigation and table header:
-		$(`div#${this.awardGrid} thead`).hide();
-		$(`div#${this.awardGrid} div.kn-records-nav`).hide();
+		$(`div#${gridDef.awardGrid} thead`).hide();
+		$(`div#${gridDef.awardGrid} div.kn-records-nav`).hide();
 
 		// Replace ranks numbers with place names:
-		for (let i = 0; i < this.medals.length; ++i) {
-			const viewId = this.awardGrid;
-			const medal = this.medals[i];
-			const rankFieldId = this.rankFieldId;
+		for (let i = 0; i < gridDef.medals.length; ++i) {
+			const viewId = gridDef.awardGrid;
+			const medal = gridDef.medals[i];
+			const rankFieldId = gridDef.rankFieldId;
 			const spanElement = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
 			spanElement.text(`${this.medalLabels[medal.rank]}`);
 		}
 
 		// Hide the team names:
-		this.numRanksShowing = 0;
+		gridDef.numRanksShowing = 0;
 		this.setTeamNameVisibilities();
 	}.bind(this);
 
-	$(document).on(`knack-view-render.${this.awardGrid}`, this.gridRenderHandler);
-	$(document).on(`knack-view-render.${this.nextBtnViewId}`, this.nextBtnRenderHandler);
-	$(document).on(`knack-scene-render.${this.awardSceneId}`, this.awardSceneRenderHandler);
-	if (this.upperLevelSceneIds) {
-		for (let i = 0; i < this.upperLevelSceneIds.length; ++i) {
-			$(document).on(`knack-scene-render.${this.upperLevelSceneIds[i]}`,
-				this.eventListSceneEventHandler);
-		}
+	for (let i = 0; i < this.gridDefinitions.length; ++i) {
+		$(document).on(`knack-view-render.${this.gridDefinitions[i].awardGrid}`,
+			this.gridRenderHandler);
 	}
+	$(document).on(`knack-view-render.${this.nextBtnViewId}`, this.nextBtnRenderHandler);
 }
 
-const eventPresenter = new Presenter(appInfo.presenterEventGrid,
-	appInfo.presenterEventNextBtnViewId, appInfo.presenterEventAwardSceneId,
-	appInfo.presenterEventIconViewId, appInfo.presenterUpperLevelSceneIds,
-	appInfo.eventIconFieldId, appInfo.teamNameFieldId, appInfo.eventRankFieldId);
+// function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions)
+const eventPresenter = new Presenter(appInfo.presenterEventNextBtnViewId,
+	appInfo.teamNameFieldId, appInfo.presenterEventGrid);
 const schoolBPresenter = appInfo.isDivA() ? null : new Presenter(
-	appInfo.presenterSchoolBGrid, appInfo.presenterSchoolBNextBtnViewId,
-	appInfo.presenterSchoolBAwardSceneId, '', null, '',
-	appInfo.schoolNameFieldId, appInfo.schoolBRankFieldId);
+	appInfo.presenterSchoolBNextBtnViewId, appInfo.schoolNameFieldId,
+	appInfo.presenterSchoolBGrid);
 const schoolCPresenter = appInfo.isDivA() ? null : new Presenter(
-	appInfo.presenterSchoolCGrid, appInfo.presenterSchoolCNextBtnViewId,
-	appInfo.presenterSchoolCAwardSceneId, '', null, '',
-	appInfo.schoolNameFieldId, appInfo.schoolCRankFieldId);
+	appInfo.presenterSchoolCNextBtnViewId, appInfo.schoolNameFieldId,
+	appInfo.presenterSchoolCGrid);
+const schoolBCPresenter = appInfo.isDivA() ? null : new Presenter(
+	appInfo.presenterSchoolBCNextBtnViewId, appInfo.schoolNameFieldId,
+	appInfo.presenterSchoolBCGridLeft, appInfo.presenterSchoolBCGridRight);
