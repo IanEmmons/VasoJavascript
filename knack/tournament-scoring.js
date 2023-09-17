@@ -37,6 +37,7 @@ function KnackAppInfo() {
 	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
 
 	// Award Background
+	this.presenterTournamentSelectionSceneId = 'scene_587';
 	this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 	this.eventIconFieldId = 'field_1712';
 
@@ -51,20 +52,25 @@ function KnackAppInfo() {
 		this.lockEventFinalizeView = 'view_1531';
 
 		// Award Background
-		this.presenterTournamentSelectionSceneId = '';
-		this.presenterEventSelectionSceneId = 'scene_587';
-		this.presenterEventAwardSceneId = 'scene_589';
-		this.presenterEventIconViewId = 'view_1440';
+		this.presenterEventSelectionBSceneId = '';
+		this.presenterEventSelectionCSceneId = '';
+		this.presenterEventSelectionAllSceneId = 'scene_616';
+		this.presenterStatesBoundBSceneId = '';
+		this.presenterStatesBoundCSceneId = '';
+		this.presenterStatesBoundAllBSceneId = '';
+		this.presenterStatesBoundAllCSceneId = '';
+		this.presenterEventAwardSceneId = 'scene_617';
+		this.presenterEventIconViewId = 'view_1538';
 		this.presenterSchoolBAwardSceneId = '';
 		this.presenterSchoolCAwardSceneId = '';
 		this.presenterSchoolBCAwardSceneId = '';
 
 		// Event Presenter
 		this.presenterEventGrid = {
-			awardGrid: 'view_1442',
+			awardGrid: 'view_1539',
 			rankFieldId: this.eventRankFieldId,
 		};
-		this.presenterEventNextBtnViewId = 'view_1470';
+		this.presenterEventNextBtnViewId = 'view_1542';
 	} else if (this.isDivBC()) {
 		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
 
@@ -88,12 +94,17 @@ function KnackAppInfo() {
 		this.overviewCFinalizeView = 'view_1635';
 
 		// Award Background
-		this.presenterTournamentSelectionSceneId = 'scene_587';
-		this.presenterEventSelectionSceneId = 'scene_605';
+		this.presenterEventSelectionBSceneId = 'scene_638';
+		this.presenterEventSelectionCSceneId = 'scene_642';
+		this.presenterEventSelectionAllSceneId = 'scene_605';
+		this.presenterStatesBoundBSceneId = 'scene_641';
+		this.presenterStatesBoundCSceneId = 'scene_645';
+		this.presenterStatesBoundAllBSceneId = 'scene_646';
+		this.presenterStatesBoundAllCSceneId = 'scene_647';
 		this.presenterEventAwardSceneId = 'scene_606';
 		this.presenterEventIconViewId = 'view_1521';
-		this.presenterSchoolBAwardSceneId = 'scene_611';
-		this.presenterSchoolCAwardSceneId = 'scene_612';
+		this.presenterSchoolBAwardSceneId = 'scene_640';
+		this.presenterSchoolCAwardSceneId = 'scene_643';
 		this.presenterSchoolBCAwardSceneId = 'scene_613';
 
 		// Event Presenter
@@ -105,17 +116,17 @@ function KnackAppInfo() {
 
 		// School Winners B Presenter
 		this.presenterSchoolBGrid = {
-			awardGrid: 'view_1549',
+			awardGrid: 'view_1673',
 			rankFieldId: this.schoolBRankFieldId,
 		};
-		this.presenterSchoolBNextBtnViewId = 'view_1553';
+		this.presenterSchoolBNextBtnViewId = 'view_1675';
 
 		// School Winners C Presenter
 		this.presenterSchoolCGrid = {
-			awardGrid: 'view_1551',
+			awardGrid: 'view_1684',
 			rankFieldId: this.schoolCRankFieldId,
 		};
-		this.presenterSchoolCNextBtnViewId = 'view_1554';
+		this.presenterSchoolCNextBtnViewId = 'view_1686';
 
 		// School Winners BC Presenter
 		this.presenterSchoolBCGridLeft = {
@@ -416,18 +427,31 @@ function AwardBackground(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
 	}
 }
 
-const eventAwardBackground = new AwardBackground(appInfo.presenterEventAwardSceneId,
-	appInfo.presenterEventIconViewId, appInfo.eventIconFieldId, appInfo.awardBackgroundUrl);
-const schoolBAwardBackground = new AwardBackground(appInfo.presenterSchoolBAwardSceneId,
-	'', '', appInfo.awardBackgroundUrl);
-const schoolCAwardBackground = new AwardBackground(appInfo.presenterSchoolCAwardSceneId,
-	'', '', appInfo.awardBackgroundUrl);
-const schoolBCAwardBackground = new AwardBackground(appInfo.presenterSchoolBCAwardSceneId,
-	'', '', appInfo.awardBackgroundUrl);
+const eventAwardBackground = new AwardBackground(
+	appInfo.presenterEventAwardSceneId, appInfo.presenterEventIconViewId,
+	appInfo.eventIconFieldId, appInfo.awardBackgroundUrl);
+const schoolBAwardBackground = new AwardBackground(
+	appInfo.presenterSchoolBAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+const schoolCAwardBackground = new AwardBackground(
+	appInfo.presenterSchoolCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+const schoolBCAwardBackground = new AwardBackground(
+	appInfo.presenterSchoolBCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+const eventSelectionBAwardBackground = new AwardBackground(
+	appInfo.presenterEventSelectionBSceneId, '', '', appInfo.awardBackgroundUrl);
+const eventSelectionCAwardBackground = new AwardBackground(
+	appInfo.presenterEventSelectionCSceneId, '', '', appInfo.awardBackgroundUrl);
+const eventSelectionAllAwardBackground = new AwardBackground(
+	appInfo.presenterEventSelectionAllSceneId, '', '', appInfo.awardBackgroundUrl);
+const statesBoundBAwardBackground = new AwardBackground(
+	appInfo.presenterStatesBoundBSceneId, '', '', appInfo.awardBackgroundUrl);
+const statesBoundCAwardBackground = new AwardBackground(
+	appInfo.presenterStatesBoundCSceneId, '', '', appInfo.awardBackgroundUrl);
+const statesBoundAllBAwardBackground = new AwardBackground(
+	appInfo.presenterStatesBoundAllBSceneId, '', '', appInfo.awardBackgroundUrl);
+const statesBoundAllCAwardBackground = new AwardBackground(
+	appInfo.presenterStatesBoundAllCSceneId, '', '', appInfo.awardBackgroundUrl);
 const tournamentSelectionAwardBackground = new AwardBackground(
 	appInfo.presenterTournamentSelectionSceneId, '', '', '');
-const eventSelectionAwardBackground = new AwardBackground(
-	appInfo.presenterEventSelectionSceneId, '', '', '');
 
 
 
@@ -465,6 +489,9 @@ function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions) {
 	this.setTeamNameVisibilities = function() {
 		for (let i = 0; i < this.gridDefinitions.length; ++i) {
 			let gridDef = this.gridDefinitions[i];
+			if (!(gridDef.medals)) {
+				continue;
+			}
 			for (let j = 0; j < gridDef.medals.length; ++j) {
 				const medal = gridDef.medals[j];
 				const viewId = gridDef.awardGrid;
