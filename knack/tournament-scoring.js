@@ -38,6 +38,8 @@ function KnackAppInfo() {
 
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
+	this.scoremasterSceneId = 'scene_546';
+	this.adminSceneId = 'scene_69';
 	this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 	this.eventIconFieldId = 'field_1712';
 
@@ -452,7 +454,10 @@ const statesBoundAllCAwardBackground = new AwardBackground(
 	appInfo.presenterStatesBoundAllCSceneId, '', '', appInfo.awardBackgroundUrl);
 const tournamentSelectionAwardBackground = new AwardBackground(
 	appInfo.presenterTournamentSelectionSceneId, '', '', '');
-
+const scoremasterAwardBackground = new AwardBackground(
+	appInfo.scoremasterSceneId, '', '', '');
+const adminAwardBackground = new AwardBackground(
+	appInfo.adminSceneId, '', '', '');
 
 
 // ====================================================================
