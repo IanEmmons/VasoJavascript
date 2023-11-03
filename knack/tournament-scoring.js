@@ -70,7 +70,6 @@ function KnackAppInfo() {
 	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
 	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
 	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
-	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
 
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
@@ -81,15 +80,16 @@ function KnackAppInfo() {
 
 	// Presenter
 	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
-	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column in portal
+	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column in BC portal
 																// 'School/School Name' column in distinct
+																// Not used in Div. A portal
 
 	if (this.isDivA()) {
 		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
 
 		// Event RankUpdater
 		this.lockEventFinalizeView = 'view_1531';
-		this.teamIsExhibitionTeamFieldId = '';		// 'Teams/Exhibition Team' column
+		this.teamIsExhibitionTeamFieldId = '';		// 'Teams/Exhibition Team' column (there is none for Div. A)
 
 		// Award Background
 		this.presenterEventSelectionBSceneId = '';
@@ -846,36 +846,16 @@ function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions) {
 		console.log(`Presentation grid row models (awardGrid ${gridDef.awardGrid}):`);
 		console.log(models);
 
-		let minRank = Number.MAX_SAFE_INTEGER;
-		let maxRank = Number.MIN_SAFE_INTEGER;
-		for (const model of models) {
-			const rawRank = model.attributes[rawRankFieldId];
-			const rank = Number(rawRank);
-			if (rawRank && !isNaN(rank)) {
-				minRank = Math.min(minRank, rank);
-				maxRank = Math.max(maxRank, rank);
-			}
-		}
-
-		if (minRank === Number.MAX_SAFE_INTEGER) {
-			gridDef.medals = Array(0);
-			return;
-		}
-
-		gridDef.medals = Array(maxRank - minRank + 1);
-		for (const model of models) {
-			const rawRank = model.attributes[rawRankFieldId];
-			const rank = Number(rawRank);
-			if (rawRank && !isNaN(rank)) {
-				if (gridDef.medals[rank - minRank]) {
-					throw 'Two teams have the same medal position';
-				}
-				gridDef.medals[rank - minRank] = {
+		gridDef.medals = models
+			.map((model) => {
+				const rawRank = model.attributes[rawRankFieldId];
+				const rank = Number(rawRank);
+				return {
 					id: model.attributes.id,
-					rank: rank,
+					rank: (rawRank && !isNaN(rank)) ? rank : 0,
 				};
-			}
-		}
+			})
+			.sort((lhs, rhs) => lhs.rank - rhs.rank);
 
 		console.log(`Medal array for awardGrid ${gridDef.awardGrid}:`);
 		console.log(gridDef.medals);
