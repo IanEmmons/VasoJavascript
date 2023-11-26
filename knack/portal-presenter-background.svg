@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
 		preserveAspectRatio="none" viewBox="0 0 320 180">
-	<polygon points="240,0 320,0 320,135" fill="#256388ff"/>
-	<polygon points="240,180 320,180 320,45" fill="#7da882ff"/>
-	<polygon points="320,45 320,135 293.3333,90" fill="#142c44ff"/>
+	<polygon points="240,0 320,0 320,135" fill="#256388ff"/> <!-- top -->
+	<polygon points="240,180 320,180 320,45" fill="#7da882ff"/> <!-- bottom -->
+	<polygon points="320,45 320,135 293.3333,90" fill="#142c44ff"/> <!-- right -->
 </svg>

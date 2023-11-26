@@ -38,7 +38,7 @@ function KnackAppInfo() {
 		return false;
 	}.bind(this);
 
-	this.isDiscrete = function() {
+	this.isScoreScope = function() {
 		return true;
 	}.bind(this);
 
@@ -46,8 +46,8 @@ function KnackAppInfo() {
 	let trueCount = 0;
 	trueCount += this.isDivA() ? 1 : 0;
 	trueCount += this.isDivBC() ? 1 : 0;
-	trueCount += this.isDiscrete() ? 1 : 0;
-	assert(trueCount === 1, 'Exactly one of isDivA, isDivBC, and isDiscrete must return true');
+	trueCount += this.isScoreScope() ? 1 : 0;
+	assert(trueCount === 1, 'Exactly one of isDivA, isDivBC, and isScoreScope must return true');
 
 	// RankUpdater
 	this.esScoringGrid = 'view_1375';
@@ -75,7 +75,6 @@ function KnackAppInfo() {
 	this.presenterTournamentSelectionSceneId = 'scene_587';
 	this.scoremasterSceneId = 'scene_546';
 	this.adminSceneId = 'scene_69';
-	this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 	this.eventIconFieldId = 'field_1712';			// Events - General/Event Icon
 
 	// Presenter
@@ -107,6 +106,7 @@ function KnackAppInfo() {
 		this.presenterTeamBAwardSceneId = '';
 		this.presenterTeamCAwardSceneId = '';
 		this.presenterTeamBCAwardSceneId = '';
+		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 
 		// Event Presenter
 		this.presenterEventGrid = {
@@ -153,6 +153,7 @@ function KnackAppInfo() {
 		this.presenterTeamBAwardSceneId = '';
 		this.presenterTeamCAwardSceneId = '';
 		this.presenterTeamBCAwardSceneId = '';
+		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 
 		// Event Presenter
 		this.presenterEventGrid = {
@@ -185,7 +186,7 @@ function KnackAppInfo() {
 			rankFieldId: this.schoolCRankFieldId,
 		};
 		this.presenterSchoolBCNextBtnViewId = 'view_1558';
-	} else if (this.isDiscrete()) {
+	} else if (this.isScoreScope()) {
 		this.apiKey = '212cab6a-6f68-4cfa-a53c-bcb06e429b78';
 
 		// Event RankUpdater
@@ -240,6 +241,7 @@ function KnackAppInfo() {
 		this.presenterTeamBAwardSceneId = 'scene_693';
 		this.presenterTeamCAwardSceneId = 'scene_694';
 		this.presenterTeamBCAwardSceneId = 'scene_615';
+		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_ca485e8df91e4837a83c85af6bae7814.svg';
 
 		// Event Presenter
 		this.presenterEventGrid = {
