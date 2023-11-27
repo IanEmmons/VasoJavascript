@@ -456,7 +456,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			return '#ffffff';	// no color for special statuses
 		} else if (rankHistogram.has(scoreInfo.newRank)
 				&& rankHistogram.get(scoreInfo.newRank) > 1) {
-			return '#b8d3bc';	// color for ties
+			return '#fbe9c2';	// color for ties
 		} else {
 			return '#ffffff';	// no color otherwise
 		}
