@@ -1,5 +1,10 @@
 'use strict';
 
+// Add symbolic names for colors
+// Recreate Duosmium Download page in Portal, but under Programmer/Developer login
+
+// ========================================================================
+
 // ✔︎✔︎ Hide ranks for special statuses on ES's page
 // ✔︎✔︎ Multiple of same special status: No coloring for ties
 // ✔︎✔︎ Exhibition teams: Computing ranks in ES's page without regard for exhibition status
@@ -35,19 +40,33 @@ function KnackAppInfo() {
 	}.bind(this);
 
 	this.isDivBC = function() {
-		return false;
-	}.bind(this);
-
-	this.isScoreScope = function() {
 		return true;
 	}.bind(this);
 
+	this.isScoreScope = function() {
+		return false;
+	}.bind(this);
+
 	// Sanity check:
-	let trueCount = 0;
-	trueCount += this.isDivA() ? 1 : 0;
-	trueCount += this.isDivBC() ? 1 : 0;
-	trueCount += this.isScoreScope() ? 1 : 0;
+	const trueCount = (this.isDivA() ? 1 : 0)
+		+ (this.isDivBC() ? 1 : 0)
+		+ (this.isScoreScope() ? 1 : 0);
 	assert(trueCount === 1, 'Exactly one of isDivA, isDivBC, and isScoreScope must return true');
+
+	this.choose = function(aValue, bcValue, ssValue) {
+		if (this.isDivA()) {
+			return aValue;
+		} else if (this.isDivBC()) {
+			return bcValue;
+		} else if (this.isScoreScope()) {
+			return ssValue;
+		} else {
+			assert(false, 'One of isDivA, isDivBC, and isScoreScope must return true');
+		}
+	}.bind(this);
+
+	this.apiKey = this.choose('c50f65dc-363f-4022-95c2-e98a0c89fd97',
+		'539b2e01-8b10-4388-b5a7-22dd644e9e2d', '212cab6a-6f68-4cfa-a53c-bcb06e429b78');
 
 	// RankUpdater
 	this.esScoringGrid = 'view_1375';
@@ -55,21 +74,25 @@ function KnackAppInfo() {
 	this.lockEventSceneId = 'scene_563';
 	this.lockEventGrid = 'view_1380';
 	this.lockEventSubmitForm = 'view_1382';
+	this.lockEventFinalizeView = this.choose('view_1531', 'view_1609', 'view_1609');
 
 	this.eventScoreTableId = 'object_95';			// 'Raw Scores' table
 	this.eventAdjScoreFieldId = 'field_1736';		// 'Raw Scores/Tier Adjusted Score' column
-	this.eventRankFieldId = 'field_1737';			// 'Raw Scores/Rank' column
 	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
+	this.eventIsTrialFieldId = 'field_1705';		// 'Events by Tournament/Trial Event' column
+	this.eventRankFieldId = this.choose('field_1737', 'field_2027', 'field_1737');	// 'Raw Scores/Rank' column
+	this.eventAdjRankFieldId = this.choose('', 'field_1737', '');							// 'Raw Scores/AdjRank' column (there is none for Div. A)
 
 	this.teamTableId = 'object_80';					// 'Teams' table
+	this.teamIsExhibitionTeamFieldId = this.choose('', 'field_1979', 'field_1979');	// 'Teams/Exhibition Team' column (there is none for Div. A)
 	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
-	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
+	this.teamAdjRankFieldId = 'field_1900';		// 'Teams/AdjRank' column
 
 	this.schoolTableId = 'object_5';					// 'School' table
 	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
 	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
-	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
-	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
+	this.schoolBAdjRankFieldId = 'field_1938';	// 'School/Reg: B AdjRank' column
+	this.schoolCAdjRankFieldId = 'field_1939';	// 'School/Reg: C AdjRank' column
 
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
@@ -80,16 +103,10 @@ function KnackAppInfo() {
 	// Presenter
 	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
 	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column in BC portal
-																// 'School/School Name' column in distinct
+																// 'School/School Name' column in ScoreScope
 																// Not used in Div. A portal
 
 	if (this.isDivA()) {
-		this.apiKey = 'c50f65dc-363f-4022-95c2-e98a0c89fd97';
-
-		// Event RankUpdater
-		this.lockEventFinalizeView = 'view_1531';
-		this.teamIsExhibitionTeamFieldId = '';		// 'Teams/Exhibition Team' column (there is none for Div. A)
-
 		// Award Background
 		this.presenterEventSelectionBSceneId = '';
 		this.presenterEventSelectionCSceneId = '';
@@ -115,27 +132,37 @@ function KnackAppInfo() {
 		};
 		this.presenterEventNextBtnViewId = 'view_1542';
 	} else if (this.isDivBC()) {
-		this.apiKey = '539b2e01-8b10-4388-b5a7-22dd644e9e2d';
+		// Div B Overview School RankUpdater
+		this.overviewSchoolBTeamBeforeGrid = 'view_1578';
+		this.overviewSchoolBTeamAfterGrid = 'view_1752';
+		this.overviewSchoolBSchoolGrid = 'view_1384';
+		this.overviewSchoolBLockSceneId = 'scene_624';
+		this.overviewSchoolBLockGrid = 'view_1585';
+		this.overviewSchoolBSubmitForm = 'view_1586';
+		this.overviewSchoolBFinalizeView = 'view_1629';
 
-		// Event RankUpdater
-		this.lockEventFinalizeView = 'view_1609';
-		this.teamIsExhibitionTeamFieldId = '';		// 'Teams/Exhibition Team' column
+		// Div B Overview Team RankUpdater
+		this.overviewTeamBTeamGrid = 'view_1769';
+		this.overviewTeamBLockSceneId = 'scene_665';
+		this.overviewTeamBLockGrid = 'view_1774';
+		this.overviewTeamBSubmitForm = 'view_1775';
+		this.overviewTeamBFinalizeView = 'view_1776';
 
-		// Div. B Overview RankUpdater
-		this.overviewBTeamGrid = 'view_1578';
-		this.overviewBSchoolGrid = 'view_1384';
-		this.overviewBLockSceneId = 'scene_624';
-		this.overviewBLockGrid = 'view_1585';
-		this.overviewBSubmitForm = 'view_1586';
-		this.overviewBFinalizeView = 'view_1629';
+		// Div C Overview School RankUpdater
+		this.overviewSchoolCTeamBeforeGrid = 'view_1581';
+		this.overviewSchoolCTeamAfterGrid = 'view_1761';
+		this.overviewSchoolCSchoolGrid = 'view_1387';
+		this.overviewSchoolCLockSceneId = 'scene_629';
+		this.overviewSchoolCLockGrid = 'view_1633';
+		this.overviewSchoolCSubmitForm = 'view_1634';
+		this.overviewSchoolCFinalizeView = 'view_1635';
 
-		// Div. C Overview RankUpdater
-		this.overviewCTeamGrid = 'view_1581';
-		this.overviewCSchoolGrid = 'view_1387';
-		this.overviewCLockSceneId = 'scene_629';
-		this.overviewCLockGrid = 'view_1633';
-		this.overviewCSubmitForm = 'view_1634';
-		this.overviewCFinalizeView = 'view_1635';
+		// Div C Overview Team RankUpdater
+		this.overviewTeamCTeamGrid = 'view_1850';
+		this.overviewTeamCLockSceneId = 'scene_689';
+		this.overviewTeamCLockGrid = 'view_1854';
+		this.overviewTeamCSubmitForm = 'view_1855';
+		this.overviewTeamCFinalizeView = 'view_1856';
 
 		// Award Background
 		this.presenterEventSelectionBSceneId = 'scene_638';
@@ -150,9 +177,9 @@ function KnackAppInfo() {
 		this.presenterSchoolBAwardSceneId = 'scene_640';
 		this.presenterSchoolCAwardSceneId = 'scene_643';
 		this.presenterSchoolBCAwardSceneId = 'scene_613';
-		this.presenterTeamBAwardSceneId = '';
-		this.presenterTeamCAwardSceneId = '';
-		this.presenterTeamBCAwardSceneId = '';
+		this.presenterTeamBAwardSceneId = 'scene_646';
+		this.presenterTeamCAwardSceneId = 'scene_647';
+		this.presenterTeamBCAwardSceneId = 'scene_615';
 		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
 
 		// Event Presenter
@@ -165,34 +192,53 @@ function KnackAppInfo() {
 		// School Winners B Presenter
 		this.presenterSchoolBGrid = {
 			awardGrid: 'view_1673',
-			rankFieldId: this.schoolBRankFieldId,
+			rankFieldId: this.schoolBAdjRankFieldId,
 		};
 		this.presenterSchoolBNextBtnViewId = 'view_1675';
 
 		// School Winners C Presenter
 		this.presenterSchoolCGrid = {
 			awardGrid: 'view_1684',
-			rankFieldId: this.schoolCRankFieldId,
+			rankFieldId: this.schoolCAdjRankFieldId,
 		};
 		this.presenterSchoolCNextBtnViewId = 'view_1686';
 
 		// School Winners BC Presenter
 		this.presenterSchoolBCGridLeft = {
 			awardGrid: 'view_1555',
-			rankFieldId: this.schoolBRankFieldId,
+			rankFieldId: this.schoolBAdjRankFieldId,
 		};
 		this.presenterSchoolBCGridRight = {
 			awardGrid: 'view_1556',
-			rankFieldId: this.schoolCRankFieldId,
+			rankFieldId: this.schoolCAdjRankFieldId,
 		};
 		this.presenterSchoolBCNextBtnViewId = 'view_1558';
+
+		// Team Winners B Presenter
+		this.presenterTeamBGrid = {
+			awardGrid: '',									// Not created yet
+			rankFieldId: this.teamAdjRankFieldId,
+		};
+		this.presenterTeamBNextBtnViewId = '';		// Not created yet
+
+		// Team Winners C Presenter
+		this.presenterTeamCGrid = {
+			awardGrid: '',									// Not created yet
+			rankFieldId: this.teamAdjRankFieldId,
+		};
+		this.presenterTeamCNextBtnViewId = '';		// Not created yet
+
+		// Team Winners BC Presenter
+		this.presenterTeamBCGridLeft = {
+			awardGrid: 'view_1560',						// Partially created
+			rankFieldId: this.teamAdjRankFieldId,
+		};
+		this.presenterTeamBCGridRight = {
+			awardGrid: 'view_1561',						// Partially created
+			rankFieldId: this.teamAdjRankFieldId,
+		};
+		this.presenterTeamBCNextBtnViewId = '';	// Not created yet
 	} else if (this.isScoreScope()) {
-		this.apiKey = '212cab6a-6f68-4cfa-a53c-bcb06e429b78';
-
-		// Event RankUpdater
-		this.lockEventFinalizeView = 'view_1609';
-		this.teamIsExhibitionTeamFieldId = 'field_1979';		// 'Teams/Exhibition Team' column
-
 		// Div B Overview School RankUpdater
 		this.overviewSchoolBTeamBeforeGrid = 'view_1578';
 		this.overviewSchoolBTeamAfterGrid = 'view_1752';
@@ -253,50 +299,50 @@ function KnackAppInfo() {
 		// School Winners B Presenter
 		this.presenterSchoolBGrid = {
 			awardGrid: 'view_1852',
-			rankFieldId: this.schoolBRankFieldId,
+			rankFieldId: this.schoolBAdjRankFieldId,
 		};
 		this.presenterSchoolBNextBtnViewId = 'view_1675';
 
 		// School Winners C Presenter
 		this.presenterSchoolCGrid = {
 			awardGrid: 'view_1853',
-			rankFieldId: this.schoolCRankFieldId,
+			rankFieldId: this.schoolCAdjRankFieldId,
 		};
 		this.presenterSchoolCNextBtnViewId = 'view_1686';
 
 		// School Winners BC Presenter
 		this.presenterSchoolBCGridLeft = {
 			awardGrid: 'view_1854',
-			rankFieldId: this.schoolBRankFieldId,
+			rankFieldId: this.schoolBAdjRankFieldId,
 		};
 		this.presenterSchoolBCGridRight = {
 			awardGrid: 'view_1855',
-			rankFieldId: this.schoolCRankFieldId,
+			rankFieldId: this.schoolCAdjRankFieldId,
 		};
 		this.presenterSchoolBCNextBtnViewId = 'view_1558';
 
 		// Team Winners B Presenter
 		this.presenterTeamBGrid = {
 			awardGrid: 'view_1862',
-			rankFieldId: this.teamRankFieldId,
+			rankFieldId: this.teamAdjRankFieldId,
 		};
 		this.presenterTeamBNextBtnViewId = 'view_1861';
 
 		// Team Winners C Presenter
 		this.presenterTeamCGrid = {
 			awardGrid: 'view_1866',
-			rankFieldId: this.teamRankFieldId,
+			rankFieldId: this.teamAdjRankFieldId,
 		};
 		this.presenterTeamCNextBtnViewId = 'view_1867';
 
 		// Team Winners BC Presenter
 		this.presenterTeamBCGridLeft = {
 			awardGrid: 'view_1560',
-			rankFieldId: this.teamRankFieldId,
+			rankFieldId: this.teamAdjRankFieldId,
 		};
 		this.presenterTeamBCGridRight = {
 			awardGrid: 'view_1561',
-			rankFieldId: this.teamRankFieldId,
+			rankFieldId: this.teamAdjRankFieldId,
 		};
 		this.presenterTeamBCNextBtnViewId = 'view_1870';
 	}
@@ -305,7 +351,7 @@ function KnackAppInfo() {
 const appInfo = new KnackAppInfo();
 
 function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
-		scoreFieldId, rankFieldId, statusFieldId, tableId, isEventRanker, isESRanker) {
+		scoreFieldId, rankFieldId, adjRankFieldId, statusFieldId, tableId, isEventRanker) {
 	this.gridId = gridId;
 	this.sceneId = sceneId;
 	this.lockSubmitForm = lockSubmitForm;
@@ -314,11 +360,12 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.rawScoreFieldId = this.scoreFieldId + '_raw';
 	this.rankFieldId = rankFieldId;
 	this.rawRankFieldId = this.rankFieldId + '_raw';
+	this.adjRankFieldId = adjRankFieldId;
+	this.rawAdjRankFieldId = this.adjRankFieldId + '_raw';
 	this.statusFieldId = statusFieldId;
 	this.rawStatusFieldId = this.statusFieldId + '_raw';
 	this.tableId = tableId;
 	this.isEventRanker = isEventRanker;
-	this.isESRanker = isESRanker;
 	this.scoreInfos = null;
 	this.rankStorageInProgress = false;
 
@@ -342,11 +389,49 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			// exhibition status.
 			return false;
 		} else {
-			//const isExhibition = model.attributes[appInfo.teamIsExhibitionTeamFieldId];
-			//return isExhibition && (isExhibition.toLowerCase() === 'yes');
 			const rawFieldId = appInfo.teamIsExhibitionTeamFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
 		}
+	}.bind(this);
+
+	this.isTrialEvent = function(model) {
+		if (!appInfo.eventIsTrialFieldId) {
+			return false;
+		} else if (!Object.hasOwn(model.attributes, appInfo.eventIsTrialFieldId)) {
+			// For the ES scoring grid, which doesn't have this column
+			return false;
+		} else {
+			const rawFieldId = appInfo.eventIsTrialFieldId + '_raw';
+			return model.attributes[rawFieldId] === true;
+		}
+	}.bind(this);
+
+	this.hasRank = function(model) {
+		if (!this.rankFieldId) {
+			return false;	// For cases where the field doesn't exist (never?)
+		} else {
+			return Object.hasOwn(model.attributes, this.rawRankFieldId);
+		}
+	}.bind(this);
+
+	this.getRank = function(model) {
+		return this.hasRank(model)
+			? model.attributes[this.rawRankFieldId]
+			: -1;	// for grids w/o an adj. rank column
+	}.bind(this);
+
+	this.hasAdjRank = function(model) {
+		if (!this.adjRankFieldId) {
+			return false;	// For Div. A, where the field doesn't exist
+		} else {
+			return Object.hasOwn(model.attributes, this.rawAdjRankFieldId);
+		}
+	}.bind(this);
+
+	this.getAdjRank = function(model) {
+		return this.hasAdjRank(model)
+			? model.attributes[this.rawAdjRankFieldId]
+			: -1;	// for grids w/o an adj. rank column
 	}.bind(this);
 
 	this.createScoreInfo = function(model) {
@@ -355,17 +440,22 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			adjScore: model.attributes[this.rawScoreFieldId],
 			status: this.getStatus(model),
 			isExhibition: this.isExhibitionTeam(model),
-			oldRank: model.attributes[this.rawRankFieldId],
+			isTrialEvent: this.isTrialEvent(model),
+			hasRank: this.hasRank(model),
+			oldRank: this.getRank(model),
 			newRank: -1,
+			hasAdjRank: this.hasAdjRank(model),
+			oldAdjRank: this.getAdjRank(model),
+			newAdjRank: -1,
 		};
 	}.bind(this);
 
-	this.computeRankClusters = function(scoreInfos) {
+	this.computeRankClusters = function(scoreInfos, adjustForExhibition) {
 		const scoresWithFlags = scoreInfos
 			.map((scoreInfo) => {
 				return {
 					score: scoreInfo.adjScore,
-					isExhibition: scoreInfo.isExhibition,
+					isExhibition: (adjustForExhibition && scoreInfo.isExhibition),
 				};
 			})
 			.sort((lhs, rhs) => this.isEventRanker
@@ -398,18 +488,17 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		return numNonExhibitionTeams;
 	}.bind(this);
 
-	this.setRank = function(scoreInfo, numNonExhibitionTeams, rankClusters) {
+	this.computeRank = function(scoreInfo, numTeams, clusters) {
 		if (scoreInfo.status === 'Participation Points Only') {
-			scoreInfo.newRank = numNonExhibitionTeams;
+			return numTeams;
 		} else if (scoreInfo.status === 'No Show') {
-			scoreInfo.newRank = numNonExhibitionTeams + 1;
+			return numTeams + 1;
 		} else if (scoreInfo.status === 'Disqualification') {
-			scoreInfo.newRank = numNonExhibitionTeams + 2;
+			return numTeams + 2;
 		} else {
-			for (let i = 0; i < rankClusters.length; ++i) {
-				if (rankClusters[i].indexOf(scoreInfo.adjScore) >= 0) {
-					scoreInfo.newRank = i + 1;
-					break;
+			for (let i = 0; i < clusters.length; ++i) {
+				if (clusters[i].indexOf(scoreInfo.adjScore) >= 0) {
+					return i + 1;
 				}
 			}
 		}
@@ -422,10 +511,25 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 		const scoreInfos = models.map((model) => this.createScoreInfo(model));
 
-		const rankClusters = this.computeRankClusters(scoreInfos);
-		const numNonExhibitionTeams = this.countNonExhibitionTeams(scoreInfos);
-		for (const scoreInfo of scoreInfos) {
-			this.setRank(scoreInfo, numNonExhibitionTeams, rankClusters);
+		if (scoreInfos[0].hasRank) {
+			const rankClusters = this.computeRankClusters(scoreInfos, false);
+			const numTeams = scoreInfos.length;
+			for (const scoreInfo of scoreInfos) {
+				scoreInfo.newRank = this.computeRank(scoreInfo, numTeams, rankClusters);
+			}
+		}
+
+		if (scoreInfos[0].hasAdjRank) {
+			// Exhibition teams may compete in trial events, but
+			// in such cases they are not considered exhibition teams:
+			const adjustForExhibition = !scoreInfos[0].isTrialEvent;
+			const adjRankClusters = this.computeRankClusters(scoreInfos, adjustForExhibition);
+			const numTeams = adjustForExhibition
+				? this.countNonExhibitionTeams(scoreInfos)
+				: scoreInfos.length;
+			for (const scoreInfo of scoreInfos) {
+				scoreInfo.newAdjRank = this.computeRank(scoreInfo, numTeams, adjRankClusters);
+			}
 		}
 
 		console.log('Score info list:');
@@ -436,9 +540,6 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.computeRankHistogram = function(scoreInfos) {
 		const rankHistogram = new Map();
 		for (const scoreInfo of scoreInfos) {
-			if (scoreInfo.isExhibition) {
-				continue;
-			}
 			const rank = scoreInfo.newRank;
 			if (rankHistogram.has(rank)) {
 				rankHistogram.set(rank, rankHistogram.get(rank) + 1);
@@ -449,39 +550,47 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		return rankHistogram;
 	}.bind(this);
 
-	this.getCellBackgroundColor = function(scoreInfo, rankHistogram) {
-		if (scoreInfo.isExhibition) {
-			return '#9db0c5';	// color for exhibition teams
-		} else if (scoreInfo.status) {
-			return '#ffffff';	// no color for special statuses
-		} else if (rankHistogram.has(scoreInfo.newRank)
-				&& rankHistogram.get(scoreInfo.newRank) > 1) {
-			return '#fbe9c2';	// color for ties
+	this.getCellBackgroundColor = function(scoreInfo, rankProperty, rankHistogram) {
+		if (scoreInfo.status) {
+			return '';	// default color for special statuses
+		} else if (rankHistogram.has(scoreInfo[rankProperty])
+				&& rankHistogram.get(scoreInfo[rankProperty]) > 1) {
+			return '#fbe9c2';	// yellow for ties
+		} else if (scoreInfo.isExhibition && !scoreInfo.isTrialEvent) {
+			return '#9db0c5';	// greyish blue for exhibition teams in non-trial events
 		} else {
-			return '#ffffff';	// no color otherwise
+			return '';	// default color otherwise
 		}
 	}.bind(this);
 
-	this.getDisplayRank = function(scoreInfo) {
-		if (this.isESRanker && scoreInfo.status) {
-			return '';	// ES scoring grid has no exhibition indication,
-							// so these ranks will be confusing to an ES
+	this.getDisplayRank = function(scoreInfo, rankProperty) {
+		if (scoreInfo.status) {
+			return '';	// Rank of a special status is not meaningful to users
 		} else if (!this.isEventRanker && scoreInfo.isExhibition) {
-			return '';	// On team and school rankings, we show the ranks
+			return '';	// For team and school rankings, we show the ranks
 							// of exhibition teams as blank, because they don't
 							// earn team/school trophies.
 		} else {
-			return scoreInfo.newRank;
+			return scoreInfo[rankProperty];
 		}
 	}.bind(this);
 
 	this.updateTeamRanks = function(scoreInfos) {
-		const rankHistogram = this.computeRankHistogram(scoreInfos);
 		for (const scoreInfo of scoreInfos) {
-			const bg = this.getCellBackgroundColor(scoreInfo, rankHistogram);
-			const rank = this.getDisplayRank(scoreInfo);
-			$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId}`).css('background', bg);
-			$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId} > span`).text(`${rank}`);
+			if (this.rankFieldId) {
+				const rankHistogram = this.computeRankHistogram(scoreInfos);
+				const bg = this.getCellBackgroundColor(scoreInfo, 'newRank', rankHistogram);
+				const rank = this.getDisplayRank(scoreInfo, 'newRank');
+				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId}`).css('background', bg);
+				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId} > span`).text(`${rank}`);
+			}
+			if (this.adjRankFieldId) {
+				const rankHistogram = new Map();
+				const bg = this.getCellBackgroundColor(scoreInfo, 'newAdjRank', rankHistogram);
+				const adjRank = this.getDisplayRank(scoreInfo, 'newAdjRank');
+				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.adjRankFieldId}`).css('background', bg);
+				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.adjRankFieldId} > span`).text(`${adjRank}`);
+			}
 		}
 	}.bind(this);
 
@@ -502,9 +611,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		setTimeout(() => Knack.hideSpinner(), 500);
 	}.bind(this);
 
-	this.putRankToDatabase = async function(id, newRank) {
+	this.putRankToDatabase = async function(id, newRank, newAdjRank) {
 		const url = `https://api.knack.com/v1/objects/${this.tableId}/records/${id}`;
-		const options = {
+		let options = {
 			method: 'PUT',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -514,10 +623,21 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 				'X-Knack-REST-API-KEY': appInfo.apiKey,
 				'Accept': 'application/json',
 			},
-			body: JSON.stringify({
-				[this.rankFieldId]: newRank,
-			}),
 		};
+		if (this.rankFieldId && this.adjRankFieldId) {
+			options.body = JSON.stringify({
+				[this.rankFieldId]: newRank,
+				[this.adjRankFieldId]: newAdjRank,
+			});
+		} else if (this.rankFieldId) {
+			options.body = JSON.stringify({
+				[this.rankFieldId]: newRank,
+			});
+		} else if (this.adjRankFieldId) {
+			options.body = JSON.stringify({
+				[this.adjRankFieldId]: newAdjRank,
+			});
+		}
 		const response = await fetch(url, options);
 
 		console.log(`HTTP response code ${response.status}`);
@@ -535,15 +655,19 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 	this.putRanksToDatabase = async function(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
-			if (scoreInfo.newRank === scoreInfo.oldRank) {
-				continue;
-			}
 			// On team and school rankings, we store a blank rank for exhibition teams,
 			// because they don't earn team/school trophies:
 			const rankToStore = (!this.isEventRanker && scoreInfo.isExhibition)
 				? ''
 				: scoreInfo.newRank;
-			await this.putRankToDatabase(scoreInfo.id, rankToStore);
+			const adjRankToStore = (!this.isEventRanker && scoreInfo.isExhibition)
+				? ''
+				: scoreInfo.newAdjRank;
+			if (rankToStore === scoreInfo.oldRank
+					&& adjRankToStore === scoreInfo.oldAdjRank) {
+				continue;
+			}
+			await this.putRankToDatabase(scoreInfo.id, rankToStore, adjRankToStore);
 		}
 	}.bind(this);
 
@@ -599,61 +723,63 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 }
 
 const esUpdater = new RankUpdater(appInfo.esScoringGrid, '', '', '',
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId, '', true, true);
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
+	appInfo.eventStatusFieldId, '', true);
 const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventGrid, '', '', '',
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId, '', true, false);
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
+	appInfo.eventStatusFieldId, '', true);
 const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEventSceneId,
 	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventStatusFieldId,
-	appInfo.eventScoreTableId, true, false);
+	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
+	appInfo.eventStatusFieldId, appInfo.eventScoreTableId, true);
 
 const overviewSchoolBTeamBeforeUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolBTeamBeforeGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewSchoolBTeamAfterUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolBTeamAfterGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewSchoolBSchoolUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolBSchoolGrid, '', '', '',
-	appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '', '', false, false);
+	appInfo.schoolBAdjScoreFieldId, '', appInfo.schoolBAdjRankFieldId, '', '', false);
 const overviewSchoolBLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolBLockGrid, appInfo.overviewSchoolBLockSceneId,
 	appInfo.overviewSchoolBSubmitForm, appInfo.overviewSchoolBFinalizeView,
-	appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '',
-	appInfo.schoolTableId, false, false);
+	appInfo.schoolBAdjScoreFieldId, '', appInfo.schoolBAdjRankFieldId, '',
+	appInfo.schoolTableId, false);
 
 const overviewTeamBTeamUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewTeamBTeamGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewTeamBLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewTeamBLockGrid, appInfo.overviewTeamBLockSceneId,
 	appInfo.overviewTeamBSubmitForm, appInfo.overviewTeamBFinalizeView,
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
-	appInfo.teamTableId, false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '',
+	appInfo.teamTableId, false);
 
 const overviewSchoolCTeamBeforeUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolCTeamBeforeGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewSchoolCTeamAfterUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolCTeamAfterGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewSchoolCSchoolUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolCSchoolGrid, '', '', '',
-	appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '', '', false, false);
+	appInfo.schoolCAdjScoreFieldId, '', appInfo.schoolCAdjRankFieldId, '', '', false);
 const overviewSchoolCLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewSchoolCLockGrid, appInfo.overviewSchoolCLockSceneId,
 	appInfo.overviewSchoolCSubmitForm, appInfo.overviewSchoolCFinalizeView,
-	appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '',
-	appInfo.schoolTableId, false, false);
+	appInfo.schoolCAdjScoreFieldId, '', appInfo.schoolCAdjRankFieldId, '',
+	appInfo.schoolTableId, false);
 
 const overviewTeamCTeamUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewTeamCTeamGrid, '', '', '',
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '', false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '', '', false);
 const overviewTeamCLockUpdater = appInfo.isDivA() ? null : new RankUpdater(
 	appInfo.overviewTeamCLockGrid, appInfo.overviewTeamCLockSceneId,
 	appInfo.overviewTeamCSubmitForm, appInfo.overviewTeamCFinalizeView,
-	appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
-	appInfo.teamTableId, false, false);
+	appInfo.teamAdjScoreFieldId, '', appInfo.teamAdjRankFieldId, '',
+	appInfo.teamTableId, false);
 
 
 
