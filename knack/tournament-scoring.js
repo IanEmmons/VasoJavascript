@@ -1,31 +1,6 @@
 'use strict';
 
-// Add symbolic names for colors
 // Recreate Duosmium Download page in Portal, but under Programmer/Developer login
-
-// ========================================================================
-
-// ✔︎✔︎ Hide ranks for special statuses on ES's page
-// ✔︎✔︎ Multiple of same special status: No coloring for ties
-// ✔︎✔︎ Exhibition teams: Computing ranks in ES's page without regard for exhibition status
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's event page
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's event lock page
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's school-b-team-before grid (blank rank on ex. team and push as blank)
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's school-b-school grid (no ex. entries - Karen)
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's school-b-lock grid
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's school-b-team-after grid (blank rank on ex. team)
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's team-b-team grid (blank rank on ex. team and push as blank)
-// ✔︎✔︎ Exhibition teams: Computing ranks in SM's team-b-lock grid
-
-// ✔︎ Exhibition teams: Computing ranks in SM's school-c-team-before grid (blank rank on ex. team and push as blank)
-// ✔︎ Exhibition teams: Computing ranks in SM's school-c-school grid (no ex. entries - Karen)
-// ✔︎ Exhibition teams: Computing ranks in SM's school-c-lock grid
-// ✔︎ Exhibition teams: Computing ranks in SM's school-c-team-after grid (blank rank on ex. team)
-// ✔︎ Exhibition teams: Computing ranks in SM's team-c-team grid (blank rank on ex. team and push as blank)
-// ✔︎ Exhibition teams: Computing ranks in SM's team-c-lock grid
-
-// ✔︎ Presentation: Varying # of awards
-// ✔︎ Presentation: Back-and-forth button in BC awards
 // Presentation: Gold bid versus "true" exhibition teams
 
 function assert(condition, message) {
@@ -68,7 +43,7 @@ function KnackAppInfo() {
 	this.apiKey = this.choose('c50f65dc-363f-4022-95c2-e98a0c89fd97',
 		'539b2e01-8b10-4388-b5a7-22dd644e9e2d', '212cab6a-6f68-4cfa-a53c-bcb06e429b78');
 
-	// RankUpdater
+	// Event RankUpdater
 	this.esScoringGrid = 'view_1375';
 	this.scoremasterEventGrid = 'view_1363';
 	this.lockEventSceneId = 'scene_563';
@@ -94,11 +69,64 @@ function KnackAppInfo() {
 	this.schoolBAdjRankFieldId = 'field_1938';	// 'School/Reg: B AdjRank' column
 	this.schoolCAdjRankFieldId = 'field_1939';	// 'School/Reg: C AdjRank' column
 
+	// Div B Overview School RankUpdater
+	this.overviewSchoolBTeamBeforeGrid = this.choose('', 'view_1578', 'view_1578');
+	this.overviewSchoolBTeamAfterGrid = this.choose('', 'view_1752', 'view_1752');
+	this.overviewSchoolBSchoolGrid = this.choose('', 'view_1384', 'view_1835');
+	this.overviewSchoolBLockSceneId = this.choose('', 'scene_624', 'scene_624');
+	this.overviewSchoolBLockGrid = this.choose('', 'view_1585', 'view_1851');
+	this.overviewSchoolBSubmitForm = this.choose('', 'view_1586', 'view_1586');
+	this.overviewSchoolBFinalizeView = this.choose('', 'view_1629', 'view_1629');
+
+	// Div B Overview Team RankUpdater
+	this.overviewTeamBTeamGrid = this.choose('', 'view_1769', 'view_1769');
+	this.overviewTeamBLockSceneId = this.choose('', 'scene_665', 'scene_665');
+	this.overviewTeamBLockGrid = this.choose('', 'view_1774', 'view_1774');
+	this.overviewTeamBSubmitForm = this.choose('', 'view_1775', 'view_1775');
+	this.overviewTeamBFinalizeView = this.choose('', 'view_1776', 'view_1776');
+
+	// Div C Overview School RankUpdater
+	this.overviewSchoolCTeamBeforeGrid = this.choose('', 'view_1581', 'view_1581');
+	this.overviewSchoolCTeamAfterGrid = this.choose('', 'view_1761', 'view_1761');
+	this.overviewSchoolCSchoolGrid = this.choose('', 'view_1387', 'view_1836');
+	this.overviewSchoolCLockSceneId = this.choose('', 'scene_629', 'scene_629');
+	this.overviewSchoolCLockGrid = this.choose('', 'view_1633', 'view_1850');
+	this.overviewSchoolCSubmitForm = this.choose('', 'view_1634', 'view_1634');
+	this.overviewSchoolCFinalizeView = this.choose('', 'view_1635', 'view_1635');
+
+	// Div C Overview Team RankUpdater
+	this.overviewTeamCTeamGrid = this.choose('', 'view_1850', 'view_1842');
+	this.overviewTeamCLockSceneId = this.choose('', 'scene_689', 'scene_692');
+	this.overviewTeamCLockGrid = this.choose('', 'view_1854', 'view_1847');
+	this.overviewTeamCSubmitForm = this.choose('', 'view_1855', 'view_1848');
+	this.overviewTeamCFinalizeView = this.choose('', 'view_1856', 'view_1849');
+
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
 	this.scoremasterSceneId = 'scene_546';
 	this.adminSceneId = 'scene_69';
 	this.eventIconFieldId = 'field_1712';			// Events - General/Event Icon
+
+	// Award Background
+	this.presenterEventSelectionBSceneId = this.choose('', 'scene_638', 'scene_638');
+	this.presenterEventSelectionCSceneId = this.choose('', 'scene_642', 'scene_642');
+	this.presenterEventSelectionAllSceneId = this.choose('scene_616', 'scene_605', 'scene_605');
+	this.presenterStatesBoundBSceneId = this.choose('', 'scene_641', '');
+	this.presenterStatesBoundCSceneId = this.choose('', 'scene_645', '');
+	this.presenterStatesBoundAllBSceneId = this.choose('', 'scene_646', '');
+	this.presenterStatesBoundAllCSceneId = this.choose('', 'scene_647', '');
+	this.presenterEventAwardSceneId = this.choose('scene_617', 'scene_606', 'scene_606');
+	this.presenterEventIconViewId = this.choose('view_1538', 'view_1521', 'view_1521');
+	this.presenterSchoolBAwardSceneId = this.choose('', 'scene_640', 'scene_640');
+	this.presenterSchoolCAwardSceneId = this.choose('', 'scene_643', 'scene_643');
+	this.presenterSchoolBCAwardSceneId = this.choose('', 'scene_613', 'scene_613');
+	this.presenterTeamBAwardSceneId = this.choose('', 'scene_646', 'scene_693');
+	this.presenterTeamCAwardSceneId = this.choose('', 'scene_647', 'scene_694');
+	this.presenterTeamBCAwardSceneId = this.choose('', 'scene_615', 'scene_615');
+	this.awardBackgroundUrl = this.choose(
+		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
+		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
+		'https://static.wixstatic.com/shapes/78a71f_ca485e8df91e4837a83c85af6bae7814.svg');
 
 	// Presenter
 	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
@@ -106,246 +134,62 @@ function KnackAppInfo() {
 																// 'School/School Name' column in ScoreScope
 																// Not used in Div. A portal
 
-	if (this.isDivA()) {
-		// Award Background
-		this.presenterEventSelectionBSceneId = '';
-		this.presenterEventSelectionCSceneId = '';
-		this.presenterEventSelectionAllSceneId = 'scene_616';
-		this.presenterStatesBoundBSceneId = '';
-		this.presenterStatesBoundCSceneId = '';
-		this.presenterStatesBoundAllBSceneId = '';
-		this.presenterStatesBoundAllCSceneId = '';
-		this.presenterEventAwardSceneId = 'scene_617';
-		this.presenterEventIconViewId = 'view_1538';
-		this.presenterSchoolBAwardSceneId = '';
-		this.presenterSchoolCAwardSceneId = '';
-		this.presenterSchoolBCAwardSceneId = '';
-		this.presenterTeamBAwardSceneId = '';
-		this.presenterTeamCAwardSceneId = '';
-		this.presenterTeamBCAwardSceneId = '';
-		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
+	// Event Presenter
+	this.presenterEventGrid = {
+		awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
+		rankFieldId: this.eventRankFieldId,
+	};
+	this.presenterEventNextBtnViewId = this.choose('view_1542', 'view_1545', 'view_1545');
 
-		// Event Presenter
-		this.presenterEventGrid = {
-			awardGrid: 'view_1539',
-			rankFieldId: this.eventRankFieldId,
-		};
-		this.presenterEventNextBtnViewId = 'view_1542';
-	} else if (this.isDivBC()) {
-		// Div B Overview School RankUpdater
-		this.overviewSchoolBTeamBeforeGrid = 'view_1578';
-		this.overviewSchoolBTeamAfterGrid = 'view_1752';
-		this.overviewSchoolBSchoolGrid = 'view_1384';
-		this.overviewSchoolBLockSceneId = 'scene_624';
-		this.overviewSchoolBLockGrid = 'view_1585';
-		this.overviewSchoolBSubmitForm = 'view_1586';
-		this.overviewSchoolBFinalizeView = 'view_1629';
+	// School Winners B Presenter
+	this.presenterSchoolBGrid = {
+		awardGrid: this.choose('', 'view_1673', 'view_1852'),
+		rankFieldId: this.schoolBAdjRankFieldId,
+	};
+	this.presenterSchoolBNextBtnViewId = this.choose('', 'view_1675', 'view_1675');
 
-		// Div B Overview Team RankUpdater
-		this.overviewTeamBTeamGrid = 'view_1769';
-		this.overviewTeamBLockSceneId = 'scene_665';
-		this.overviewTeamBLockGrid = 'view_1774';
-		this.overviewTeamBSubmitForm = 'view_1775';
-		this.overviewTeamBFinalizeView = 'view_1776';
+	// School Winners C Presenter
+	this.presenterSchoolCGrid = {
+		awardGrid: this.choose('', 'view_1684', 'view_1853'),
+		rankFieldId: this.schoolCAdjRankFieldId,
+	};
+	this.presenterSchoolCNextBtnViewId = this.choose('', 'view_1686', 'view_1686');
 
-		// Div C Overview School RankUpdater
-		this.overviewSchoolCTeamBeforeGrid = 'view_1581';
-		this.overviewSchoolCTeamAfterGrid = 'view_1761';
-		this.overviewSchoolCSchoolGrid = 'view_1387';
-		this.overviewSchoolCLockSceneId = 'scene_629';
-		this.overviewSchoolCLockGrid = 'view_1633';
-		this.overviewSchoolCSubmitForm = 'view_1634';
-		this.overviewSchoolCFinalizeView = 'view_1635';
+	// School Winners BC Presenter
+	this.presenterSchoolBCGridLeft = {
+		awardGrid: this.choose('', 'view_1555', 'view_1854'),
+		rankFieldId: this.schoolBAdjRankFieldId,
+	};
+	this.presenterSchoolBCGridRight = {
+		awardGrid: this.choose('', 'view_1556', 'view_1855'),
+		rankFieldId: this.schoolCAdjRankFieldId,
+	};
+	this.presenterSchoolBCNextBtnViewId = this.choose('', 'view_1558', 'view_1558');
 
-		// Div C Overview Team RankUpdater
-		this.overviewTeamCTeamGrid = 'view_1850';
-		this.overviewTeamCLockSceneId = 'scene_689';
-		this.overviewTeamCLockGrid = 'view_1854';
-		this.overviewTeamCSubmitForm = 'view_1855';
-		this.overviewTeamCFinalizeView = 'view_1856';
+	// Team Winners B Presenter
+	this.presenterTeamBGrid = {
+		awardGrid: this.choose('', '', 'view_1862'),									// Not created yet in BC
+		rankFieldId: this.teamAdjRankFieldId,
+	};
+	this.presenterTeamBNextBtnViewId = this.choose('', '', 'view_1861');		// Not created yet in BC
 
-		// Award Background
-		this.presenterEventSelectionBSceneId = 'scene_638';
-		this.presenterEventSelectionCSceneId = 'scene_642';
-		this.presenterEventSelectionAllSceneId = 'scene_605';
-		this.presenterStatesBoundBSceneId = 'scene_641';
-		this.presenterStatesBoundCSceneId = 'scene_645';
-		this.presenterStatesBoundAllBSceneId = 'scene_646';
-		this.presenterStatesBoundAllCSceneId = 'scene_647';
-		this.presenterEventAwardSceneId = 'scene_606';
-		this.presenterEventIconViewId = 'view_1521';
-		this.presenterSchoolBAwardSceneId = 'scene_640';
-		this.presenterSchoolCAwardSceneId = 'scene_643';
-		this.presenterSchoolBCAwardSceneId = 'scene_613';
-		this.presenterTeamBAwardSceneId = 'scene_646';
-		this.presenterTeamCAwardSceneId = 'scene_647';
-		this.presenterTeamBCAwardSceneId = 'scene_615';
-		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg';
+	// Team Winners C Presenter
+	this.presenterTeamCGrid = {
+		awardGrid: this.choose('', '', 'view_1866'),									// Not created yet in BC
+		rankFieldId: this.teamAdjRankFieldId,
+	};
+	this.presenterTeamCNextBtnViewId = this.choose('', '', 'view_1867');		// Not created yet in BC
 
-		// Event Presenter
-		this.presenterEventGrid = {
-			awardGrid: 'view_1522',
-			rankFieldId: this.eventRankFieldId,
-		};
-		this.presenterEventNextBtnViewId = 'view_1545';
-
-		// School Winners B Presenter
-		this.presenterSchoolBGrid = {
-			awardGrid: 'view_1673',
-			rankFieldId: this.schoolBAdjRankFieldId,
-		};
-		this.presenterSchoolBNextBtnViewId = 'view_1675';
-
-		// School Winners C Presenter
-		this.presenterSchoolCGrid = {
-			awardGrid: 'view_1684',
-			rankFieldId: this.schoolCAdjRankFieldId,
-		};
-		this.presenterSchoolCNextBtnViewId = 'view_1686';
-
-		// School Winners BC Presenter
-		this.presenterSchoolBCGridLeft = {
-			awardGrid: 'view_1555',
-			rankFieldId: this.schoolBAdjRankFieldId,
-		};
-		this.presenterSchoolBCGridRight = {
-			awardGrid: 'view_1556',
-			rankFieldId: this.schoolCAdjRankFieldId,
-		};
-		this.presenterSchoolBCNextBtnViewId = 'view_1558';
-
-		// Team Winners B Presenter
-		this.presenterTeamBGrid = {
-			awardGrid: '',									// Not created yet
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBNextBtnViewId = '';		// Not created yet
-
-		// Team Winners C Presenter
-		this.presenterTeamCGrid = {
-			awardGrid: '',									// Not created yet
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamCNextBtnViewId = '';		// Not created yet
-
-		// Team Winners BC Presenter
-		this.presenterTeamBCGridLeft = {
-			awardGrid: 'view_1560',						// Partially created
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBCGridRight = {
-			awardGrid: 'view_1561',						// Partially created
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBCNextBtnViewId = '';	// Not created yet
-	} else if (this.isScoreScope()) {
-		// Div B Overview School RankUpdater
-		this.overviewSchoolBTeamBeforeGrid = 'view_1578';
-		this.overviewSchoolBTeamAfterGrid = 'view_1752';
-		this.overviewSchoolBSchoolGrid = 'view_1835';
-		this.overviewSchoolBLockSceneId = 'scene_624';
-		this.overviewSchoolBLockGrid = 'view_1851';
-		this.overviewSchoolBSubmitForm = 'view_1586';
-		this.overviewSchoolBFinalizeView = 'view_1629';
-
-		// Div B Overview Team RankUpdater
-		this.overviewTeamBTeamGrid = 'view_1769';
-		this.overviewTeamBLockSceneId = 'scene_665';
-		this.overviewTeamBLockGrid = 'view_1774';
-		this.overviewTeamBSubmitForm = 'view_1775';
-		this.overviewTeamBFinalizeView = 'view_1776';
-
-		// Div C Overview School RankUpdater
-		this.overviewSchoolCTeamBeforeGrid = 'view_1581';
-		this.overviewSchoolCTeamAfterGrid = 'view_1761';
-		this.overviewSchoolCSchoolGrid = 'view_1836';
-		this.overviewSchoolCLockSceneId = 'scene_629';
-		this.overviewSchoolCLockGrid = 'view_1850';
-		this.overviewSchoolCSubmitForm = 'view_1634';
-		this.overviewSchoolCFinalizeView = 'view_1635';
-
-		// Div C Overview Team RankUpdater
-		this.overviewTeamCTeamGrid = 'view_1842';
-		this.overviewTeamCLockSceneId = 'scene_692';
-		this.overviewTeamCLockGrid = 'view_1847';
-		this.overviewTeamCSubmitForm = 'view_1848';
-		this.overviewTeamCFinalizeView = 'view_1849';
-
-		// Award Background
-		this.presenterEventSelectionBSceneId = 'scene_638';
-		this.presenterEventSelectionCSceneId = 'scene_642';
-		this.presenterEventSelectionAllSceneId = 'scene_605';
-		this.presenterStatesBoundBSceneId = '';
-		this.presenterStatesBoundCSceneId = '';
-		this.presenterStatesBoundAllBSceneId = '';
-		this.presenterStatesBoundAllCSceneId = '';
-		this.presenterEventAwardSceneId = 'scene_606';
-		this.presenterEventIconViewId = 'view_1521';
-		this.presenterSchoolBAwardSceneId = 'scene_640';
-		this.presenterSchoolCAwardSceneId = 'scene_643';
-		this.presenterSchoolBCAwardSceneId = 'scene_613';
-		this.presenterTeamBAwardSceneId = 'scene_693';
-		this.presenterTeamCAwardSceneId = 'scene_694';
-		this.presenterTeamBCAwardSceneId = 'scene_615';
-		this.awardBackgroundUrl = 'https://static.wixstatic.com/shapes/78a71f_ca485e8df91e4837a83c85af6bae7814.svg';
-
-		// Event Presenter
-		this.presenterEventGrid = {
-			awardGrid: 'view_1522',
-			rankFieldId: this.eventRankFieldId,
-		};
-		this.presenterEventNextBtnViewId = 'view_1545';
-
-		// School Winners B Presenter
-		this.presenterSchoolBGrid = {
-			awardGrid: 'view_1852',
-			rankFieldId: this.schoolBAdjRankFieldId,
-		};
-		this.presenterSchoolBNextBtnViewId = 'view_1675';
-
-		// School Winners C Presenter
-		this.presenterSchoolCGrid = {
-			awardGrid: 'view_1853',
-			rankFieldId: this.schoolCAdjRankFieldId,
-		};
-		this.presenterSchoolCNextBtnViewId = 'view_1686';
-
-		// School Winners BC Presenter
-		this.presenterSchoolBCGridLeft = {
-			awardGrid: 'view_1854',
-			rankFieldId: this.schoolBAdjRankFieldId,
-		};
-		this.presenterSchoolBCGridRight = {
-			awardGrid: 'view_1855',
-			rankFieldId: this.schoolCAdjRankFieldId,
-		};
-		this.presenterSchoolBCNextBtnViewId = 'view_1558';
-
-		// Team Winners B Presenter
-		this.presenterTeamBGrid = {
-			awardGrid: 'view_1862',
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBNextBtnViewId = 'view_1861';
-
-		// Team Winners C Presenter
-		this.presenterTeamCGrid = {
-			awardGrid: 'view_1866',
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamCNextBtnViewId = 'view_1867';
-
-		// Team Winners BC Presenter
-		this.presenterTeamBCGridLeft = {
-			awardGrid: 'view_1560',
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBCGridRight = {
-			awardGrid: 'view_1561',
-			rankFieldId: this.teamAdjRankFieldId,
-		};
-		this.presenterTeamBCNextBtnViewId = 'view_1870';
-	}
+	// Team Winners BC Presenter
+	this.presenterTeamBCGridLeft = {
+		awardGrid: this.choose('', 'view_1560', 'view_1560'),						// Partially created in BC
+		rankFieldId: this.teamAdjRankFieldId,
+	};
+	this.presenterTeamBCGridRight = {
+		awardGrid: this.choose('', 'view_1561', 'view_1561'),						// Partially created in BC
+		rankFieldId: this.teamAdjRankFieldId,
+	};
+	this.presenterTeamBCNextBtnViewId = this.choose('', '', 'view_1870');	// Not created yet in BC
 }
 
 const appInfo = new KnackAppInfo();
@@ -357,13 +201,11 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.lockSubmitForm = lockSubmitForm;
 	this.finalizeBtnViewId = finalizeBtnViewId;
 	this.scoreFieldId = scoreFieldId;
-	this.rawScoreFieldId = this.scoreFieldId + '_raw';
 	this.rankFieldId = rankFieldId;
 	this.rawRankFieldId = this.rankFieldId + '_raw';
 	this.adjRankFieldId = adjRankFieldId;
 	this.rawAdjRankFieldId = this.adjRankFieldId + '_raw';
 	this.statusFieldId = statusFieldId;
-	this.rawStatusFieldId = this.statusFieldId + '_raw';
 	this.tableId = tableId;
 	this.isEventRanker = isEventRanker;
 	this.scoreInfos = null;
@@ -371,7 +213,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 	this.getStatus = function(model) {
 		if (this.statusFieldId) {
-			const statusField = model.attributes[this.rawStatusFieldId];
+			const statusField = model.attributes[this.statusFieldId + '_raw'];
 			return (statusField.length > 0) ? statusField[0].identifier : '';
 		} else {
 			return '';
@@ -437,7 +279,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.createScoreInfo = function(model) {
 		return {
 			id: model.attributes.id,
-			adjScore: model.attributes[this.rawScoreFieldId],
+			adjScore: model.attributes[this.scoreFieldId + '_raw'],
 			status: this.getStatus(model),
 			isExhibition: this.isExhibitionTeam(model),
 			isTrialEvent: this.isTrialEvent(model),
@@ -789,7 +631,6 @@ function AwardBackground(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
 	this.awardSceneId = awardSceneId;
 	this.iconViewId = iconViewId;
 	this.iconFieldId = iconFieldId;
-	this.rawIconFieldId = this.iconFieldId + '_raw';
 	this.backgroundUrl = backgroundUrl;
 
 	this.setBackground = function(image, repeat, size, position) {
@@ -802,7 +643,8 @@ function AwardBackground(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
 
 	this.awardSceneRenderHandler = function(/*event, view, record*/) {
 		if (this.iconViewId && this.backgroundUrl) {
-			const eventIconUrl = Knack.models[this.iconViewId].attributes[this.rawIconFieldId];
+			const rawIconFieldId = this.iconFieldId + '_raw';
+			const eventIconUrl = Knack.models[this.iconViewId].attributes[rawIconFieldId];
 			const cssImageValue = `url("${eventIconUrl}"), url("${this.backgroundUrl}")`;
 			this.setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, contain',
 				'top 40px right 50px, top left');
@@ -968,7 +810,6 @@ function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions) {
 	}.bind(this);
 
 	this.getMedalList = function(gridDef) {
-		const rawRankFieldId = gridDef.rankFieldId + '_raw';
 		const models = Knack.models[gridDef.awardGrid].data.models;
 
 		console.log(`Presentation grid row models (awardGrid ${gridDef.awardGrid}):`);
@@ -976,7 +817,7 @@ function Presenter(nextBtnViewId, awardeeNameFieldId, ...gridDefinitions) {
 
 		gridDef.medals = models
 			.map((model) => {
-				const rawRank = model.attributes[rawRankFieldId];
+				const rawRank = model.attributes[this.rawRankFieldId];
 				const rank = Number(rawRank);
 				return {
 					id: model.attributes.id,
