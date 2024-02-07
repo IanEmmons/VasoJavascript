@@ -1,0 +1,39 @@
+/* Formatting for presentation slide pages in ScoreScope */
+
+div#view_1521 {		/* Event presentation page, event name */
+	margin-bottom: 0px;
+}
+div#view_1521 h2 {	/* Event presentation page, event name */
+	font-size: 32px;
+	font-weight: bold;
+}
+div#view_1674 h2 {	/* Division B School Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1869 h2 {	/* Division B Team Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1685 h2 {	/* Division C School Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1870 h2 {	/* Division C Team Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1557 h2 {	/* Division BC School Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1562 h2 {	/* Division BC Team Trophies presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1677 h2 {	/* States-Bound B presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1693 h2 {	/* States-Bound C presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1697 h2 {	/* States-Bound B of BC presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1699 h2 {	/* States-Bound C of BC presentation page, ournament name/date */
+	font-weight: bold;
+}

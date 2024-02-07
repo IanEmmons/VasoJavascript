@@ -1,122 +1,122 @@
 /* Formatting for presentation slide pages in ScoreScope */
 
 /* Event presentation page: */
-div#view_1521 h1 {
+div#view_1521 h1 {			/* Event title */
 	font-size: 32px;
 }
-div#view_1522 span.col-0 {
+div#view_1522 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1522 span.col-1 {
+div#view_1522 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
 
 /* Division B School Trophies presentation page: */
-div#view_1674 h2 {
+div#view_1674 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1852 h2 {
+div#view_1852 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1852 span.col-0 {
+div#view_1852 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1852 span.col-1 {
+div#view_1852 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
 
 /* Division B Team Trophies presentation page: */
-div#view_1859 h2 {
+div#view_1859 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1862 h2 {
+div#view_1862 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1862 span.col-0 {
+div#view_1862 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1862 span.col-1 {
+div#view_1862 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
 
 /* Division C School Trophies presentation page: */
-div#view_1685 h2 {
+div#view_1685 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1853 h2 {
+div#view_1853 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1853 span.col-0 {
+div#view_1853 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1853 span.col-1 {
+div#view_1853 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
 
 /* Division C Team Trophies presentation page: */
-div#view_1865 h2 {
+div#view_1865 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1866 h2 {
+div#view_1866 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1866 span.col-0 {
+div#view_1866 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1866 span.col-1 {
+div#view_1866 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
 
 /* Division BC School Trophies presentation page: */
-div#view_1557 h2 {
+div#view_1557 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1854 h2 {
+div#view_1854 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1854 span.col-0 {
+div#view_1854 span.col-0 {	/* Rank column */
 	font-size: 20px;
 }
-div#view_1854 span.col-1 {
+div#view_1854 span.col-1 {	/* Team column */
 	font-size: 20px;
 }
-div#view_1855 h2 {
+div#view_1855 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1855 span.col-0 {
+div#view_1855 span.col-0 {	/* Rank column */
 	font-size: 20px;
 }
-div#view_1855 span.col-1 {
+div#view_1855 span.col-1 {	/* Team column */
 	font-size: 20px;
 }
 
 /* Division BC Team Trophies presentation page: */
-div#view_1857 h2 {
+div#view_1857 h2 {			/* Tournament name and date */
 	font-weight: bold;
 }
-div#view_1560 h2 {
+div#view_1560 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1560 span.col-0 {
+div#view_1560 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1560 span.col-1 {
+div#view_1560 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
-div#view_1561 h2 {
+div#view_1561 h2 {			/* Division title */
 	font-size: 32px;
 	font-weight: bold;
 }
-div#view_1561 span.col-0 {
+div#view_1561 span.col-0 {	/* Rank column */
 	font-size: 24px;
 }
-div#view_1561 span.col-1 {
+div#view_1561 span.col-1 {	/* Team column */
 	font-size: 24px;
 }
