@@ -37,3 +37,12 @@ div#view_1697 h2 {	/* States-Bound B of BC presentation page, tournament name/da
 div#view_1699 h2 {	/* States-Bound C of BC presentation page, ournament name/date */
 	font-weight: bold;
 }
+div#view_1944 h2 {	/* Rookie Team of the Year B presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1942 h2 {	/* Rookie Team of the Year C presentation page, tournament name/date */
+	font-weight: bold;
+}
+div#view_1946 h2 {	/* Rookie Team of the Year BC presentation page, tournament name/date */
+	font-weight: bold;
+}

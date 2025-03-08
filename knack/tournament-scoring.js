@@ -123,6 +123,9 @@ function KnackAppInfo() {
 	this.presenterTeamBAwardSceneId = this.choose('', 'scene_692', 'scene_693');
 	this.presenterTeamCAwardSceneId = this.choose('', 'scene_693', 'scene_694');
 	this.presenterTeamBCAwardSceneId = this.choose('', 'scene_615', 'scene_615');
+	this.rookieTeamOfTheYearBAwardSceneId = this.choose('', 'scene_715', '');
+	this.rookieTeamOfTheYearCAwardSceneId = this.choose('', 'scene_714', '');
+	this.rookieTeamOfTheYearBCAwardSceneId = this.choose('', 'scene_716', '');
 	this.awardBackgroundUrl = this.choose(
 		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
 		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
@@ -137,7 +140,7 @@ function KnackAppInfo() {
 	this.eventPresenterParams = {
 		nextBtnViewId: this.choose('view_1542', 'view_1545', 'view_1545'),
 		awardeeNameFieldId: this.teamNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
@@ -156,7 +159,7 @@ function KnackAppInfo() {
 	this.schoolBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1675', 'view_1675'),
 		awardeeNameFieldId: this.schoolNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1673', 'view_1852'),
@@ -168,7 +171,7 @@ function KnackAppInfo() {
 	this.schoolCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1686', 'view_1686'),
 		awardeeNameFieldId: this.schoolNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1684', 'view_1853'),
@@ -180,7 +183,7 @@ function KnackAppInfo() {
 	this.schoolBCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1558', 'view_1558'),
 		awardeeNameFieldId: this.schoolNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1555', 'view_1854'),
@@ -199,7 +202,7 @@ function KnackAppInfo() {
 	this.teamBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1861', 'view_1861'),
 		awardeeNameFieldId: this.teamNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1863', 'view_1862'),
@@ -211,7 +214,7 @@ function KnackAppInfo() {
 	this.teamCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1867', 'view_1867'),
 		awardeeNameFieldId: this.teamNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1866', 'view_1866'),
@@ -223,7 +226,7 @@ function KnackAppInfo() {
 	this.teamBCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1873', 'view_1870'),
 		awardeeNameFieldId: this.teamNameFieldId,
-		isStatesBoundPresenter: false,
+		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1560', 'view_1560'),
@@ -242,7 +245,7 @@ function KnackAppInfo() {
 	this.statesBoundBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1895', ''),
 		awardeeNameFieldId: '',
-		isStatesBoundPresenter: true,
+		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1678', ''),
@@ -259,7 +262,7 @@ function KnackAppInfo() {
 	this.statesBoundCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1894', ''),
 		awardeeNameFieldId: '',
-		isStatesBoundPresenter: true,
+		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1694', ''),
@@ -276,7 +279,7 @@ function KnackAppInfo() {
 	this.statesBoundAllBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1893', ''),
 		awardeeNameFieldId: '',
-		isStatesBoundPresenter: true,
+		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1698', ''),
@@ -293,7 +296,7 @@ function KnackAppInfo() {
 	this.statesBoundAllCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1892', ''),
 		awardeeNameFieldId: '',
-		isStatesBoundPresenter: true,
+		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1700', ''),
@@ -302,6 +305,49 @@ function KnackAppInfo() {
 			},
 			{
 				awardGrid: this.choose('', 'view_1701', ''),
+				isGoldBidGrid: false,
+				rankFieldId: '',
+			}
+		]
+	};
+
+	// Rookie Team of the Year Presenters
+	this.rookieTeamOfTheYearBPresenterParams = {
+		nextBtnViewId: this.choose('', 'view_1964', ''),
+		awardeeNameFieldId: '',
+		nextShowsWholeGrid: true,
+		gridDefinitions: [
+			{
+				awardGrid: this.choose('', 'view_1945', ''),
+				isGoldBidGrid: false,
+				rankFieldId: '',
+			}
+		]
+	};
+	this.rookieTeamOfTheYearCPresenterParams = {
+		nextBtnViewId: this.choose('', 'view_1965', ''),
+		awardeeNameFieldId: '',
+		nextShowsWholeGrid: true,
+		gridDefinitions: [
+			{
+				awardGrid: this.choose('', 'view_1943', ''),
+				isGoldBidGrid: false,
+				rankFieldId: '',
+			}
+		]
+	};
+	this.rookieTeamOfTheYearBCPresenterParams = {
+		nextBtnViewId: this.choose('', 'view_1966', ''),
+		awardeeNameFieldId: '',
+		nextShowsWholeGrid: true,
+		gridDefinitions: [
+			{
+				awardGrid: this.choose('', 'view_1947', ''),
+				isGoldBidGrid: false,
+				rankFieldId: '',
+			},
+			{
+				awardGrid: this.choose('', 'view_1948', ''),
 				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
@@ -814,6 +860,12 @@ const statesBoundAllBAwardBackground = new AwardBackground(
 	appInfo.presenterStatesBoundAllBSceneId, '', '', appInfo.awardBackgroundUrl);
 const statesBoundAllCAwardBackground = new AwardBackground(
 	appInfo.presenterStatesBoundAllCSceneId, '', '', appInfo.awardBackgroundUrl);
+const rookieTeamOfTheYearBAwardBackground = new AwardBackground(
+	appInfo.rookieTeamOfTheYearBAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+const rookieTeamOfTheYearCAwardBackground = new AwardBackground(
+	appInfo.rookieTeamOfTheYearCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+const rookieTeamOfTheYearBCAwardBackground = new AwardBackground(
+	appInfo.rookieTeamOfTheYearBCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
 const tournamentSelectionAwardBackground = new AwardBackground(
 	appInfo.presenterTournamentSelectionSceneId, '', '', '');
 const scoremasterAwardBackground = new AwardBackground(
@@ -822,13 +874,14 @@ const adminAwardBackground = new AwardBackground(
 	appInfo.adminSceneId, '', '', '');
 
 
+
 // ====================================================================
 
 // presenterParams is an object of this form:
 // 	{
 // 		nextBtnViewId: '',
 //			awardeeNameFieldId: '',
-// 		isStatesBoundPresenter: true/false,
+// 		nextShowsWholeGrid: true/false,
 // 		gridDefinitions: [ gridDef1, ... ]
 // 	}
 // Where each item in gridDefinitions is an object of this form:
@@ -843,7 +896,7 @@ const adminAwardBackground = new AwardBackground(
 function Presenter(presenterParams) {
 	this.nextBtnViewId = presenterParams.nextBtnViewId;
 	this.awardeeNameFieldId = presenterParams.awardeeNameFieldId;
-	this.isStatesBoundPresenter = presenterParams.isStatesBoundPresenter;
+	this.nextShowsWholeGrid = presenterParams.nextShowsWholeGrid;
 	this.gridDefinitions = presenterParams.gridDefinitions;
 
 	this.medalLabels = [
@@ -946,7 +999,7 @@ function Presenter(presenterParams) {
 			}
 		}
 
-		if (this.isStatesBoundPresenter) {
+		if (this.nextShowsWholeGrid) {
 			for (const gridDef of this.gridDefinitions) {
 				if (!gridDef.isGridShowing && gridDef.numRows > 0) {
 					gridDef.isGridShowing = true;
@@ -1047,19 +1100,19 @@ function Presenter(presenterParams) {
 		// If this scene has a gold-bid award grid, then make the headings
 		// on all the award grids white (invisible). The gold-bid headings
 		// will be shown at the appropriate time during the presentation.
-		if (!this.isStatesBoundPresenter && this.sceneHasGoldBidGrid()) {
+		if (!this.nextShowsWholeGrid && this.sceneHasGoldBidGrid()) {
 			for (const gridDef of this.gridDefinitions) {
 				$(`div#${gridDef.awardGrid} h2`).css('color', 'white');
 			}
 		}
 
 		// Get the medal data:
-		if (!this.isStatesBoundPresenter) {
+		if (!this.nextShowsWholeGrid) {
 			this.getMedalList(gridDef);
 		}
 
 		// Replace ranks numbers with place names:
-		if (!this.isStatesBoundPresenter) {
+		if (!this.nextShowsWholeGrid) {
 			const viewId = gridDef.awardGrid;
 			const rankFieldId = gridDef.rankFieldId;
 			for (const medal of gridDef.medals) {
@@ -1068,7 +1121,7 @@ function Presenter(presenterParams) {
 			}
 		}
 
-		if (this.isStatesBoundPresenter) {
+		if (this.nextShowsWholeGrid) {
 			// Hide the grids:
 			gridDef.numRanksShowing = -1;
 			gridDef.isGridShowing = false;
@@ -1104,3 +1157,6 @@ const statesBoundBPresenter = new Presenter(appInfo.statesBoundBPresenterParams)
 const statesBoundCPresenter = new Presenter(appInfo.statesBoundCPresenterParams);
 const statesBoundAllBPresenter = new Presenter(appInfo.statesBoundAllBPresenterParams);
 const statesBoundAllCPresenter = new Presenter(appInfo.statesBoundAllCPresenterParams);
+const rookieTeamOfTheYearBPresenter = new Presenter(appInfo.rookieTeamOfTheYearBPresenterParams);
+const rookieTeamOfTheYearCPresenter = new Presenter(appInfo.rookieTeamOfTheYearCPresenterParams);
+const rookieTeamOfTheYearBCPresenter = new Presenter(appInfo.rookieTeamOfTheYearBCPresenterParams);
