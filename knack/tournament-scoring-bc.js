@@ -1,7 +1,8 @@
 'use strict';
 
+// For better security, switch from API-based to view-based requests: https://docs.knack.com/reference/view-based-requests
 // Recreate Duosmium Download page in Portal, but under Programmer/Developer login
-// Presentation: Gold bid versus "true" exhibition teams
+// Presentation: Add feature for exhibition teams (separate from gold bids)
 
 function assert(condition, message) {
 	if (!condition) {
@@ -140,16 +141,11 @@ function KnackAppInfo() {
 	this.eventPresenterParams = {
 		nextBtnViewId: this.choose('view_1542', 'view_1545', 'view_1545'),
 		awardeeNameFieldId: this.teamNameFieldId,
+		goldBidIndicatorFieldId: this.choose('', 'field_2028', ''),
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
-				isGoldBidGrid: false,
-				rankFieldId: this.eventAdjRankFieldId,
-			},
-			{
-				awardGrid: this.choose('', 'view_1883', ''),
-				isGoldBidGrid: true,
 				rankFieldId: this.eventAdjRankFieldId,
 			}
 		]
@@ -159,11 +155,11 @@ function KnackAppInfo() {
 	this.schoolBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1675', 'view_1675'),
 		awardeeNameFieldId: this.schoolNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1673', 'view_1852'),
-				isGoldBidGrid: false,
 				rankFieldId: this.schoolBRankFieldId,
 			}
 		]
@@ -171,11 +167,11 @@ function KnackAppInfo() {
 	this.schoolCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1686', 'view_1686'),
 		awardeeNameFieldId: this.schoolNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1684', 'view_1853'),
-				isGoldBidGrid: false,
 				rankFieldId: this.schoolCRankFieldId,
 			}
 		]
@@ -183,16 +179,15 @@ function KnackAppInfo() {
 	this.schoolBCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1558', 'view_1558'),
 		awardeeNameFieldId: this.schoolNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1555', 'view_1854'),
-				isGoldBidGrid: false,
 				rankFieldId: this.schoolBRankFieldId,
 			},
 			{
 				awardGrid: this.choose('', 'view_1556', 'view_1855'),
-				isGoldBidGrid: false,
 				rankFieldId: this.schoolCRankFieldId,
 			}
 		]
@@ -202,11 +197,11 @@ function KnackAppInfo() {
 	this.teamBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1861', 'view_1861'),
 		awardeeNameFieldId: this.teamNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1863', 'view_1862'),
-				isGoldBidGrid: false,
 				rankFieldId: this.teamRankFieldId,
 			}
 		]
@@ -214,11 +209,11 @@ function KnackAppInfo() {
 	this.teamCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1867', 'view_1867'),
 		awardeeNameFieldId: this.teamNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1866', 'view_1866'),
-				isGoldBidGrid: false,
 				rankFieldId: this.teamRankFieldId,
 			}
 		]
@@ -226,16 +221,15 @@ function KnackAppInfo() {
 	this.teamBCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1873', 'view_1870'),
 		awardeeNameFieldId: this.teamNameFieldId,
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: false,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1560', 'view_1560'),
-				isGoldBidGrid: false,
 				rankFieldId: this.teamRankFieldId,
 			},
 			{
 				awardGrid: this.choose('', 'view_1561', 'view_1561'),
-				isGoldBidGrid: false,
 				rankFieldId: this.teamRankFieldId,
 			}
 		]
@@ -245,16 +239,15 @@ function KnackAppInfo() {
 	this.statesBoundBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1895', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1678', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			},
 			{
 				awardGrid: this.choose('', 'view_1695', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -262,16 +255,15 @@ function KnackAppInfo() {
 	this.statesBoundCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1894', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1694', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			},
 			{
 				awardGrid: this.choose('', 'view_1696', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -279,16 +271,15 @@ function KnackAppInfo() {
 	this.statesBoundAllBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1893', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1698', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			},
 			{
 				awardGrid: this.choose('', 'view_1702', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -296,16 +287,15 @@ function KnackAppInfo() {
 	this.statesBoundAllCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1892', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1700', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			},
 			{
 				awardGrid: this.choose('', 'view_1701', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -315,11 +305,11 @@ function KnackAppInfo() {
 	this.rookieTeamOfTheYearBPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1964', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1945', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -327,11 +317,11 @@ function KnackAppInfo() {
 	this.rookieTeamOfTheYearCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1965', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1943', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -339,16 +329,15 @@ function KnackAppInfo() {
 	this.rookieTeamOfTheYearBCPresenterParams = {
 		nextBtnViewId: this.choose('', 'view_1966', ''),
 		awardeeNameFieldId: '',
+		goldBidIndicatorFieldId: '',
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('', 'view_1947', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			},
 			{
 				awardGrid: this.choose('', 'view_1948', ''),
-				isGoldBidGrid: false,
 				rankFieldId: '',
 			}
 		]
@@ -881,21 +870,22 @@ const adminAwardBackground = new AwardBackground(
 // 	{
 // 		nextBtnViewId: '',
 //			awardeeNameFieldId: '',
+//			goldBidIndicatorFieldId: '',
 // 		nextShowsWholeGrid: true/false,
 // 		gridDefinitions: [ gridDef1, ... ]
 // 	}
 // Where each item in gridDefinitions is an object of this form:
 // 	{
 // 		awardGrid: '';
-//			isGoldBidGrid: true/false,
 // 		rankFieldId: '';
 // 	}
-// The Presenter will add the fields 'medals', 'numRanksShowing', 'numRows',
+// The Presenter will add the fields 'medals', 'bestRankShowing', 'numRows',
 // and 'isGridShowing' to the grid definition structures dynamically.
 
 function Presenter(presenterParams) {
 	this.nextBtnViewId = presenterParams.nextBtnViewId;
 	this.awardeeNameFieldId = presenterParams.awardeeNameFieldId;
+	this.goldBidIndicatorFieldId = presenterParams.goldBidIndicatorFieldId;
 	this.nextShowsWholeGrid = presenterParams.nextShowsWholeGrid;
 	this.gridDefinitions = presenterParams.gridDefinitions;
 
@@ -923,29 +913,6 @@ function Presenter(presenterParams) {
 		'20<sup>th</sup>',
 	];
 
-	this.setTeamNameVisibilities = function() {
-		for (const gridDef of this.gridDefinitions) {
-			if (!(gridDef.medals)) {
-				continue;
-			}
-			for (let j = 0; j < gridDef.medals.length; ++j) {
-				const medal = gridDef.medals[j];
-				const viewId = gridDef.awardGrid;
-				const rankFieldId = gridDef.rankFieldId;
-				const awardeeFieldId = this.awardeeNameFieldId;
-				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
-				const nameSpan = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
-				if (j < gridDef.medals.length - gridDef.numRanksShowing) {
-					rankSpan.css('color', 'white');
-					nameSpan.hide();
-				} else {
-					rankSpan.css('color', '');
-					nameSpan.show();
-				}
-			}
-		}
-	}.bind(this);
-
 	this.setGridVisibilities = function() {
 		for (const gridDef of this.gridDefinitions) {
 			const gridDiv = $(`div#${gridDef.awardGrid}`);
@@ -957,38 +924,50 @@ function Presenter(presenterParams) {
 		}
 	}.bind(this);
 
-	this.getNumRanksNotShowing = function(gridDef) {
-		return Math.max(0, gridDef.medals.length - gridDef.numRanksShowing);
-	}.bind(this);
-
-	// Find the maximum number of ranks not showing across all grids:
-	this.getMaxNumRanksNotShowing = function(isGoldBidGrid) {
-		let maxNumRanksNotShowing = 0;
+	this.setTeamNameVisibilities = function() {
 		for (const gridDef of this.gridDefinitions) {
-			if (gridDef.isGoldBidGrid === isGoldBidGrid) {
-				const numRanksNotShowing = this.getNumRanksNotShowing(gridDef);
-				maxNumRanksNotShowing = Math.max(maxNumRanksNotShowing, numRanksNotShowing);
+			if (!(gridDef.medals)) {
+				continue;
 			}
-		}
-		return maxNumRanksNotShowing;
-	}.bind(this);
-
-	// Increment the number of ranks showing in the first list that
-	// (a) matches isGoldBidGrid, (b) is not fully displayed, and
-	// (c) has the maximum number of ranks not showing:
-	this.incrementNumRanksShowing = function(isGoldBidGrid, maxNumRanksNotShowing) {
-		for (const gridDef of this.gridDefinitions) {
-			const numRanksNotShowing = this.getNumRanksNotShowing(gridDef);
-			if (gridDef.isGoldBidGrid === isGoldBidGrid
-					&& numRanksNotShowing > 0
-					&& numRanksNotShowing === maxNumRanksNotShowing) {
-				++(gridDef.numRanksShowing);
-				if (gridDef.isGoldBidGrid) {	// Show heading
-					$(`div#${gridDef.awardGrid} h2`).css('color', '');
+			const visibleRanksAlreadySeen = new Set();
+			for (let j = 0; j < gridDef.medals.length; ++j) {
+				const medal = gridDef.medals[j];
+				const viewId = gridDef.awardGrid;
+				const rankFieldId = gridDef.rankFieldId;
+				const awardeeFieldId = this.awardeeNameFieldId;
+				const goldBidFieldId = this.goldBidIndicatorFieldId;
+				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
+				const nameSpan = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
+				const goldBidSpan = $(`div#${viewId} tr#${medal.id} > td.${goldBidFieldId} > span`);
+				if (medal.rank < gridDef.bestRankShowing) {
+					rankSpan.css('color', 'white');
+					nameSpan.hide();
+					goldBidSpan.hide();
+				} else {
+					if (visibleRanksAlreadySeen.has(medal.rank)) {
+						rankSpan.css('color', 'white');
+					} else {
+						rankSpan.css('color', '');
+					}
+					nameSpan.show();
+					goldBidSpan.show();
+					visibleRanksAlreadySeen.add(medal.rank);
 				}
-				break;
 			}
 		}
+	}.bind(this);
+
+	// Find the first grid whose best visible rank is the worst:
+	this.getFirstGridWithWorstRankShowing = function() {
+		let worstRankShowing = 0;
+		let gridWithWorstRankShowing = null;
+		for (const gridDef of this.gridDefinitions) {
+			if (gridDef.bestRankShowing > worstRankShowing) {
+				worstRankShowing = gridDef.bestRankShowing;
+				gridWithWorstRankShowing = gridDef;
+			}
+		}
+		return gridWithWorstRankShowing;
 	}.bind(this);
 
 	this.nextBtnClickHandler = function() {
@@ -1019,17 +998,15 @@ function Presenter(presenterParams) {
 				$(`div#${this.nextBtnViewId} svg`).hide();	// Hide the Next button
 			}
 		} else {
-			const maxNumNonGoldRanksNotShowing = this.getMaxNumRanksNotShowing(false);
-			const maxNumGoldRanksNotShowing = this.getMaxNumRanksNotShowing(true);
-			if (maxNumNonGoldRanksNotShowing > 0) {
-				this.incrementNumRanksShowing(false, maxNumNonGoldRanksNotShowing);
-			} else if (maxNumGoldRanksNotShowing > 0) {
-				this.incrementNumRanksShowing(true, maxNumGoldRanksNotShowing);
+			let gridWithWorstRankShowing = this.getFirstGridWithWorstRankShowing();
+			if (gridWithWorstRankShowing.bestRankShowing > 1) {
+				--(gridWithWorstRankShowing.bestRankShowing);
 			}
 
 			this.setTeamNameVisibilities();
-			if (this.getMaxNumRanksNotShowing(false) <= 0
-					&& this.getMaxNumRanksNotShowing(true) <= 0) {
+
+			gridWithWorstRankShowing = this.getFirstGridWithWorstRankShowing();
+			if (gridWithWorstRankShowing.bestRankShowing <= 1) {
 				$(`div#${this.nextBtnViewId} svg`).hide();	// Hide the Next button
 			}
 		}
@@ -1049,13 +1026,18 @@ function Presenter(presenterParams) {
 		return null;
 	}.bind(this);
 
-	this.sceneHasGoldBidGrid = function() {
-		for (const gridDef of this.gridDefinitions) {
-			if (gridDef.isGoldBidGrid) {
-				return true;
-			}
+	this.setGridAppearance = function(gridViewId) {
+		// Hide the table page navigation and table header:
+		$(`div#${gridViewId} thead`).hide();
+		$(`div#${gridViewId} div.kn-records-nav`).hide();
+
+		// Grid styling:
+		$(`div#${gridViewId} h2`).css('font-size', '32px');
+		$(`div#${gridViewId} h2`).css('font-weight', 'bold');
+		for (let i = 0; i < 3; ++i) {
+			$(`div#${gridViewId} span.col-${i}`).css('font-size', '24px');
 		}
-		return false;
+		$(`div#${gridViewId} td`).css('border-bottom-width', '0px');
 	}.bind(this);
 
 	this.getMedalList = function(gridDef) {
@@ -1071,6 +1053,7 @@ function Presenter(presenterParams) {
 				return {
 					id: model.attributes.id,
 					rank: (rawRank && !isNaN(rank)) ? rank : 0,
+					isGoldBidTeam: model.attributes[this.goldBidIndicatorFieldId],
 				};
 			})
 			.sort((lhs, rhs) => lhs.rank - rhs.rank);
@@ -1079,32 +1062,17 @@ function Presenter(presenterParams) {
 		console.log(gridDef.medals);
 	}.bind(this);
 
-	this.setGridAppearance = function(gridViewId) {
-		// Hide the table page navigation and table header:
-		$(`div#${gridViewId} thead`).hide();
-		$(`div#${gridViewId} div.kn-records-nav`).hide();
-
-		// Grid styling:
-		$(`div#${gridViewId} h2`).css('font-size', '32px');
-		$(`div#${gridViewId} h2`).css('font-weight', 'bold');
-		for (let i = 0; i < 3; ++i) {
-			$(`div#${gridViewId} span.col-${i}`).css('font-size', '24px');
+	this.getMaxRank = function(gridDef) {
+		let maxRank = 0;
+		for (const medal of gridDef.medals) {
+			maxRank = Math.max(maxRank, medal.rank);
 		}
-		$(`div#${gridViewId} td`).css('border-bottom-width', '0px');
+		return maxRank;
 	}.bind(this);
 
 	this.gridRenderHandler = function(event, view, record) {
 		const gridDef = this.getGridDefForView(view);
 		this.setGridAppearance(gridDef.awardGrid);
-
-		// If this scene has a gold-bid award grid, then make the headings
-		// on all the award grids white (invisible). The gold-bid headings
-		// will be shown at the appropriate time during the presentation.
-		if (!this.nextShowsWholeGrid && this.sceneHasGoldBidGrid()) {
-			for (const gridDef of this.gridDefinitions) {
-				$(`div#${gridDef.awardGrid} h2`).css('color', 'white');
-			}
-		}
 
 		// Get the medal data:
 		if (!this.nextShowsWholeGrid) {
@@ -1115,21 +1083,24 @@ function Presenter(presenterParams) {
 		if (!this.nextShowsWholeGrid) {
 			const viewId = gridDef.awardGrid;
 			const rankFieldId = gridDef.rankFieldId;
+			const goldBidFieldId = this.goldBidIndicatorFieldId;
 			for (const medal of gridDef.medals) {
-				const spanElement = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
-				spanElement.html(`${this.medalLabels[medal.rank]}`);
+				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
+				const goldBidSpan = $(`div#${viewId} tr#${medal.id} > td.${goldBidFieldId} > span`);
+				rankSpan.html(`${this.medalLabels[medal.rank]}`);
+				goldBidSpan.html((medal.isGoldBidTeam === 1) ? '(Gold Bid Team)' : '');
 			}
 		}
 
 		if (this.nextShowsWholeGrid) {
 			// Hide the grids:
-			gridDef.numRanksShowing = -1;
+			gridDef.bestRankShowing = -1;
 			gridDef.isGridShowing = false;
 			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
 			this.setGridVisibilities();
 		} else {
 			// Hide the team names:
-			gridDef.numRanksShowing = 0;
+			gridDef.bestRankShowing = this.getMaxRank(gridDef) + 1;
 			gridDef.isGridShowing = true;
 			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
 			this.setTeamNameVisibilities();
