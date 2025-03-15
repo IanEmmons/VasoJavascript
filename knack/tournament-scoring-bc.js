@@ -1,7 +1,6 @@
 'use strict';
 
 // For better security, switch from API-based to view-based requests: https://docs.knack.com/reference/view-based-requests
-// Recreate Duosmium Download page in Portal, but under Programmer/Developer login
 // Presentation: Add feature for exhibition teams (separate from gold bids)
 
 function assert(condition, message) {
@@ -924,6 +923,17 @@ function Presenter(presenterParams) {
 		}
 	}.bind(this);
 
+	this.setGoldBidSpanVisibility = function(viewId, medalId, gbFieldId, setVisible) {
+		if (viewId && medalId && gbFieldId) {
+			const gbSpan = $(`div#${viewId} tr#${medal.id} > td.${gbFieldId} > span`);
+			if (setVisible) {
+				gbSpan.show();
+			} else {
+				gbSpan.hide();
+			}
+		}
+	}.bind(this);
+
 	this.setTeamNameVisibilities = function() {
 		for (const gridDef of this.gridDefinitions) {
 			if (!(gridDef.medals)) {
@@ -935,22 +945,18 @@ function Presenter(presenterParams) {
 				const viewId = gridDef.awardGrid;
 				const rankFieldId = gridDef.rankFieldId;
 				const awardeeFieldId = this.awardeeNameFieldId;
-				const goldBidFieldId = this.goldBidIndicatorFieldId;
+				const gbFieldId = this.goldBidIndicatorFieldId;
 				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
 				const nameSpan = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
-				const goldBidSpan = $(`div#${viewId} tr#${medal.id} > td.${goldBidFieldId} > span`);
 				if (medal.rank < gridDef.bestRankShowing) {
 					rankSpan.css('color', 'white');
 					nameSpan.hide();
-					goldBidSpan.hide();
+					this.setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, false);
 				} else {
-					if (visibleRanksAlreadySeen.has(medal.rank)) {
-						rankSpan.css('color', 'white');
-					} else {
-						rankSpan.css('color', '');
-					}
+					const rankSpanColor = visibleRanksAlreadySeen.has(medal.rank) ? 'white' : '';
+					rankSpan.css('color', rankSpanColor);
 					nameSpan.show();
-					goldBidSpan.show();
+					this.setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, true);
 					visibleRanksAlreadySeen.add(medal.rank);
 				}
 			}
@@ -1083,12 +1089,14 @@ function Presenter(presenterParams) {
 		if (!this.nextShowsWholeGrid) {
 			const viewId = gridDef.awardGrid;
 			const rankFieldId = gridDef.rankFieldId;
-			const goldBidFieldId = this.goldBidIndicatorFieldId;
+			const gbFieldId = this.goldBidIndicatorFieldId;
 			for (const medal of gridDef.medals) {
 				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
-				const goldBidSpan = $(`div#${viewId} tr#${medal.id} > td.${goldBidFieldId} > span`);
 				rankSpan.html(`${this.medalLabels[medal.rank]}`);
-				goldBidSpan.html((medal.isGoldBidTeam === 1) ? '(Gold Bid Team)' : '');
+				if (gbFieldId) {
+					const gbSpan = $(`div#${viewId} tr#${medal.id} > td.${gbFieldId} > span`);
+					gbSpan.html((medal.isGoldBidTeam === 1) ? '(Gold Bid Team)' : '');
+				}
 			}
 		}
 
