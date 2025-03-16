@@ -308,7 +308,7 @@ function KnackAppInfo() {
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
-				awardGrid: this.choose('', 'view_1945', ''),
+				awardGrid: this.choose('', 'view_2144', ''),
 				rankFieldId: '',
 			}
 		]
@@ -320,7 +320,7 @@ function KnackAppInfo() {
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
-				awardGrid: this.choose('', 'view_1943', ''),
+				awardGrid: this.choose('', 'view_2145', ''),
 				rankFieldId: '',
 			}
 		]
@@ -332,11 +332,11 @@ function KnackAppInfo() {
 		nextShowsWholeGrid: true,
 		gridDefinitions: [
 			{
-				awardGrid: this.choose('', 'view_1947', ''),
+				awardGrid: this.choose('', 'view_2146', ''),
 				rankFieldId: '',
 			},
 			{
-				awardGrid: this.choose('', 'view_1948', ''),
+				awardGrid: this.choose('', 'view_2147', ''),
 				rankFieldId: '',
 			}
 		]
@@ -925,7 +925,7 @@ function Presenter(presenterParams) {
 
 	this.setGoldBidSpanVisibility = function(viewId, medalId, gbFieldId, setVisible) {
 		if (viewId && medalId && gbFieldId) {
-			const gbSpan = $(`div#${viewId} tr#${medal.id} > td.${gbFieldId} > span`);
+			const gbSpan = $(`div#${viewId} tr#${medalId} > td.${gbFieldId} > span`);
 			if (setVisible) {
 				gbSpan.show();
 			} else {
@@ -1080,13 +1080,17 @@ function Presenter(presenterParams) {
 		const gridDef = this.getGridDefForView(view);
 		this.setGridAppearance(gridDef.awardGrid);
 
-		// Get the medal data:
-		if (!this.nextShowsWholeGrid) {
+		if (this.nextShowsWholeGrid) {
+			// Hide the grids:
+			gridDef.bestRankShowing = -1;
+			gridDef.isGridShowing = false;
+			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
+			this.setGridVisibilities();
+		} else {
+			// Get the medal data:
 			this.getMedalList(gridDef);
-		}
 
-		// Replace ranks numbers with place names:
-		if (!this.nextShowsWholeGrid) {
+			// Replace ranks numbers with place names:
 			const viewId = gridDef.awardGrid;
 			const rankFieldId = gridDef.rankFieldId;
 			const gbFieldId = this.goldBidIndicatorFieldId;
@@ -1098,15 +1102,7 @@ function Presenter(presenterParams) {
 					gbSpan.html((medal.isGoldBidTeam === 1) ? '(Gold Bid Team)' : '');
 				}
 			}
-		}
 
-		if (this.nextShowsWholeGrid) {
-			// Hide the grids:
-			gridDef.bestRankShowing = -1;
-			gridDef.isGridShowing = false;
-			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
-			this.setGridVisibilities();
-		} else {
 			// Hide the team names:
 			gridDef.bestRankShowing = this.getMaxRank(gridDef) + 1;
 			gridDef.isGridShowing = true;

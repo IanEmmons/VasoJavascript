@@ -4,7 +4,7 @@ function hideEmptyTables(event, scene) {
 	scene.views.map(function(view) {
 		//console.log(`   View '${view.name}'`);
 		// If view has row data whose length is less than 1...
-		if(Knack.models[view.key].data && Knack.models[view.key].data.length < 1) {
+		if (Knack.models[view.key].data && Knack.models[view.key].data.length < 1) {
 			//console.log(`      Hiding view '${view.name}'`);
 			$('#' + view.key).remove(); // remove that view
 		}
