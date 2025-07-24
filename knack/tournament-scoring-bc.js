@@ -40,9 +40,6 @@ function KnackAppInfo() {
 		}
 	}.bind(this);
 
-	this.apiKey = this.choose('c50f65dc-363f-4022-95c2-e98a0c89fd97',
-		'539b2e01-8b10-4388-b5a7-22dd644e9e2d', '212cab6a-6f68-4cfa-a53c-bcb06e429b78');
-
 	// Event RankUpdater
 	this.esScoringGrid = 'view_1375';
 	this.scoremasterEventGrid = 'view_1363';
@@ -51,19 +48,16 @@ function KnackAppInfo() {
 	this.lockEventSubmitForm = 'view_1382';
 	this.lockEventFinalizeView = this.choose('view_1531', 'view_1609', 'view_1609');
 
-	this.eventScoreTableId = 'object_95';			// 'Raw Scores' table
 	this.eventAdjScoreFieldId = 'field_1736';		// 'Raw Scores/Tier Adjusted Score' column
 	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
 	this.eventIsTrialFieldId = 'field_1705';		// 'Events by Tournament/Trial Event' column
 	this.eventRankFieldId = this.choose('field_1737', 'field_2027', 'field_1737');	// 'Raw Scores/Rank' column
 	this.eventAdjRankFieldId = this.choose('', 'field_1737', '');							// 'Raw Scores/AdjRank' column
 
-	this.teamTableId = 'object_80';					// 'Teams' table
 	this.teamIsExhibitionTeamFieldId = this.choose('', 'field_1979', 'field_1979');	// 'Teams/Exhibition Team' column
 	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
 	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
 
-	this.schoolTableId = 'object_5';					// 'School' table
 	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
 	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
 	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
@@ -347,12 +341,12 @@ const appInfo = new KnackAppInfo();
 
 // Rank: The true rank that the team earned, regardless of exhibitions teams.
 //
-// Adjusted Rank: This is the adjusted rank for towards the team's overall
+// Adjusted Rank: This is the adjusted rank towards the team's overall
 // score that this event/score earns. If exhibition teams are participating,
-// for example, this will not equal the rank. It could also be thought of as
+// for example, this may not equal the rank. It could also be thought of as
 // the number of points earned when there are exhibition teams.
 function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
-		scoreFieldId, rankFieldId, adjRankFieldId, statusFieldId, tableId, isEventRanker) {
+		scoreFieldId, rankFieldId, adjRankFieldId, statusFieldId, isEventRanker) {
 	this.gridId = gridId;
 	this.sceneId = sceneId;
 	this.lockSubmitForm = lockSubmitForm;
@@ -363,7 +357,6 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.adjRankFieldId = adjRankFieldId;
 	this.rawAdjRankFieldId = this.adjRankFieldId + '_raw';
 	this.statusFieldId = statusFieldId;
-	this.tableId = tableId;
 	this.isEventRanker = isEventRanker;
 	this.scoreInfos = null;
 	this.rankStorageInProgress = false;
@@ -610,46 +603,94 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		setTimeout(() => Knack.hideSpinner(), 500);
 	}.bind(this);
 
-	this.putRankToDatabase = async function(id, newRank, newAdjRank) {
-		const url = `https://api.knack.com/v1/objects/${this.tableId}/records/${id}`;
-		let options = {
+	this.createOptionsBody = function(newRank, newAdjRank) {
+		if (this.rankFieldId && this.adjRankFieldId) {
+			return {
+				[this.rankFieldId]: newRank,
+				[this.adjRankFieldId]: newAdjRank,
+			};
+		} else if (this.rankFieldId) {
+			return {
+				[this.rankFieldId]: newRank,
+			};
+		} else if (this.adjRankFieldId) {
+			return {
+				[this.adjRankFieldId]: newAdjRank,
+			};
+		} else {
+			throw new Error('At least one of this.rankFieldId and this.adjRankFieldId must be set');
+		}
+	}.bind(this);
+
+	this.getPlanLimitRemaining = function(hdrs) {
+		const hdrStr = hdrs.get("X-PlanLimit-Remaining");
+		const result = (hdrStr ? Number(hdrStr) : Number.MAX_SAFE_INTEGER);
+		console.log(`X-PlanLimit-Remaining = '${hdrStr}', ${result}`);
+		return result;
+	}.bind(this);
+
+	// Returns the number of milliseconds to wait before retrying, or zero if success (no retry needed), or throws
+	this.putRankToDatabase = async function(url, options) {
+		const response = await fetch(url, options);	// returns response
+		const hdrs = response.headers;
+		if (response.ok) {
+			console.log(`PUT rank: response.ok`);
+			return 0;
+		} else if (response.status != 429) {	// Status 429 is Too Many Requests
+			const text = await response.text();
+			console.log(`PUT rank: HTTP response code ${response.status}, response text '${text}'`);
+			throw new Error(`HTTP response code ${response.status}, response text '${text}'`);
+		} else if (this.getPlanLimitRemaining(hdrs) <= 0) {	// Exceeding Knack's daily plan limit
+			console.log(`PUT rank: Exceeded Knack API plan limit`);
+			const planLimit = Number(hdrs.get("X-PlanLimit-Limit"));
+			const planLimitReset = Number(hdrs.get("X-PlanLimit-Reset"));
+			throw new Error(`Exceeded Knack API plan limit (${planLimit} requests per day). Will reset in ${planLimitReset} milliseconds.`);
+		} else {
+			// Exceeded Knack's API rate limit
+			const rateLimitReset = Number(hdrs.get("X-RateLimit-Reset"));
+			const milliSecToWait = (1000 * rateLimitReset) - Date.now() + 1;
+			console.log(`PUT rank: Exceeded Knack API rate limit. Waiting ${milliSecToWait} milliseonds for reset`);
+			return milliSecToWait;
+		}
+	}.bind(this);
+
+	this.putRankToDatabaseWithRetry = async function(id, newRank, newAdjRank) {
+		const url = `https://api.knack.com/v1/pages/${this.sceneId}/views/${this.gridId}/records/${id}`;
+		const options = {
 			method: 'PUT',
-			mode: 'cors',
-			cache: 'no-cache',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-Knack-Application-Id': Knack.application_id,
-				'X-Knack-REST-API-KEY': appInfo.apiKey,
-				'Accept': 'application/json',
+				'X-Knack-Application-ID': Knack.application_id,
+				'X-Knack-REST-API-Key': 'knack',
+				'Authorization': Knack.getUserToken(),
 			},
+			body: JSON.stringify(this.createOptionsBody(newRank, newAdjRank)),
 		};
-		if (this.rankFieldId && this.adjRankFieldId) {
-			options.body = JSON.stringify({
-				[this.rankFieldId]: newRank,
-				[this.adjRankFieldId]: newAdjRank,
-			});
-		} else if (this.rankFieldId) {
-			options.body = JSON.stringify({
-				[this.rankFieldId]: newRank,
-			});
-		} else if (this.adjRankFieldId) {
-			options.body = JSON.stringify({
-				[this.adjRankFieldId]: newAdjRank,
-			});
-		}
-		const response = await fetch(url, options);
+		//console.log(`Put rank URL: ${url}`);
+		//console.log('options:');
+		//console.log(options);
 
-		console.log(`HTTP response code ${response.status}`);
-		if (!response.ok) {
-			console.log(`URL: ${url}`);
-			console.log(`Options: ${JSON.stringify(options), '  '}`);
-			throw new Error(`HTTP response code ${response.status}`);
+		let milliSecToWait = await this.putRankToDatabase(url, options);
+		if (milliSecToWait <= 0) {
+			return;
 		}
 
-		//const result = await response.json();
-		//console.log(`Success: ${JSON.stringify(result)}`);
+		console.log(`Put rank first retry, milliSecToWait = ${milliSecToWait}`);
+		await this.sleep(milliSecToWait);
+		milliSecToWait = await this.putRankToDatabase(url, options);
+		if (milliSecToWait <= 0) {
+			return;
+		}
 
-		return this.sleep(100);	// milliseconds - prevents overrunning the Knack API limits
+		milliSecToWait = 1100;
+		console.log(`Put rank second retry, milliSecToWait = ${milliSecToWait}`);
+		await this.sleep(milliSecToWait);
+		milliSecToWait = await this.putRankToDatabase(url, options);
+		if (milliSecToWait <= 0) {
+			return;
+		}
+
+		throw new Error(`Exceeded Knack API rate limit, but waiting hasn't helped`);
 	}.bind(this);
 
 	this.putRanksToDatabase = async function(scoreInfos) {
@@ -666,40 +707,41 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 					&& adjRankToStore === scoreInfo.oldAdjRank) {
 				continue;
 			}
-			await this.putRankToDatabase(scoreInfo.id, rankToStore, adjRankToStore);
+			await this.putRankToDatabaseWithRetry(scoreInfo.id, rankToStore, adjRankToStore);
 		}
 	}.bind(this);
 
-	this.finalizeBtnClickHandler = function() {
+	this.finalizeBtnClickHandler = async function() {
 		if (this.rankStorageInProgress) {
-			return false;
+			return;
 		}
 		$(`#${this.lockSubmitForm} div#kn-input-`).show();	// Result report - Please Wait
 		this.setSpinner();
 		this.rankStorageInProgress = true;
-		this.putRanksToDatabase(this.scoreInfos)
-			.then(() => {
-				console.log('Database updates for ranking succeeded');
-				$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('Success!');
-				const label = this.isEventRanker ? 'event' : 'tournament';
-				$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
-					The scores and ranks have been finalized. Press the button to<br/>
-					lock the ${label} and submit it for presentation.`);
-				$(`div#${this.finalizeBtnViewId}`).hide();		// Finalize button
-				$(`#${this.lockSubmitForm} div.kn-submit`).show();	// Submit button
-				this.cancelSpinner();
-				this.rankStorageInProgress = false;
-			})
-			.catch((error) => {
-				console.error(`PUT failure: ${error.message}`);
-				$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('An error occurred');
-				$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
-					Please wait a moment or two and press the Finalize button again.
-					<br/><br/>Error message: ${error.message}`);
-				this.cancelSpinner();
-				this.rankStorageInProgress = false;
-			});
-		return false;
+		try {
+			const startTime = Date.now();
+			await this.putRanksToDatabase(this.scoreInfos);
+			const elapsedTime = (Date.now() - startTime) / 1000.0;
+			console.log(`Database updates for ranking succeeded in ${elapsedTime} sec`);
+
+			$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('Success!');
+			const label = this.isEventRanker ? 'event' : 'tournament';
+			$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
+				The scores and ranks have been finalized. Press the button to<br/>
+				lock the ${label} and submit it for presentation.`);
+			$(`div#${this.finalizeBtnViewId}`).hide();			// Finalize button
+			$(`#${this.lockSubmitForm} div.kn-submit`).show();	// Submit button
+			this.cancelSpinner();
+			this.rankStorageInProgress = false;
+		} catch (error) {
+			console.log(`Database updates for ranking failed: ${error.message}`);
+			$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('An error occurred');
+			$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
+				Please wait a moment or two and press the Finalize button again.
+				<br/><br/>Error message: ${error.message}`);
+			this.cancelSpinner();
+			this.rankStorageInProgress = false;
+		}
 	}.bind(this);
 
 	this.rankUpdateHandler = function(/* event, view, record*/) {
@@ -725,58 +767,58 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 const esUpdater = new RankUpdater(appInfo.esScoringGrid, '', '', '',
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, '', true);
+	appInfo.eventStatusFieldId, true);
 const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventGrid, '', '', '',
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, '', true);
+	appInfo.eventStatusFieldId, true);
 const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEventSceneId,
 	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, appInfo.eventScoreTableId, true);
+	appInfo.eventStatusFieldId, true);
 
 const overviewSchoolBTeamBeforeUpdater = new RankUpdater(
 	appInfo.overviewSchoolBTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', '', false);
+	appInfo.teamRankFieldId, '', '', false);
 const overviewSchoolBTeamAfterUpdater = new RankUpdater(
 	appInfo.overviewSchoolBTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', '', false);
+	appInfo.teamRankFieldId, '', '', false);
 const overviewSchoolBSchoolUpdater = new RankUpdater(appInfo.overviewSchoolBSchoolGrid,
 	'', '', '', appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '',
-	'', '', false);
+	'', false);
 const overviewSchoolBLockUpdater = new RankUpdater(appInfo.overviewSchoolBLockGrid,
 	appInfo.overviewSchoolBLockSceneId, appInfo.overviewSchoolBSubmitForm,
 	appInfo.overviewSchoolBFinalizeView, appInfo.schoolBAdjScoreFieldId,
-	appInfo.schoolBRankFieldId, '', '', appInfo.schoolTableId, false);
+	appInfo.schoolBRankFieldId, '', '', false);
 
 const overviewTeamBTeamUpdater = new RankUpdater(appInfo.overviewTeamBTeamGrid,
 	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
-	'', '', false);
+	'', false);
 const overviewTeamBLockUpdater = new RankUpdater(appInfo.overviewTeamBLockGrid,
 	appInfo.overviewTeamBLockSceneId, appInfo.overviewTeamBSubmitForm,
 	appInfo.overviewTeamBFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', appInfo.teamTableId, false);
+	appInfo.teamRankFieldId, '', '', false);
 
 const overviewSchoolCTeamBeforeUpdater = new RankUpdater(
 	appInfo.overviewSchoolCTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', '', false);
+	appInfo.teamRankFieldId, '', '', false);
 const overviewSchoolCTeamAfterUpdater = new RankUpdater(
 	appInfo.overviewSchoolCTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', '', false);
+	appInfo.teamRankFieldId, '', '', false);
 const overviewSchoolCSchoolUpdater = new RankUpdater(appInfo.overviewSchoolCSchoolGrid,
 	'', '', '', appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '', '',
-	'', false);
+	false);
 const overviewSchoolCLockUpdater = new RankUpdater(appInfo.overviewSchoolCLockGrid,
 	appInfo.overviewSchoolCLockSceneId, appInfo.overviewSchoolCSubmitForm,
 	appInfo.overviewSchoolCFinalizeView, appInfo.schoolCAdjScoreFieldId,
-	appInfo.schoolCRankFieldId, '', '', appInfo.schoolTableId, false);
+	appInfo.schoolCRankFieldId, '', '', false);
 
 const overviewTeamCTeamUpdater = new RankUpdater(appInfo.overviewTeamCTeamGrid,
 	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '',
-	'', false);
+	false);
 const overviewTeamCLockUpdater = new RankUpdater(appInfo.overviewTeamCLockGrid,
 	appInfo.overviewTeamCLockSceneId, appInfo.overviewTeamCSubmitForm,
 	appInfo.overviewTeamCFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', appInfo.teamTableId, false);
+	appInfo.teamRankFieldId, '', '', false);
 
 
 
