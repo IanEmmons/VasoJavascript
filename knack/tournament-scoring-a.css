@@ -1,12 +1,5 @@
 /* Formatting for presentation slide pages in Division A Portal */
 
-/* Event presentation page: */
-div#view_1538 h1 {
+div#view_1538 h1 {			/* Event presentation page, event name */
 	font-size: 32px;
-}
-div#view_1539 span.col-0 {
-	font-size: 24px;
-}
-div#view_1539 span.col-1 {
-	font-size: 24px;
 }

@@ -1,6 +1,5 @@
 'use strict';
 
-// For better security, switch from API-based to view-based requests: https://docs.knack.com/reference/view-based-requests
 // Presentation: Add feature for exhibition teams (separate from gold bids)
 
 function assert(condition, message) {
@@ -139,7 +138,8 @@ function KnackAppInfo() {
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
-				rankFieldId: this.eventAdjRankFieldId,
+				// BC uses AdjRank for gold bigs, but A and ScoreScope use plain rank (no gold bids):
+				rankFieldId: this.choose(this.eventRankFieldId, this.eventAdjRankFieldId, this.eventRankFieldId),
 			}
 		]
 	};
