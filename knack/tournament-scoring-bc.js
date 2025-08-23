@@ -1,3 +1,6 @@
+/* jshint esnext: false */
+/* jshint esversion: 8 */
+/* jshint laxbreak: true */
 'use strict';
 
 // Presentation: Add feature for exhibition teams (separate from gold bids)
@@ -62,37 +65,46 @@ function KnackAppInfo() {
 	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
 	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
 
-	// Div B Overview School RankUpdater
-	this.overviewSchoolBTeamBeforeGrid = this.choose('', 'view_1578', 'view_1578');
-	this.overviewSchoolBTeamAfterGrid = this.choose('', 'view_1752', 'view_1752');
-	this.overviewSchoolBSchoolGrid = this.choose('', 'view_1384', 'view_1835');
-	this.overviewSchoolBLockSceneId = this.choose('', 'scene_624', 'scene_624');
-	this.overviewSchoolBLockGrid = this.choose('', 'view_1585', 'view_1851');
-	this.overviewSchoolBSubmitForm = this.choose('', 'view_1586', 'view_1586');
-	this.overviewSchoolBFinalizeView = this.choose('', 'view_1629', 'view_1629');
+	// Track Overview RankUpdaters
+	this.overviewTrackTeamBeforeGrid = this.choose('', 'view_2272', '');
+	this.overviewTrackTeamAfterGrid = this.choose('', 'view_2275', '');
+	this.overviewTrackSchoolGrid = this.choose('', 'view_2276', '');
+	this.overviewTrackLockSceneId = this.choose('', 'scene_788', '');
+	this.overviewTrackLockGrid = this.choose('', 'view_2280', '');
+	this.overviewTrackSubmitForm = this.choose('', 'view_2282', '');
+	this.overviewTrackFinalizeView = this.choose('', 'view_2281', '');
 
-	// Div B Overview Team RankUpdater
-	this.overviewTeamBTeamGrid = this.choose('', 'view_1769', 'view_1769');
-	this.overviewTeamBLockSceneId = this.choose('', 'scene_665', 'scene_665');
-	this.overviewTeamBLockGrid = this.choose('', 'view_1774', 'view_1774');
-	this.overviewTeamBSubmitForm = this.choose('', 'view_1775', 'view_1775');
-	this.overviewTeamBFinalizeView = this.choose('', 'view_1776', 'view_1776');
+	// Div B Overview School RankUpdater (ScoreScope only)
+	this.overviewSchoolBTeamBeforeGrid = this.choose('', '', 'view_1578');
+	this.overviewSchoolBTeamAfterGrid = this.choose('', '', 'view_1752');
+	this.overviewSchoolBSchoolGrid = this.choose('', '', 'view_1835');
+	this.overviewSchoolBLockSceneId = this.choose('', '', 'scene_624');
+	this.overviewSchoolBLockGrid = this.choose('', '', 'view_1851');
+	this.overviewSchoolBSubmitForm = this.choose('', '', 'view_1586');
+	this.overviewSchoolBFinalizeView = this.choose('', '', 'view_1629');
 
-	// Div C Overview School RankUpdater
-	this.overviewSchoolCTeamBeforeGrid = this.choose('', 'view_1581', 'view_1581');
-	this.overviewSchoolCTeamAfterGrid = this.choose('', 'view_1761', 'view_1761');
-	this.overviewSchoolCSchoolGrid = this.choose('', 'view_1387', 'view_1836');
-	this.overviewSchoolCLockSceneId = this.choose('', 'scene_629', 'scene_629');
-	this.overviewSchoolCLockGrid = this.choose('', 'view_1633', 'view_1850');
-	this.overviewSchoolCSubmitForm = this.choose('', 'view_1634', 'view_1634');
-	this.overviewSchoolCFinalizeView = this.choose('', 'view_1635', 'view_1635');
+	// Div B Overview Team RankUpdater (ScoreScope only)
+	this.overviewTeamBTeamGrid = this.choose('', '', 'view_1769');
+	this.overviewTeamBLockSceneId = this.choose('', '', 'scene_665');
+	this.overviewTeamBLockGrid = this.choose('', '', 'view_1774');
+	this.overviewTeamBSubmitForm = this.choose('', '', 'view_1775');
+	this.overviewTeamBFinalizeView = this.choose('', '', 'view_1776');
 
-	// Div C Overview Team RankUpdater
-	this.overviewTeamCTeamGrid = this.choose('', 'view_1850', 'view_1842');
-	this.overviewTeamCLockSceneId = this.choose('', 'scene_689', 'scene_692');
-	this.overviewTeamCLockGrid = this.choose('', 'view_1854', 'view_1847');
-	this.overviewTeamCSubmitForm = this.choose('', 'view_1855', 'view_1848');
-	this.overviewTeamCFinalizeView = this.choose('', 'view_1856', 'view_1849');
+	// Div C Overview School RankUpdater (ScoreScope only)
+	this.overviewSchoolCTeamBeforeGrid = this.choose('', '', 'view_1581');
+	this.overviewSchoolCTeamAfterGrid = this.choose('', '', 'view_1761');
+	this.overviewSchoolCSchoolGrid = this.choose('', '', 'view_1836');
+	this.overviewSchoolCLockSceneId = this.choose('', '', 'scene_629');
+	this.overviewSchoolCLockGrid = this.choose('', '', 'view_1850');
+	this.overviewSchoolCSubmitForm = this.choose('', '', 'view_1634');
+	this.overviewSchoolCFinalizeView = this.choose('', '', 'view_1635');
+
+	// Div C Overview Team RankUpdater (ScoreScope only)
+	this.overviewTeamCTeamGrid = this.choose('', '', 'view_1842');
+	this.overviewTeamCLockSceneId = this.choose('', '', 'scene_692');
+	this.overviewTeamCLockGrid = this.choose('', '', 'view_1847');
+	this.overviewTeamCSubmitForm = this.choose('', '', 'view_1848');
+	this.overviewTeamCFinalizeView = this.choose('', '', 'view_1849');
 
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
@@ -775,6 +787,22 @@ const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEven
 	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
 	appInfo.eventStatusFieldId, true);
+
+const overviewTrackTeamBeforeUpdater = new RankUpdater(
+	appInfo.overviewTrackTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
+	appInfo.teamRankFieldId, '', '', false);
+const overviewTrackTeamAfterUpdater = new RankUpdater(
+	appInfo.overviewTrackTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
+	appInfo.teamRankFieldId, '', '', false);
+const overviewTrackSchoolUpdater = new RankUpdater(appInfo.overviewTrackSchoolGrid,
+	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
+	'', false);
+const overviewTrackLockUpdater = new RankUpdater(appInfo.overviewTrackLockGrid,
+	appInfo.overviewTrackLockSceneId, appInfo.overviewTrackSubmitForm,
+	appInfo.overviewTrackFinalizeView, appInfo.teamAdjScoreFieldId,
+	appInfo.teamRankFieldId, '', '', false);
+
+// ========================== The RanksUpdaters below are for ScoreScope only ==========================
 
 const overviewSchoolBTeamBeforeUpdater = new RankUpdater(
 	appInfo.overviewSchoolBTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
