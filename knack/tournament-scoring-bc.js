@@ -3,42 +3,19 @@
 /* jshint laxbreak: true */
 'use strict';
 
-// Presentation: Add feature for exhibition teams (separate from gold bids)
-
-function assert(condition, message) {
-	if (!condition) {
-		throw new Error(message || "Assertion failed");
-	}
-}
+// Switch from prototype syntax to classes
 
 function KnackAppInfo() {
-	this.isDivA = function() {
-		return false;
-	}.bind(this);
-
-	this.isDivBC = function() {
-		return true;
-	}.bind(this);
-
-	this.isScoreScope = function() {
-		return false;
-	}.bind(this);
-
-	// Sanity check:
-	const trueCount = (this.isDivA() ? 1 : 0)
-		+ (this.isDivBC() ? 1 : 0)
-		+ (this.isScoreScope() ? 1 : 0);
-	assert(trueCount === 1, 'Exactly one of isDivA, isDivBC, and isScoreScope must return true');
-
 	this.choose = function(aValue, bcValue, ssValue) {
-		if (this.isDivA()) {
-			return aValue;
-		} else if (this.isDivBC()) {
-			return bcValue;
-		} else if (this.isScoreScope()) {
-			return ssValue;
-		} else {
-			assert(false, 'One of isDivA, isDivBC, and isScoreScope must return true');
+		switch (Knack.application_id.toLowerCase()) {
+			case '64ca43965ac49100285bcd41':	// Division A Portal
+				return aValue;
+			case '648d0fcf2458250028b97840':	// Division BC Portal
+				return bcValue;
+			case '652ead5e0d05db00275daab7':	// ScoreScope
+				return ssValue;
+			default:
+				throw new Error('Unrecognized portal: Not Div A, Div BC, or ScoreScope');
 		}
 	}.bind(this);
 
@@ -53,58 +30,32 @@ function KnackAppInfo() {
 	this.eventAdjScoreFieldId = 'field_1736';		// 'Raw Scores/Tier Adjusted Score' column
 	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
 	this.eventIsTrialFieldId = 'field_1705';		// 'Events by Tournament/Trial Event' column
-	this.eventRankFieldId = this.choose('field_1737', 'field_2027', 'field_1737');	// 'Raw Scores/Rank' column
-	this.eventAdjRankFieldId = this.choose('', 'field_1737', '');							// 'Raw Scores/AdjRank' column
+	this.isBestPlacedTrueTeamFieldId = this.choose('', 'field_2361', 'field_2054');	// 'Teams/Best Placed Team Indicator' column
+	this.acceptedInviteFieldId = this.choose('', 'field_2313', '');						// 'Teams/Reg: Accepted Invite?' column
+	this.eventRankFieldId = this.choose('field_1737', 'field_2027', 'field_1737');	// 'Raw Scores/True Rank' column
+	this.eventAdjRankFieldId = this.choose('', 'field_1737', 'field_2048');				// 'Raw Scores/Adj Rank' column
+	this.trophyRankFieldId = this.choose('', 'field_2382', 'field_2050');				// 'Teams/Trophy Rank' column
+	this.uninvitedRankFieldId = this.choose('', 'field_2371', '');							// 'Teams/Uninvited School Rank' column
 
 	this.teamIsExhibitionTeamFieldId = this.choose('', 'field_1979', 'field_1979');	// 'Teams/Exhibition Team' column
 	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
 	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
 
-	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
-	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
-	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
-	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
+/* The first two are no longer used, and the second two are used only in presenters */
+/* Probably should be deleted after fixing the field IDs used in the presenters */
+/**/	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
+/**/	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
+/**/	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
+/**/	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
+/************************************************************************************/
 
-	// Track Overview RankUpdaters
-	this.overviewTrackTeamBeforeGrid = this.choose('', 'view_2272', '');
-	this.overviewTrackTeamAfterGrid = this.choose('', 'view_2275', '');
-	this.overviewTrackSchoolGrid = this.choose('', 'view_2276', '');
-	this.overviewTrackLockSceneId = this.choose('', 'scene_788', '');
-	this.overviewTrackLockGrid = this.choose('', 'view_2280', '');
-	this.overviewTrackSubmitForm = this.choose('', 'view_2282', '');
-	this.overviewTrackFinalizeView = this.choose('', 'view_2281', '');
-
-	// Div B Overview School RankUpdater (ScoreScope only)
-	this.overviewSchoolBTeamBeforeGrid = this.choose('', '', 'view_1578');
-	this.overviewSchoolBTeamAfterGrid = this.choose('', '', 'view_1752');
-	this.overviewSchoolBSchoolGrid = this.choose('', '', 'view_1835');
-	this.overviewSchoolBLockSceneId = this.choose('', '', 'scene_624');
-	this.overviewSchoolBLockGrid = this.choose('', '', 'view_1851');
-	this.overviewSchoolBSubmitForm = this.choose('', '', 'view_1586');
-	this.overviewSchoolBFinalizeView = this.choose('', '', 'view_1629');
-
-	// Div B Overview Team RankUpdater (ScoreScope only)
-	this.overviewTeamBTeamGrid = this.choose('', '', 'view_1769');
-	this.overviewTeamBLockSceneId = this.choose('', '', 'scene_665');
-	this.overviewTeamBLockGrid = this.choose('', '', 'view_1774');
-	this.overviewTeamBSubmitForm = this.choose('', '', 'view_1775');
-	this.overviewTeamBFinalizeView = this.choose('', '', 'view_1776');
-
-	// Div C Overview School RankUpdater (ScoreScope only)
-	this.overviewSchoolCTeamBeforeGrid = this.choose('', '', 'view_1581');
-	this.overviewSchoolCTeamAfterGrid = this.choose('', '', 'view_1761');
-	this.overviewSchoolCSchoolGrid = this.choose('', '', 'view_1836');
-	this.overviewSchoolCLockSceneId = this.choose('', '', 'scene_629');
-	this.overviewSchoolCLockGrid = this.choose('', '', 'view_1850');
-	this.overviewSchoolCSubmitForm = this.choose('', '', 'view_1634');
-	this.overviewSchoolCFinalizeView = this.choose('', '', 'view_1635');
-
-	// Div C Overview Team RankUpdater (ScoreScope only)
-	this.overviewTeamCTeamGrid = this.choose('', '', 'view_1842');
-	this.overviewTeamCLockSceneId = this.choose('', '', 'scene_692');
-	this.overviewTeamCLockGrid = this.choose('', '', 'view_1847');
-	this.overviewTeamCSubmitForm = this.choose('', '', 'view_1848');
-	this.overviewTeamCFinalizeView = this.choose('', '', 'view_1849');
+	// Track Overview RankUpdaters (Division Overview in ScoreScope)
+	this.trackOverviewTeamBeforeGrid = this.choose('', 'view_2272', 'view_1897');
+	this.trackOverviewSchoolGrid = this.choose('', 'view_2276', 'view_1896');
+	this.trackOverviewLockSceneId = this.choose('', 'scene_788', 'scene_702');
+	this.trackOverviewLockGrid = this.choose('', 'view_2280', 'view_1905');
+	this.trackOverviewSubmitForm = this.choose('', 'view_2282', 'view_1906');
+	this.trackOverviewFinalizeView = this.choose('', 'view_2281', 'view_1907');
 
 	// Award Background
 	this.presenterTournamentSelectionSceneId = 'scene_587';
@@ -150,8 +101,12 @@ function KnackAppInfo() {
 		gridDefinitions: [
 			{
 				awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
-				// BC uses AdjRank for gold bigs, but A and ScoreScope use plain rank (no gold bids):
-				rankFieldId: this.choose(this.eventRankFieldId, this.eventAdjRankFieldId, this.eventRankFieldId),
+				// BC uses AdjRank for gold bids. A uses plain rank, since there are
+				// no gold bids there. In ScoreScope, the Knack-based logic removes
+				// all the exhibition teams from the list, but we must use AdjRank
+				// so we don't end up with skipped medals.
+				rankFieldId: this.choose(this.eventRankFieldId, this.eventAdjRankFieldId,
+					this.eventAdjRankFieldId),
 			}
 		]
 	};
@@ -358,7 +313,8 @@ const appInfo = new KnackAppInfo();
 // for example, this may not equal the rank. It could also be thought of as
 // the number of points earned when there are exhibition teams.
 function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
-		scoreFieldId, rankFieldId, adjRankFieldId, statusFieldId, isEventRanker) {
+		scoreFieldId, rankFieldId, adjRankFieldId, trophyRankFieldId,
+		uninvitedRankFieldId, statusFieldId, isEventRanker) {
 	this.gridId = gridId;
 	this.sceneId = sceneId;
 	this.lockSubmitForm = lockSubmitForm;
@@ -368,6 +324,10 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	this.rawRankFieldId = this.rankFieldId + '_raw';
 	this.adjRankFieldId = adjRankFieldId;
 	this.rawAdjRankFieldId = this.adjRankFieldId + '_raw';
+	this.trophyRankFieldId = trophyRankFieldId;
+	this.rawTrophyRankFieldId = this.trophyRankFieldId + '_raw';
+	this.uninvitedRankFieldId = uninvitedRankFieldId;
+	this.rawUninvitedRankFieldId = this.uninvitedRankFieldId + '_raw';
 	this.statusFieldId = statusFieldId;
 	this.isEventRanker = isEventRanker;
 	this.scoreInfos = null;
@@ -382,6 +342,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		}
 	}.bind(this);
 
+	// In the BC portal, this really means "is gold bid team,"
+	// but in ScoreScope it means a true exhibition team, e.g.,
+	// a Fairfax team at the Fairfax invitational.
 	this.isExhibitionTeam = function(model) {
 		if (!appInfo.teamIsExhibitionTeamFieldId) {
 			return false;
@@ -407,6 +370,32 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		} else {
 			const rawFieldId = appInfo.eventIsTrialFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
+		}
+	}.bind(this);
+
+	// True if this team has the best team score among the teams from the same school.
+	// This team serves as the representative of the school when we list school rankings.
+	this.isBestPlacedTrueTeam = function(model) {
+		if (!appInfo.isBestPlacedTrueTeamFieldId) {
+			return false;
+		} else if (!Object.hasOwn(model.attributes, appInfo.isBestPlacedTrueTeamFieldId)) {
+			return false;
+		} else {
+			const rawFieldId = appInfo.isBestPlacedTrueTeamFieldId + '_raw';
+			return model.attributes[rawFieldId] === 0;
+		}
+	}.bind(this);
+
+	// True if this school was given an invite to states and accepted
+	// that invite by attending the national-ready regional.
+	this.acceptedInvite = function(model) {
+		if (!appInfo.acceptedInviteFieldId) {
+			return false;
+		} else if (!Object.hasOwn(model.attributes, appInfo.acceptedInviteFieldId)) {
+			return false;
+		} else {
+			const rawFieldId = appInfo.acceptedInviteFieldId + '_raw';
+			return model.attributes[rawFieldId] !== 0;
 		}
 	}.bind(this);
 
@@ -438,6 +427,34 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			: -1;	// for grids w/o an adj. rank column
 	}.bind(this);
 
+	this.hasTrophyRank = function(model) {
+		if (!this.trophyRankFieldId) {
+			return false;
+		} else {
+			return Object.hasOwn(model.attributes, this.rawTrophyRankFieldId);
+		}
+	}.bind(this);
+
+	this.getTrophyRank = function(model) {
+		return this.hasTrophyRank(model)
+			? model.attributes[this.rawTrophyRankFieldId]
+			: -1;	// for grids w/o a trophy. rank column
+	}.bind(this);
+
+	this.hasUninvitedRank = function(model) {
+		if (!this.uninvitedRankFieldId) {
+			return false;
+		} else {
+			return Object.hasOwn(model.attributes, this.rawUninvitedRankFieldId);
+		}
+	}.bind(this);
+
+	this.getUninvitedRank = function(model) {
+		return this.hasUninvitedRank(model)
+			? model.attributes[this.rawUninvitedRankFieldId]
+			: -1;	// for grids w/o an uninvited. rank column
+	}.bind(this);
+
 	this.createScoreInfo = function(model) {
 		return {
 			id: model.attributes.id,
@@ -445,17 +462,28 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			status: this.getStatus(model),
 			isExhibition: this.isExhibitionTeam(model),
 			isTrialEvent: this.isTrialEvent(model),
+			isBestPlacedTrueTeam: this.isBestPlacedTrueTeam(model),
+			acceptedInvite: this.acceptedInvite(model),
 			hasRank: this.hasRank(model),
 			oldRank: this.getRank(model),
 			newRank: -1,
 			hasAdjRank: this.hasAdjRank(model),
 			oldAdjRank: this.getAdjRank(model),
 			newAdjRank: -1,
+			hasTrophyRank: this.hasTrophyRank(model),
+			oldTrophyRank: this.getTrophyRank(model),
+			newTrophyRank: -1,
+			hasUninvitedRank: this.hasUninvitedRank(model),
+			oldUninvitedRank: this.getUninvitedRank(model),
+			newUninvitedRank: -1,
 		};
 	}.bind(this);
 
+	// A cluster in this context is one non-exhibition team together with
+	// any exhibition teams that score better than, and adjacent to, that
+	// non-exhibition team.
 	this.computeRankClusters = function(scoreInfos, adjustForExhibition) {
-		const scoresWithFlags = scoreInfos
+		const flaggedScores = scoreInfos
 			.map((scoreInfo) => {
 				return {
 					score: scoreInfo.adjScore,
@@ -468,13 +496,13 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		const rankClusters = [];
 		let currentCluster = [];
 		let lastScoreWasExhibition = true;
-		for (const scoreWithFlag of scoresWithFlags) {
+		for (const flaggedScore of flaggedScores) {
 			if (!lastScoreWasExhibition) {
 				rankClusters.push(currentCluster);
 				currentCluster = [];
 			}
-			currentCluster.push(scoreWithFlag.score);
-			lastScoreWasExhibition = scoreWithFlag.isExhibition;
+			currentCluster.push(flaggedScore.score);
+			lastScoreWasExhibition = flaggedScore.isExhibition;
 		}
 		if (currentCluster.length > 0) {
 			rankClusters.push(currentCluster);
@@ -508,6 +536,64 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		}
 	}.bind(this);
 
+	// Takes two ScoreInfo instances and returns neg, 0,
+	// or pos according to their team rank sort order.
+	this.teamRankComparitor = function(lhs, rhs) {
+		if (lhs.isExhibition && !rhs.isExhibition) {
+			return 1;
+		} else if (!lhs.isExhibition && rhs.isExhibition) {
+			return -1;
+		} else {
+			return lhs.adjScore - rhs.adjScore;
+		}
+	}.bind(this);
+
+	// Calling
+	//    indexOf(scoreInfos, toFind, predicate)
+	// is similar to
+	//    scoreInfos.indexOf(toFind)
+	// except that rather than using comparison by strict equality, this
+	// indexOf variant is looking for the element x where
+	//    predicate(x, toFind)
+	// returns true.
+	this.indexOf = function(scoreInfos, toFind, predicate) {
+		for (let i = 0; i < scoreInfos.length; ++i) {
+			if (predicate(toFind, scoreInfos[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}.bind(this);
+
+	this.rankTeamsExhibitionAdjusted = function(scoreInfos) {
+		// Compute the true ranks, with exhibition teams at the end:
+		const rankOrderedScoreInfos = scoreInfos.toSorted(this.teamRankComparitor);
+		for (const si of scoreInfos) {
+			si.newRank = 1 + this.indexOf(rankOrderedScoreInfos, si,
+				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+		}
+
+		// Compute trophy ranks on school-representative teams:
+		const rankOrderedTrophyScoreInfos = rankOrderedScoreInfos
+			.filter((si) => si.isBestPlacedTrueTeam);
+		for (const si of scoreInfos) {
+			const index = this.indexOf(rankOrderedTrophyScoreInfos, si,
+				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+			si.newTrophyRank = (!si.isBestPlacedTrueTeam || index < 0)
+				? '' : (index + 1);
+		}
+
+		// Compute uninvited school ranks:
+		const rankOrderedUninvitedScoreInfos = rankOrderedTrophyScoreInfos
+			.filter((si) => !si.acceptedInvite);
+		for (const si of scoreInfos) {
+			const index = this.indexOf(rankOrderedUninvitedScoreInfos, si,
+				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+			si.newUninvitedRank = (!si.isBestPlacedTrueTeam || si.acceptedInvite || index < 0)
+				? '' : (index + 1);
+		}
+	}.bind(this);
+
 	this.computeScoreInfoList = function() {
 		const models = Knack.models[this.gridId].data.models;
 		console.log('Grid row models:');
@@ -515,25 +601,29 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 		const scoreInfos = models.map((model) => this.createScoreInfo(model));
 
-		if (scoreInfos[0].hasRank) {
-			const rankClusters = this.computeRankClusters(scoreInfos, false);
-			const numTeams = scoreInfos.length;
-			for (const scoreInfo of scoreInfos) {
-				scoreInfo.newRank = this.computeRank(scoreInfo, numTeams, rankClusters);
+		if (this.isEventRanker) {
+			if (scoreInfos[0].hasRank) {
+				const rankClusters = this.computeRankClusters(scoreInfos, false);
+				const numTeams = scoreInfos.length;
+				for (const scoreInfo of scoreInfos) {
+					scoreInfo.newRank = this.computeRank(scoreInfo, numTeams, rankClusters);
+				}
 			}
-		}
 
-		if (scoreInfos[0].hasAdjRank) {
-			// Exhibition teams may compete in trial events, but
-			// in such cases they are not considered exhibition teams:
-			const adjustForExhibition = !scoreInfos[0].isTrialEvent;
-			const adjRankClusters = this.computeRankClusters(scoreInfos, adjustForExhibition);
-			const numTeams = adjustForExhibition
-				? this.countNonExhibitionTeams(scoreInfos)
-				: scoreInfos.length;
-			for (const scoreInfo of scoreInfos) {
-				scoreInfo.newAdjRank = this.computeRank(scoreInfo, numTeams, adjRankClusters);
+			if (scoreInfos[0].hasAdjRank) {
+				// Exhibition teams may compete in trial events, but
+				// in such cases they are not considered exhibition teams:
+				const adjustForExhibition = !scoreInfos[0].isTrialEvent;
+				const adjRankClusters = this.computeRankClusters(scoreInfos, adjustForExhibition);
+				const numTeams = adjustForExhibition
+					? this.countNonExhibitionTeams(scoreInfos)
+					: scoreInfos.length;
+				for (const scoreInfo of scoreInfos) {
+					scoreInfo.newAdjRank = this.computeRank(scoreInfo, numTeams, adjRankClusters);
+				}
 			}
+		} else {
+			this.rankTeamsExhibitionAdjusted(scoreInfos);
 		}
 
 		console.log('Score info list:');
@@ -554,12 +644,20 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		return rankHistogram;
 	}.bind(this);
 
-	this.getCellBackgroundColor = function(scoreInfo, rankProperty, rankHistogram) {
+	this.getRankCellBackgroundColor = function(scoreInfo, rankHistogram) {
 		if (scoreInfo.status) {
 			return '';	// default color for special statuses
-		} else if (rankHistogram.has(scoreInfo[rankProperty])
-				&& rankHistogram.get(scoreInfo[rankProperty]) > 1) {
+		} else if (rankHistogram.has(scoreInfo.newRank)
+				&& rankHistogram.get(scoreInfo.newRank) > 1) {
 			return '#fbe9c2';	// yellow for ties
+		} else {
+			return '';	// default color otherwise
+		}
+	}.bind(this);
+
+	this.getAdjRankCellBackgroundColor = function(scoreInfo) {
+		if (scoreInfo.status) {
+			return '';	// default color for special statuses
 		} else if (scoreInfo.isExhibition && !scoreInfo.isTrialEvent) {
 			return '#9db0c5';	// greyish blue for exhibition teams in non-trial events
 		} else {
@@ -568,33 +666,33 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	}.bind(this);
 
 	this.getDisplayRank = function(scoreInfo, rankProperty) {
-		if (scoreInfo.status) {
-			return '';	// Rank of a special status is not meaningful to users
-		} else if (!this.isEventRanker && scoreInfo.isExhibition) {
-			return '';	// For team and school rankings, we show the ranks
-							// of exhibition teams as blank, because they don't
-							// earn team/school trophies.
-		} else {
-			return scoreInfo[rankProperty];
+		return scoreInfo.status
+			? ''	// Rank of a special status is not meaningful to users
+			: scoreInfo[rankProperty];
+	}.bind(this);
+
+	// "Other" ranks are adjusted ranks, trophy ranks, and uninvited ranks
+	this.updateDisplayedOtherRanks = function(scoreInfo, rankFieldId, rankPropName) {
+		if (rankFieldId) {
+			const bg = this.getAdjRankCellBackgroundColor(scoreInfo);
+			const adjRank = this.getDisplayRank(scoreInfo, rankPropName);
+			$(`div#${gridId} tr#${scoreInfo.id} > td.${rankFieldId}`).css('background', bg);
+			$(`div#${gridId} tr#${scoreInfo.id} > td.${rankFieldId} > span`).text(`${adjRank}`);
 		}
 	}.bind(this);
 
-	this.updateTeamRanks = function(scoreInfos) {
+	this.updateDisplayedRanks = function(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
 			if (this.rankFieldId) {
 				const rankHistogram = this.computeRankHistogram(scoreInfos);
-				const bg = this.getCellBackgroundColor(scoreInfo, 'newRank', rankHistogram);
+				const bg = this.getRankCellBackgroundColor(scoreInfo, rankHistogram);
 				const rank = this.getDisplayRank(scoreInfo, 'newRank');
 				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId}`).css('background', bg);
 				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId} > span`).text(`${rank}`);
 			}
-			if (this.adjRankFieldId) {
-				const rankHistogram = new Map();
-				const bg = this.getCellBackgroundColor(scoreInfo, 'newAdjRank', rankHistogram);
-				const adjRank = this.getDisplayRank(scoreInfo, 'newAdjRank');
-				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.adjRankFieldId}`).css('background', bg);
-				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.adjRankFieldId} > span`).text(`${adjRank}`);
-			}
+			this.updateDisplayedOtherRanks(scoreInfo, this.adjRankFieldId, 'newAdjRank');
+			this.updateDisplayedOtherRanks(scoreInfo, this.trophyRankFieldId, 'newTrophyRank');
+			this.updateDisplayedOtherRanks(scoreInfo, this.uninvitedRankFieldId, 'newUninvitedRank');
 		}
 	}.bind(this);
 
@@ -615,23 +713,21 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		setTimeout(() => Knack.hideSpinner(), 500);
 	}.bind(this);
 
-	this.createOptionsBody = function(newRank, newAdjRank) {
-		if (this.rankFieldId && this.adjRankFieldId) {
-			return {
-				[this.rankFieldId]: newRank,
-				[this.adjRankFieldId]: newAdjRank,
-			};
-		} else if (this.rankFieldId) {
-			return {
-				[this.rankFieldId]: newRank,
-			};
-		} else if (this.adjRankFieldId) {
-			return {
-				[this.adjRankFieldId]: newAdjRank,
-			};
-		} else {
-			throw new Error('At least one of this.rankFieldId and this.adjRankFieldId must be set');
+	this.createOptionsBody = function(newRank, newAdjRank, newTrophyRank, newUninvitedRank) {
+		const optionsBody = new Map();
+		if (this.rankFieldId) {
+			optionsBody.set(this.rankFieldId, newRank);
 		}
+		if (this.adjRankFieldId) {
+			optionsBody.set(this.adjRankFieldId, newAdjRank);
+		}
+		if (this.trophyRankFieldId) {
+			optionsBody.set(this.trophyRankFieldId, newTrophyRank);
+		}
+		if (this.uninvitedRankFieldId) {
+			optionsBody.set(this.uninvitedRankFieldId, newUninvitedRank);
+		}
+		return Object.fromEntries(optionsBody);
 	}.bind(this);
 
 	this.getPlanLimitRemaining = function(hdrs) {
@@ -666,7 +762,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		}
 	}.bind(this);
 
-	this.putRankToDatabaseWithRetry = async function(id, newRank, newAdjRank) {
+	this.putRankToDatabaseWithRetry = async function(id, newRank, newAdjRank, newTrophyRank, newUninvitedRank) {
 		const url = `https://api.knack.com/v1/pages/${this.sceneId}/views/${this.gridId}/records/${id}`;
 		const options = {
 			method: 'PUT',
@@ -676,7 +772,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 				'X-Knack-REST-API-Key': 'knack',
 				'Authorization': Knack.getUserToken(),
 			},
-			body: JSON.stringify(this.createOptionsBody(newRank, newAdjRank)),
+			body: JSON.stringify(this.createOptionsBody(newRank, newAdjRank, newTrophyRank, newUninvitedRank)),
 		};
 		//console.log(`Put rank URL: ${url}`);
 		//console.log('options:');
@@ -707,19 +803,14 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 	this.putRanksToDatabase = async function(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
-			// On team and school rankings, we store a blank rank for exhibition teams,
-			// because they don't earn team/school trophies:
-			const rankToStore = (!this.isEventRanker && scoreInfo.isExhibition)
-				? ''
-				: scoreInfo.newRank;
-			const adjRankToStore = (!this.isEventRanker && scoreInfo.isExhibition)
-				? ''
-				: scoreInfo.newAdjRank;
-			if (rankToStore === scoreInfo.oldRank
-					&& adjRankToStore === scoreInfo.oldAdjRank) {
+			if (scoreInfo.newRank === scoreInfo.oldRank
+					&& scoreInfo.newAdjRank === scoreInfo.oldAdjRank
+					&& scoreInfo.newTrophyRank === scoreInfo.oldTrophyRank
+					&& scoreInfo.newUninvitedRank === scoreInfo.oldUninvitedRank) {
 				continue;
 			}
-			await this.putRankToDatabaseWithRetry(scoreInfo.id, rankToStore, adjRankToStore);
+			await this.putRankToDatabaseWithRetry(scoreInfo.id, scoreInfo.newRank,
+				scoreInfo.newAdjRank, scoreInfo.newTrophyRank, scoreInfo.newUninvitedRank);
 		}
 	}.bind(this);
 
@@ -758,11 +849,17 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 	this.rankUpdateHandler = function(/* event, view, record*/) {
 		this.scoreInfos = this.computeScoreInfoList();
-		this.updateTeamRanks(this.scoreInfos);
+		this.updateDisplayedRanks(this.scoreInfos);
 	}.bind(this);
 
 	this.sceneRenderHandler = function(/* event, view, record*/) {
-		$(`#${this.gridId}`).hide();	// Scores table needed only to force data retrieval
+		if (this.isEventRanker) {
+			// For the event ranker on the lock scores page, the scores table is needed
+			// only to force data retrieval, so we hide it. But on the team lock scores
+			// page, this table is the only way to see all the ranks computed, so we
+			// label it "for programmers only" and leave it showing.
+			$(`#${this.gridId}`).hide();
+		}
 		$(`#${this.lockSubmitForm} div#kn-input-`).hide();	// Result report
 		$(`#${this.lockSubmitForm} div.kn-submit`).hide();	// Submit button
 		$(`div#${this.finalizeBtnViewId} svg`).on('click', this.finalizeBtnClickHandler);
@@ -779,74 +876,26 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 
 const esUpdater = new RankUpdater(appInfo.esScoringGrid, '', '', '',
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, true);
+	'', '', appInfo.eventStatusFieldId, true);
 const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventGrid, '', '', '',
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, true);
+	'', '', appInfo.eventStatusFieldId, true);
 const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEventSceneId,
 	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
 	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	appInfo.eventStatusFieldId, true);
+	'', '', appInfo.eventStatusFieldId, true);
 
-const overviewTrackTeamBeforeUpdater = new RankUpdater(
-	appInfo.overviewTrackTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewTrackTeamAfterUpdater = new RankUpdater(
-	appInfo.overviewTrackTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewTrackSchoolUpdater = new RankUpdater(appInfo.overviewTrackSchoolGrid,
+const trackOverviewTeamBeforeUpdater = new RankUpdater(
+	appInfo.trackOverviewTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
+	appInfo.teamRankFieldId, '', '', '', '', false);
+const trackOverviewSchoolUpdater = new RankUpdater(appInfo.trackOverviewSchoolGrid,
 	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
+	'', '', '', false);
+const trackOverviewLockUpdater = new RankUpdater(appInfo.trackOverviewLockGrid,
+	appInfo.trackOverviewLockSceneId, appInfo.trackOverviewSubmitForm,
+	appInfo.trackOverviewFinalizeView, appInfo.teamAdjScoreFieldId,
+	appInfo.teamRankFieldId, '', appInfo.trophyRankFieldId, appInfo.uninvitedRankFieldId,
 	'', false);
-const overviewTrackLockUpdater = new RankUpdater(appInfo.overviewTrackLockGrid,
-	appInfo.overviewTrackLockSceneId, appInfo.overviewTrackSubmitForm,
-	appInfo.overviewTrackFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-
-// ========================== The RanksUpdaters below are for ScoreScope only ==========================
-
-const overviewSchoolBTeamBeforeUpdater = new RankUpdater(
-	appInfo.overviewSchoolBTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewSchoolBTeamAfterUpdater = new RankUpdater(
-	appInfo.overviewSchoolBTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewSchoolBSchoolUpdater = new RankUpdater(appInfo.overviewSchoolBSchoolGrid,
-	'', '', '', appInfo.schoolBAdjScoreFieldId, appInfo.schoolBRankFieldId, '',
-	'', false);
-const overviewSchoolBLockUpdater = new RankUpdater(appInfo.overviewSchoolBLockGrid,
-	appInfo.overviewSchoolBLockSceneId, appInfo.overviewSchoolBSubmitForm,
-	appInfo.overviewSchoolBFinalizeView, appInfo.schoolBAdjScoreFieldId,
-	appInfo.schoolBRankFieldId, '', '', false);
-
-const overviewTeamBTeamUpdater = new RankUpdater(appInfo.overviewTeamBTeamGrid,
-	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
-	'', false);
-const overviewTeamBLockUpdater = new RankUpdater(appInfo.overviewTeamBLockGrid,
-	appInfo.overviewTeamBLockSceneId, appInfo.overviewTeamBSubmitForm,
-	appInfo.overviewTeamBFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-
-const overviewSchoolCTeamBeforeUpdater = new RankUpdater(
-	appInfo.overviewSchoolCTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewSchoolCTeamAfterUpdater = new RankUpdater(
-	appInfo.overviewSchoolCTeamAfterGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
-const overviewSchoolCSchoolUpdater = new RankUpdater(appInfo.overviewSchoolCSchoolGrid,
-	'', '', '', appInfo.schoolCAdjScoreFieldId, appInfo.schoolCRankFieldId, '', '',
-	false);
-const overviewSchoolCLockUpdater = new RankUpdater(appInfo.overviewSchoolCLockGrid,
-	appInfo.overviewSchoolCLockSceneId, appInfo.overviewSchoolCSubmitForm,
-	appInfo.overviewSchoolCFinalizeView, appInfo.schoolCAdjScoreFieldId,
-	appInfo.schoolCRankFieldId, '', '', false);
-
-const overviewTeamCTeamUpdater = new RankUpdater(appInfo.overviewTeamCTeamGrid,
-	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '', '',
-	false);
-const overviewTeamCLockUpdater = new RankUpdater(appInfo.overviewTeamCLockGrid,
-	appInfo.overviewTeamCLockSceneId, appInfo.overviewTeamCSubmitForm,
-	appInfo.overviewTeamCFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', false);
 
 
 
