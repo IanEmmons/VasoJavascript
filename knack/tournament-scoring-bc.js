@@ -3,308 +3,538 @@
 /* jshint laxbreak: true */
 'use strict';
 
-// Switch from prototype syntax to classes
+// To-do items:
+// - Switch from prototype syntax to classes
 
-function KnackAppInfo() {
-	this.choose = function(aValue, bcValue, ssValue) {
+
+
+// ====================================================================
+
+class AppInfo {
+	// Coach LoginLogger
+	static get coachLoginViewId() { return AppInfo.#ch('view_39', 'view_39', ''); }
+	static get coachLandingSceneId() { return AppInfo.#ch('scene_13', 'scene_13', ''); }
+	static get coachUserViewId() { return AppInfo.#ch('view_1793', 'view_2411', ''); }
+	static get coachLoginCountFieldId() { return AppInfo.#ch('field_2291', 'field_2401', ''); }
+	static get coachLastLoginTimeFieldId() { return AppInfo.#ch('field_2290', 'field_2400', ''); }
+
+	// Event RankUpdater
+	static get esScoringGrid() { return 'view_1375'; }
+	static get scoremasterEventGrid() { return 'view_1363'; }
+	static get lockEventSceneId() { return 'scene_563'; }
+	static get lockEventGrid() { return 'view_1380'; }
+	static get lockEventSubmitForm() { return 'view_1382'; }
+	static get lockEventFinalizeView() { return AppInfo.#ch('view_1531', 'view_1609', 'view_1609'); }
+
+	static get eventAdjScoreFieldId() { return 'field_1736'; }	// 'Raw Scores/Tier Adjusted Score' column
+	static get eventStatusFieldId() { return 'field_1731'; }		// 'Raw Scores/Event Special Status' column
+	static get eventIsTrialFieldId() { return 'field_1705'; }	// 'Events by Tournament/Trial Event' column
+	static get isBestPlacedTrueTeamFieldId() { return AppInfo.#ch('', 'field_2361', 'field_2054'); }	// 'Teams/Best Placed Team Indicator' column
+	static get acceptedInviteFieldId() { return AppInfo.#ch('', 'field_2313', ''); }			 				// 'Teams/Reg: Accepted Invite?' column
+	static get eventRankFieldId() { return AppInfo.#ch('field_1737', 'field_2027', 'field_1737'); }		// 'Raw Scores/True Rank' column
+	static get eventAdjRankFieldId() { return AppInfo.#ch('', 'field_1737', 'field_2048'); }			 	// 'Raw Scores/Adj Rank' column
+	static get trophyRankFieldId() { return AppInfo.#ch('', 'field_2382', 'field_2050'); }			 		// 'Teams/Trophy Rank' column
+	static get uninvitedRankFieldId() { return AppInfo.#ch('', 'field_2371', ''); }			 				// 'Teams/Uninvited School Rank' column
+
+	static get teamIsExhibitionTeamFieldId() { return AppInfo.#ch('', 'field_1979', 'field_1979'); }	// 'Teams/Exhibition Team' column
+	static get teamAdjScoreFieldId() { return 'field_1760'; }	// 'Teams/Tie-Adj Overall Score' column
+	static get teamRankFieldId() { return 'field_1900'; }			// 'Teams/Rank' column
+
+
+
+	/* The first two are no longer used, and the second two are used only in presenters */
+	/* Probably should be deleted after fixing the field IDs used in the presenters */
+	/**/ static get schoolBAdjScoreFieldId() { return 'field_1763'; }	// 'School/Reg: Best B Tie-Adj Score' column
+	/**/ static get schoolCAdjScoreFieldId() { return 'field_1764'; }	// 'School/Reg: Best C Tie-Adj Score' column
+	/**/ static get schoolBRankFieldId() { return 'field_1938'; }		// 'School/Reg: B Rank' column
+	/**/ static get schoolCRankFieldId() { return 'field_1939'; }		// 'School/Reg: C Rank' column
+
+
+
+	/************************************************************************************/
+	// Track Overview RankUpdaters (Division Overview in ScoreScope)
+	static get trackOverviewTeamBeforeGrid() { return AppInfo.#ch('', 'view_2272', 'view_1897'); }
+	static get trackOverviewSchoolGrid() { return AppInfo.#ch('', 'view_2276', 'view_1896'); }
+	static get trackOverviewLockSceneId() { return AppInfo.#ch('', 'scene_788', 'scene_702'); }
+	static get trackOverviewLockGrid() { return AppInfo.#ch('', 'view_2280', 'view_1905'); }
+	static get trackOverviewSubmitForm() { return AppInfo.#ch('', 'view_2282', 'view_1906'); }
+	static get trackOverviewFinalizeView() { return AppInfo.#ch('', 'view_2281', 'view_1907'); }
+
+	// Award Background
+	static get presenterTournamentSelectionSceneId() { return 'scene_587'; }
+	static get scoremasterSceneId() { return 'scene_546'; }
+	static get adminSceneId() { return 'scene_69'; }
+	static get eventIconFieldId() { return 'field_1712'; }			 	// Events - General/Event Icon
+
+	// Award Background
+	static get presenterEventSelectionBSceneId() { return AppInfo.#ch('', 'scene_638', 'scene_638'); }
+	static get presenterEventSelectionCSceneId() { return AppInfo.#ch('', 'scene_642', 'scene_642'); }
+	static get presenterEventSelectionAllSceneId() { return AppInfo.#ch('scene_616', 'scene_605', 'scene_605'); }
+	static get presenterStatesBoundBSceneId() { return AppInfo.#ch('', 'scene_641', ''); }
+	static get presenterStatesBoundCSceneId() { return AppInfo.#ch('', 'scene_645', ''); }
+	static get presenterStatesBoundAllBSceneId() { return AppInfo.#ch('', 'scene_646', ''); }
+	static get presenterStatesBoundAllCSceneId() { return AppInfo.#ch('', 'scene_647', ''); }
+	static get presenterEventAwardSceneId() { return AppInfo.#ch('scene_617', 'scene_606', 'scene_606'); }
+	static get presenterEventIconViewId() { return AppInfo.#ch('view_1538', 'view_1521', 'view_1521'); }
+	static get presenterSchoolBAwardSceneId() { return AppInfo.#ch('', 'scene_640', 'scene_640'); }
+	static get presenterSchoolCAwardSceneId() { return AppInfo.#ch('', 'scene_643', 'scene_643'); }
+	static get presenterSchoolBCAwardSceneId() { return AppInfo.#ch('', 'scene_613', 'scene_613'); }
+	static get presenterTeamBAwardSceneId() { return AppInfo.#ch('', 'scene_692', 'scene_693'); }
+	static get presenterTeamCAwardSceneId() { return AppInfo.#ch('', 'scene_693', 'scene_694'); }
+	static get presenterTeamBCAwardSceneId() { return AppInfo.#ch('', 'scene_615', 'scene_615'); }
+	static get rookieTeamOfTheYearBAwardSceneId() { return AppInfo.#ch('', 'scene_715', ''); }
+	static get rookieTeamOfTheYearCAwardSceneId() { return AppInfo.#ch('', 'scene_714', ''); }
+	static get rookieTeamOfTheYearBCAwardSceneId() { return AppInfo.#ch('', 'scene_716', ''); }
+	static get awardBackgroundUrl() {
+		return AppInfo.#ch(
+			'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
+			'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
+			'https://static.wixstatic.com/shapes/78a71f_ca485e8df91e4837a83c85af6bae7814.svg');
+	}
+
+	// Presenter
+	static get teamNameFieldId() { return 'field_1202'; }				 	// 'Teams/Award Ceremony Team Name' column
+	static get schoolNameFieldId() { return 'field_1862'; }			 	// 'School/Award Ceremony Name' column in BC portal
+																							// 'School/School Name' column in ScoreScope
+																							// Not used in Div. A portal
+
+	static get eventPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('view_1542', 'view_1545', 'view_1545'),
+			awardeeNameFieldId: this.teamNameFieldId,
+			goldBidIndicatorFieldId: AppInfo.#ch('', 'field_2028', ''),
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('view_1539', 'view_1522', 'view_1522'),
+					// BC uses AdjRank for gold bids. A uses plain rank, since there are
+					// no gold bids there. In ScoreScope, the Knack-based logic removes
+					// all the exhibition teams from the list, but we must use AdjRank
+					// so we don't end up with skipped medals.
+					rankFieldId: AppInfo.#ch(this.eventRankFieldId, this.eventAdjRankFieldId,
+						this.eventAdjRankFieldId),
+				}
+			]
+		};
+	}
+
+	// School Winners Presenters
+	static get schoolBPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1675', 'view_1675'),
+			awardeeNameFieldId: this.schoolNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1673', 'view_1852'),
+					rankFieldId: this.schoolBRankFieldId,
+				}
+			]
+		};
+	}
+	static get schoolCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1686', 'view_1686'),
+			awardeeNameFieldId: this.schoolNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1684', 'view_1853'),
+					rankFieldId: this.schoolCRankFieldId,
+				}
+			]
+		};
+	}
+	static get schoolBCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1558', 'view_1558'),
+			awardeeNameFieldId: this.schoolNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1555', 'view_1854'),
+					rankFieldId: this.schoolBRankFieldId,
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1556', 'view_1855'),
+					rankFieldId: this.schoolCRankFieldId,
+				}
+			]
+		};
+	}
+
+	// Team Winners Presenters
+	static get teamBPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1861', 'view_1861'),
+			awardeeNameFieldId: this.teamNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1863', 'view_1862'),
+					rankFieldId: this.teamRankFieldId,
+				}
+			]
+		};
+	}
+	static get teamCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1867', 'view_1867'),
+			awardeeNameFieldId: this.teamNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1866', 'view_1866'),
+					rankFieldId: this.teamRankFieldId,
+				}
+			]
+		};
+	}
+	static get teamBCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1873', 'view_1870'),
+			awardeeNameFieldId: this.teamNameFieldId,
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: false,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1560', 'view_1560'),
+					rankFieldId: this.teamRankFieldId,
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1561', 'view_1561'),
+					rankFieldId: this.teamRankFieldId,
+				}
+			]
+		};
+	}
+
+	// States-Bound Presenters
+	static get statesBoundBPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1895', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1678', ''),
+					rankFieldId: '',
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1695', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+	static get statesBoundCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1894', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1694', ''),
+					rankFieldId: '',
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1696', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+	static get statesBoundAllBPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1893', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1698', ''),
+					rankFieldId: '',
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1702', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+	static get statesBoundAllCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1892', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_1700', ''),
+					rankFieldId: '',
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_1701', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+
+	// Rookie Team of the Year Presenters
+	static get rookieTeamOfTheYearBPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1964', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_2144', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+	static get rookieTeamOfTheYearCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1965', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_2145', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+	static get rookieTeamOfTheYearBCPresenterParams() {
+		return {
+			nextBtnViewId: AppInfo.#ch('', 'view_1966', ''),
+			awardeeNameFieldId: '',
+			goldBidIndicatorFieldId: '',
+			nextShowsWholeGrid: true,
+			gridDefinitions: [
+				{
+					awardGrid: AppInfo.#ch('', 'view_2146', ''),
+					rankFieldId: '',
+				},
+				{
+					awardGrid: AppInfo.#ch('', 'view_2147', ''),
+					rankFieldId: '',
+				}
+			]
+		};
+	}
+
+	// "ch" is short for "choose"
+	static #ch(aValue, bcValue, ssValue) {
 		switch (Knack.application_id.toLowerCase()) {
-			case '64ca43965ac49100285bcd41':	// Division A Portal
+			case '64ca43965ac49100285bcd41': // Division A Portal
 				return aValue;
-			case '648d0fcf2458250028b97840':	// Division BC Portal
+			case '648d0fcf2458250028b97840': // Division BC Portal
 				return bcValue;
-			case '652ead5e0d05db00275daab7':	// ScoreScope
+			case '652ead5e0d05db00275daab7': // ScoreScope
 				return ssValue;
 			default:
 				throw new Error('Unrecognized portal: Not Div A, Div BC, or ScoreScope');
 		}
-	}.bind(this);
-
-	// Event RankUpdater
-	this.esScoringGrid = 'view_1375';
-	this.scoremasterEventGrid = 'view_1363';
-	this.lockEventSceneId = 'scene_563';
-	this.lockEventGrid = 'view_1380';
-	this.lockEventSubmitForm = 'view_1382';
-	this.lockEventFinalizeView = this.choose('view_1531', 'view_1609', 'view_1609');
-
-	this.eventAdjScoreFieldId = 'field_1736';		// 'Raw Scores/Tier Adjusted Score' column
-	this.eventStatusFieldId = 'field_1731';		// 'Raw Scores/Event Special Status' column
-	this.eventIsTrialFieldId = 'field_1705';		// 'Events by Tournament/Trial Event' column
-	this.isBestPlacedTrueTeamFieldId = this.choose('', 'field_2361', 'field_2054');	// 'Teams/Best Placed Team Indicator' column
-	this.acceptedInviteFieldId = this.choose('', 'field_2313', '');						// 'Teams/Reg: Accepted Invite?' column
-	this.eventRankFieldId = this.choose('field_1737', 'field_2027', 'field_1737');	// 'Raw Scores/True Rank' column
-	this.eventAdjRankFieldId = this.choose('', 'field_1737', 'field_2048');				// 'Raw Scores/Adj Rank' column
-	this.trophyRankFieldId = this.choose('', 'field_2382', 'field_2050');				// 'Teams/Trophy Rank' column
-	this.uninvitedRankFieldId = this.choose('', 'field_2371', '');							// 'Teams/Uninvited School Rank' column
-
-	this.teamIsExhibitionTeamFieldId = this.choose('', 'field_1979', 'field_1979');	// 'Teams/Exhibition Team' column
-	this.teamAdjScoreFieldId = 'field_1760';		// 'Teams/Tie-Adj Overall Score' column
-	this.teamRankFieldId = 'field_1900';			// 'Teams/Rank' column
-
-/* The first two are no longer used, and the second two are used only in presenters */
-/* Probably should be deleted after fixing the field IDs used in the presenters */
-/**/	this.schoolBAdjScoreFieldId = 'field_1763';	// 'School/Reg: Best B Tie-Adj Score' column
-/**/	this.schoolCAdjScoreFieldId = 'field_1764';	// 'School/Reg: Best C Tie-Adj Score' column
-/**/	this.schoolBRankFieldId = 'field_1938';		// 'School/Reg: B Rank' column
-/**/	this.schoolCRankFieldId = 'field_1939';		// 'School/Reg: C Rank' column
-/************************************************************************************/
-
-	// Track Overview RankUpdaters (Division Overview in ScoreScope)
-	this.trackOverviewTeamBeforeGrid = this.choose('', 'view_2272', 'view_1897');
-	this.trackOverviewSchoolGrid = this.choose('', 'view_2276', 'view_1896');
-	this.trackOverviewLockSceneId = this.choose('', 'scene_788', 'scene_702');
-	this.trackOverviewLockGrid = this.choose('', 'view_2280', 'view_1905');
-	this.trackOverviewSubmitForm = this.choose('', 'view_2282', 'view_1906');
-	this.trackOverviewFinalizeView = this.choose('', 'view_2281', 'view_1907');
-
-	// Award Background
-	this.presenterTournamentSelectionSceneId = 'scene_587';
-	this.scoremasterSceneId = 'scene_546';
-	this.adminSceneId = 'scene_69';
-	this.eventIconFieldId = 'field_1712';			// Events - General/Event Icon
-
-	// Award Background
-	this.presenterEventSelectionBSceneId = this.choose('', 'scene_638', 'scene_638');
-	this.presenterEventSelectionCSceneId = this.choose('', 'scene_642', 'scene_642');
-	this.presenterEventSelectionAllSceneId = this.choose('scene_616', 'scene_605', 'scene_605');
-	this.presenterStatesBoundBSceneId = this.choose('', 'scene_641', '');
-	this.presenterStatesBoundCSceneId = this.choose('', 'scene_645', '');
-	this.presenterStatesBoundAllBSceneId = this.choose('', 'scene_646', '');
-	this.presenterStatesBoundAllCSceneId = this.choose('', 'scene_647', '');
-	this.presenterEventAwardSceneId = this.choose('scene_617', 'scene_606', 'scene_606');
-	this.presenterEventIconViewId = this.choose('view_1538', 'view_1521', 'view_1521');
-	this.presenterSchoolBAwardSceneId = this.choose('', 'scene_640', 'scene_640');
-	this.presenterSchoolCAwardSceneId = this.choose('', 'scene_643', 'scene_643');
-	this.presenterSchoolBCAwardSceneId = this.choose('', 'scene_613', 'scene_613');
-	this.presenterTeamBAwardSceneId = this.choose('', 'scene_692', 'scene_693');
-	this.presenterTeamCAwardSceneId = this.choose('', 'scene_693', 'scene_694');
-	this.presenterTeamBCAwardSceneId = this.choose('', 'scene_615', 'scene_615');
-	this.rookieTeamOfTheYearBAwardSceneId = this.choose('', 'scene_715', '');
-	this.rookieTeamOfTheYearCAwardSceneId = this.choose('', 'scene_714', '');
-	this.rookieTeamOfTheYearBCAwardSceneId = this.choose('', 'scene_716', '');
-	this.awardBackgroundUrl = this.choose(
-		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
-		'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
-		'https://static.wixstatic.com/shapes/78a71f_ca485e8df91e4837a83c85af6bae7814.svg');
-
-	// Presenter
-	this.teamNameFieldId = 'field_1202';			// 'Teams/Award Ceremony Team Name' column
-	this.schoolNameFieldId = 'field_1862';			// 'School/Award Ceremony Name' column in BC portal
-																// 'School/School Name' column in ScoreScope
-																// Not used in Div. A portal
-
-	this.eventPresenterParams = {
-		nextBtnViewId: this.choose('view_1542', 'view_1545', 'view_1545'),
-		awardeeNameFieldId: this.teamNameFieldId,
-		goldBidIndicatorFieldId: this.choose('', 'field_2028', ''),
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('view_1539', 'view_1522', 'view_1522'),
-				// BC uses AdjRank for gold bids. A uses plain rank, since there are
-				// no gold bids there. In ScoreScope, the Knack-based logic removes
-				// all the exhibition teams from the list, but we must use AdjRank
-				// so we don't end up with skipped medals.
-				rankFieldId: this.choose(this.eventRankFieldId, this.eventAdjRankFieldId,
-					this.eventAdjRankFieldId),
-			}
-		]
-	};
-
-	// School Winners Presenters
-	this.schoolBPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1675', 'view_1675'),
-		awardeeNameFieldId: this.schoolNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1673', 'view_1852'),
-				rankFieldId: this.schoolBRankFieldId,
-			}
-		]
-	};
-	this.schoolCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1686', 'view_1686'),
-		awardeeNameFieldId: this.schoolNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1684', 'view_1853'),
-				rankFieldId: this.schoolCRankFieldId,
-			}
-		]
-	};
-	this.schoolBCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1558', 'view_1558'),
-		awardeeNameFieldId: this.schoolNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1555', 'view_1854'),
-				rankFieldId: this.schoolBRankFieldId,
-			},
-			{
-				awardGrid: this.choose('', 'view_1556', 'view_1855'),
-				rankFieldId: this.schoolCRankFieldId,
-			}
-		]
-	};
-
-	// Team Winners Presenters
-	this.teamBPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1861', 'view_1861'),
-		awardeeNameFieldId: this.teamNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1863', 'view_1862'),
-				rankFieldId: this.teamRankFieldId,
-			}
-		]
-	};
-	this.teamCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1867', 'view_1867'),
-		awardeeNameFieldId: this.teamNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1866', 'view_1866'),
-				rankFieldId: this.teamRankFieldId,
-			}
-		]
-	};
-	this.teamBCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1873', 'view_1870'),
-		awardeeNameFieldId: this.teamNameFieldId,
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: false,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1560', 'view_1560'),
-				rankFieldId: this.teamRankFieldId,
-			},
-			{
-				awardGrid: this.choose('', 'view_1561', 'view_1561'),
-				rankFieldId: this.teamRankFieldId,
-			}
-		]
-	};
-
-	// States-Bound Presenters
-	this.statesBoundBPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1895', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1678', ''),
-				rankFieldId: '',
-			},
-			{
-				awardGrid: this.choose('', 'view_1695', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-	this.statesBoundCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1894', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1694', ''),
-				rankFieldId: '',
-			},
-			{
-				awardGrid: this.choose('', 'view_1696', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-	this.statesBoundAllBPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1893', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1698', ''),
-				rankFieldId: '',
-			},
-			{
-				awardGrid: this.choose('', 'view_1702', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-	this.statesBoundAllCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1892', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_1700', ''),
-				rankFieldId: '',
-			},
-			{
-				awardGrid: this.choose('', 'view_1701', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-
-	// Rookie Team of the Year Presenters
-	this.rookieTeamOfTheYearBPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1964', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_2144', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-	this.rookieTeamOfTheYearCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1965', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_2145', ''),
-				rankFieldId: '',
-			}
-		]
-	};
-	this.rookieTeamOfTheYearBCPresenterParams = {
-		nextBtnViewId: this.choose('', 'view_1966', ''),
-		awardeeNameFieldId: '',
-		goldBidIndicatorFieldId: '',
-		nextShowsWholeGrid: true,
-		gridDefinitions: [
-			{
-				awardGrid: this.choose('', 'view_2146', ''),
-				rankFieldId: '',
-			},
-			{
-				awardGrid: this.choose('', 'view_2147', ''),
-				rankFieldId: '',
-			}
-		]
-	};
+	}
 }
 
-const appInfo = new KnackAppInfo();
+
+
+// ====================================================================
+
+class ViewBasedApiPut {
+	static #sleep(timeInMillis) {
+		return new Promise(resolve => setTimeout(resolve, timeInMillis));
+	}
+
+	static #getPlanLimitRemaining(hdrs) {
+		const hdrStr = hdrs.get("X-PlanLimit-Remaining");
+		const result = (hdrStr ? Number(hdrStr) : Number.MAX_SAFE_INTEGER);
+		console.log(`X-PlanLimit-Remaining = '${hdrStr}', ${result}`);
+		return result;
+	}
+
+	// Returns the number of milliseconds to wait before retrying, or zero if success (no retry needed), or throws
+	static async #put(url, options) {
+		const response = await fetch(url, options);	// returns response
+		const hdrs = response.headers;
+		if (response.ok) {
+			console.log(`PUT rank: response.ok`);
+			return 0;
+		} else if (response.status != 429) {	// Status 429 is Too Many Requests
+			const text = await response.text();
+			console.log(`PUT rank: HTTP response code ${response.status}, response text '${text}'`);
+			throw new Error(`HTTP response code ${response.status}, response text '${text}'`);
+		} else if (ViewBasedApiPut.#getPlanLimitRemaining(hdrs) <= 0) {	// Exceeding Knack's daily plan limit
+			console.log(`PUT rank: Exceeded Knack API plan limit`);
+			const planLimit = Number(hdrs.get("X-PlanLimit-Limit"));
+			const planLimitReset = Number(hdrs.get("X-PlanLimit-Reset"));
+			throw new Error(`Exceeded Knack API plan limit (${planLimit} requests per day). Will reset in ${planLimitReset} milliseconds.`);
+		} else {
+			// Exceeded Knack's API rate limit
+			const rateLimitReset = Number(hdrs.get("X-RateLimit-Reset"));
+			const milliSecToWait = (1000 * rateLimitReset) - Date.now() + 1;
+			console.log(`PUT rank: Exceeded Knack API rate limit. Waiting ${milliSecToWait} milliseonds for reset`);
+			return milliSecToWait;
+		}
+	}
+
+	static async putWithRetry(sceneId, viewId, id, optionsBody) {
+		const url = `${Knack.api_url}/v1/pages/${sceneId}/views/${viewId}/records/${id}`;
+		const options = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-Knack-Application-ID': Knack.application_id,
+				'X-Knack-REST-API-Key': 'knack',
+				'Authorization': Knack.getUserToken(),
+			},
+			body: JSON.stringify(optionsBody),
+		};
+		// console.log(`Put rank URL: ${url}`);
+		// console.log('options:');
+		// console.log(options);
+
+		let milliSecToWait = await ViewBasedApiPut.#put(url, options);
+		if (milliSecToWait <= 0) {
+			return;
+		}
+
+		console.log(`Put rank first retry, milliSecToWait = ${milliSecToWait}`);
+		await ViewBasedApiPut.#sleep(milliSecToWait);
+		milliSecToWait = await ViewBasedApiPut.#put(url, options);
+		if (milliSecToWait <= 0) {
+			return;
+		}
+
+		milliSecToWait = 1100;
+		console.log(`Put rank second retry, milliSecToWait = ${milliSecToWait}`);
+		await ViewBasedApiPut.#sleep(milliSecToWait);
+		milliSecToWait = await ViewBasedApiPut.#put(url, options);
+		if (milliSecToWait <= 0) {
+			return;
+		}
+
+		throw new Error(`Exceeded Knack API rate limit, but waiting hasn't helped`);
+	}
+
+	static setSpinner() {
+		// Show a spinner after a third of a second:
+		setTimeout(() => Knack.showSpinner(), 333);
+	}
+
+	static cancelSpinner() {
+		// For immediate effect:
+		Knack.hideSpinner();
+		// To ensure cancel in cases where we reach the line above before
+		// the preceeding setSpinner() call's 333 milliseconds has expired:
+		setTimeout(() => Knack.hideSpinner(), 500);
+	}
+}
+
+
+
+// ====================================================================
+
+class LoginLogger {
+	#loginViewId;
+	#landingSceneId;
+	#userDetailsViewId;
+	#loginCountFieldId;
+	#lastLoginTimeFieldId;
+	#isLandingDueToLogin;
+
+	constructor(loginViewId, landingSceneId, userDetailsViewId, loginCountFieldId, lastLoginTimeFieldId) {
+		this.#loginViewId = loginViewId;
+		this.#landingSceneId = landingSceneId;
+		this.#userDetailsViewId = userDetailsViewId;
+		this.#loginCountFieldId = loginCountFieldId;
+		this.#lastLoginTimeFieldId = lastLoginTimeFieldId;
+		this.#isLandingDueToLogin = false;
+
+		if (this.#loginViewId && this.#landingSceneId && this.#userDetailsViewId) {
+			$(document).on(`knack-scene-render.${this.#landingSceneId}`,
+				this.sceneRenderHandler.bind(this));
+			$(document).on(`knack-view-render.${this.#loginViewId}`,
+				this.loginViewRenderHandler.bind(this));
+			$(document).on(`knack-view-render.${this.#userDetailsViewId}`,
+				this.userDetailsViewRenderHandler.bind(this));
+		}
+	}
+
+	sceneRenderHandler(/* event, view, record*/) {
+		$(`#${this.#userDetailsViewId}`).hide();
+	}
+
+	loginViewRenderHandler(/*event, view, record*/) {
+		this.#isLandingDueToLogin = false;
+		$('input[type="submit"]').click(this.onClickLogin.bind(this));
+	}
+
+	onClickLogin(event) {
+		event.preventDefault();
+		this.#isLandingDueToLogin = true;
+		$('form').submit();
+	}
+
+	async userDetailsViewRenderHandler(/*event, view, record*/) {
+		if (this.#isLandingDueToLogin) {
+			this.#isLandingDueToLogin = false;
+
+			const attributes = Knack.models[this.#userDetailsViewId].attributes;
+			console.log('user view attributes:');
+			console.log(attributes);
+
+			const id = attributes.id;
+			const oldCount = attributes[this.#loginCountFieldId];
+			const newCount = (typeof oldCount !== 'number') ? 1 : (oldCount + 1);
+			const dateFormat = {
+				hour12: true,
+				timeZone: 'America/New_York'
+			};
+			const newLoginTime = new Date().toLocaleString('en-US', dateFormat)
+				.replace(',', '');	// Knack doesn't like the comma between date and time
+
+			const optionsBody = {
+				[this.#loginCountFieldId]:		newCount,
+				[this.#lastLoginTimeFieldId]:	newLoginTime
+			};
+			ViewBasedApiPut.setSpinner();
+			try {
+				const startTime = Date.now();
+				await ViewBasedApiPut.putWithRetry(this.#landingSceneId,
+					this.#userDetailsViewId, id, optionsBody);
+				const elapsedTime = (Date.now() - startTime) / 1000.0;
+				console.log(`Database update for login logging succeeded in ${elapsedTime} sec`);
+			} catch (error) {
+				console.log(`Database updates for ranking failed: ${error.message}`);
+			} finally {
+				ViewBasedApiPut.cancelSpinner();
+			}
+		}
+	}
+}
+
+const coachLoginLogger = new LoginLogger(AppInfo.coachLoginViewId,
+	AppInfo.coachLandingSceneId, AppInfo.coachUserViewId,
+	AppInfo.coachLoginCountFieldId, AppInfo.coachLastLoginTimeFieldId);
+
+
+
+// ====================================================================
 
 // Rank: The true rank that the team earned, regardless of exhibitions teams.
 //
@@ -346,9 +576,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	// but in ScoreScope it means a true exhibition team, e.g.,
 	// a Fairfax team at the Fairfax invitational.
 	this.isExhibitionTeam = function(model) {
-		if (!appInfo.teamIsExhibitionTeamFieldId) {
+		if (!AppInfo.teamIsExhibitionTeamFieldId) {
 			return false;
-		} else if (!Object.hasOwn(model.attributes, appInfo.teamIsExhibitionTeamFieldId)) {
+		} else if (!Object.hasOwn(model.attributes, AppInfo.teamIsExhibitionTeamFieldId)) {
 			// The ES scoring grid will use this option, because the grid doesn't
 			// have an exhibition column. This is on purpose, because we don't want
 			// the ES to have to understand about exhibition teams. The end result
@@ -356,19 +586,19 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			// exhibition status.
 			return false;
 		} else {
-			const rawFieldId = appInfo.teamIsExhibitionTeamFieldId + '_raw';
+			const rawFieldId = AppInfo.teamIsExhibitionTeamFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
 		}
 	}.bind(this);
 
 	this.isTrialEvent = function(model) {
-		if (!appInfo.eventIsTrialFieldId) {
+		if (!AppInfo.eventIsTrialFieldId) {
 			return false;
-		} else if (!Object.hasOwn(model.attributes, appInfo.eventIsTrialFieldId)) {
+		} else if (!Object.hasOwn(model.attributes, AppInfo.eventIsTrialFieldId)) {
 			// For the ES scoring grid, which doesn't have this column
 			return false;
 		} else {
-			const rawFieldId = appInfo.eventIsTrialFieldId + '_raw';
+			const rawFieldId = AppInfo.eventIsTrialFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
 		}
 	}.bind(this);
@@ -376,12 +606,12 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	// True if this team has the best team score among the teams from the same school.
 	// This team serves as the representative of the school when we list school rankings.
 	this.isBestPlacedTrueTeam = function(model) {
-		if (!appInfo.isBestPlacedTrueTeamFieldId) {
+		if (!AppInfo.isBestPlacedTrueTeamFieldId) {
 			return false;
-		} else if (!Object.hasOwn(model.attributes, appInfo.isBestPlacedTrueTeamFieldId)) {
+		} else if (!Object.hasOwn(model.attributes, AppInfo.isBestPlacedTrueTeamFieldId)) {
 			return false;
 		} else {
-			const rawFieldId = appInfo.isBestPlacedTrueTeamFieldId + '_raw';
+			const rawFieldId = AppInfo.isBestPlacedTrueTeamFieldId + '_raw';
 			return model.attributes[rawFieldId] === 0;
 		}
 	}.bind(this);
@@ -389,12 +619,12 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	// True if this school was given an invite to states and accepted
 	// that invite by attending the national-ready regional.
 	this.acceptedInvite = function(model) {
-		if (!appInfo.acceptedInviteFieldId) {
+		if (!AppInfo.acceptedInviteFieldId) {
 			return false;
-		} else if (!Object.hasOwn(model.attributes, appInfo.acceptedInviteFieldId)) {
+		} else if (!Object.hasOwn(model.attributes, AppInfo.acceptedInviteFieldId)) {
 			return false;
 		} else {
-			const rawFieldId = appInfo.acceptedInviteFieldId + '_raw';
+			const rawFieldId = AppInfo.acceptedInviteFieldId + '_raw';
 			return model.attributes[rawFieldId] !== 0;
 		}
 	}.bind(this);
@@ -696,111 +926,6 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		}
 	}.bind(this);
 
-	this.sleep = function(timeInMillis) {
-		return new Promise(resolve => setTimeout(resolve, timeInMillis));
-	}.bind(this);
-
-	this.setSpinner = function() {
-		// Show a spinner after a third of a second:
-		setTimeout(() => Knack.showSpinner(), 333);
-	}.bind(this);
-
-	this.cancelSpinner = function() {
-		// For immediate effect:
-		Knack.hideSpinner();
-		// To ensure cancel in cases where we reach the line above before
-		// the preceeding setSpinner() call's 333 milliseconds has expired:
-		setTimeout(() => Knack.hideSpinner(), 500);
-	}.bind(this);
-
-	this.createOptionsBody = function(newRank, newAdjRank, newTrophyRank, newUninvitedRank) {
-		const optionsBody = new Map();
-		if (this.rankFieldId) {
-			optionsBody.set(this.rankFieldId, newRank);
-		}
-		if (this.adjRankFieldId) {
-			optionsBody.set(this.adjRankFieldId, newAdjRank);
-		}
-		if (this.trophyRankFieldId) {
-			optionsBody.set(this.trophyRankFieldId, newTrophyRank);
-		}
-		if (this.uninvitedRankFieldId) {
-			optionsBody.set(this.uninvitedRankFieldId, newUninvitedRank);
-		}
-		return Object.fromEntries(optionsBody);
-	}.bind(this);
-
-	this.getPlanLimitRemaining = function(hdrs) {
-		const hdrStr = hdrs.get("X-PlanLimit-Remaining");
-		const result = (hdrStr ? Number(hdrStr) : Number.MAX_SAFE_INTEGER);
-		console.log(`X-PlanLimit-Remaining = '${hdrStr}', ${result}`);
-		return result;
-	}.bind(this);
-
-	// Returns the number of milliseconds to wait before retrying, or zero if success (no retry needed), or throws
-	this.putRankToDatabase = async function(url, options) {
-		const response = await fetch(url, options);	// returns response
-		const hdrs = response.headers;
-		if (response.ok) {
-			console.log(`PUT rank: response.ok`);
-			return 0;
-		} else if (response.status != 429) {	// Status 429 is Too Many Requests
-			const text = await response.text();
-			console.log(`PUT rank: HTTP response code ${response.status}, response text '${text}'`);
-			throw new Error(`HTTP response code ${response.status}, response text '${text}'`);
-		} else if (this.getPlanLimitRemaining(hdrs) <= 0) {	// Exceeding Knack's daily plan limit
-			console.log(`PUT rank: Exceeded Knack API plan limit`);
-			const planLimit = Number(hdrs.get("X-PlanLimit-Limit"));
-			const planLimitReset = Number(hdrs.get("X-PlanLimit-Reset"));
-			throw new Error(`Exceeded Knack API plan limit (${planLimit} requests per day). Will reset in ${planLimitReset} milliseconds.`);
-		} else {
-			// Exceeded Knack's API rate limit
-			const rateLimitReset = Number(hdrs.get("X-RateLimit-Reset"));
-			const milliSecToWait = (1000 * rateLimitReset) - Date.now() + 1;
-			console.log(`PUT rank: Exceeded Knack API rate limit. Waiting ${milliSecToWait} milliseonds for reset`);
-			return milliSecToWait;
-		}
-	}.bind(this);
-
-	this.putRankToDatabaseWithRetry = async function(id, newRank, newAdjRank, newTrophyRank, newUninvitedRank) {
-		const url = `https://api.knack.com/v1/pages/${this.sceneId}/views/${this.gridId}/records/${id}`;
-		const options = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Knack-Application-ID': Knack.application_id,
-				'X-Knack-REST-API-Key': 'knack',
-				'Authorization': Knack.getUserToken(),
-			},
-			body: JSON.stringify(this.createOptionsBody(newRank, newAdjRank, newTrophyRank, newUninvitedRank)),
-		};
-		//console.log(`Put rank URL: ${url}`);
-		//console.log('options:');
-		//console.log(options);
-
-		let milliSecToWait = await this.putRankToDatabase(url, options);
-		if (milliSecToWait <= 0) {
-			return;
-		}
-
-		console.log(`Put rank first retry, milliSecToWait = ${milliSecToWait}`);
-		await this.sleep(milliSecToWait);
-		milliSecToWait = await this.putRankToDatabase(url, options);
-		if (milliSecToWait <= 0) {
-			return;
-		}
-
-		milliSecToWait = 1100;
-		console.log(`Put rank second retry, milliSecToWait = ${milliSecToWait}`);
-		await this.sleep(milliSecToWait);
-		milliSecToWait = await this.putRankToDatabase(url, options);
-		if (milliSecToWait <= 0) {
-			return;
-		}
-
-		throw new Error(`Exceeded Knack API rate limit, but waiting hasn't helped`);
-	}.bind(this);
-
 	this.putRanksToDatabase = async function(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
 			if (scoreInfo.newRank === scoreInfo.oldRank
@@ -809,8 +934,20 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 					&& scoreInfo.newUninvitedRank === scoreInfo.oldUninvitedRank) {
 				continue;
 			}
-			await this.putRankToDatabaseWithRetry(scoreInfo.id, scoreInfo.newRank,
-				scoreInfo.newAdjRank, scoreInfo.newTrophyRank, scoreInfo.newUninvitedRank);
+			const optionsBody = {};
+			if (this.rankFieldId) {
+				optionsBody[this.rankFieldId] = scoreInfo.newRank;
+			}
+			if (this.adjRankFieldId) {
+				optionsBody[this.adjRankFieldId] = scoreInfo.newAdjRank;
+			}
+			if (this.trophyRankFieldId) {
+				optionsBody[this.trophyRankFieldId] = scoreInfo.newTrophyRank;
+			}
+			if (this.uninvitedRankFieldId) {
+				optionsBody[this.uninvitedRankFieldId] = scoreInfo.newUninvitedRank;
+			}
+			await ViewBasedApiPut.putWithRetry(this.sceneId, this.gridId, scoreInfo.id, optionsBody);
 		}
 	}.bind(this);
 
@@ -819,7 +956,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			return;
 		}
 		$(`#${this.lockSubmitForm} div#kn-input-`).show();	// Result report - Please Wait
-		this.setSpinner();
+		ViewBasedApiPut.setSpinner();
 		this.rankStorageInProgress = true;
 		try {
 			const startTime = Date.now();
@@ -834,15 +971,14 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 				lock the ${label} and submit it for presentation.`);
 			$(`div#${this.finalizeBtnViewId}`).hide();			// Finalize button
 			$(`#${this.lockSubmitForm} div.kn-submit`).show();	// Submit button
-			this.cancelSpinner();
-			this.rankStorageInProgress = false;
 		} catch (error) {
 			console.log(`Database updates for ranking failed: ${error.message}`);
 			$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('An error occurred');
 			$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
 				Please wait a moment or two and press the Finalize button again.
 				<br/><br/>Error message: ${error.message}`);
-			this.cancelSpinner();
+		} finally {
+			ViewBasedApiPut.cancelSpinner();
 			this.rankStorageInProgress = false;
 		}
 	}.bind(this);
@@ -874,111 +1010,119 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 	}
 }
 
-const esUpdater = new RankUpdater(appInfo.esScoringGrid, '', '', '',
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	'', '', appInfo.eventStatusFieldId, true);
-const scoremasterEventUpdater = new RankUpdater(appInfo.scoremasterEventGrid, '', '', '',
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	'', '', appInfo.eventStatusFieldId, true);
-const lockEventUpdater = new RankUpdater(appInfo.lockEventGrid, appInfo.lockEventSceneId,
-	appInfo.lockEventSubmitForm, appInfo.lockEventFinalizeView,
-	appInfo.eventAdjScoreFieldId, appInfo.eventRankFieldId, appInfo.eventAdjRankFieldId,
-	'', '', appInfo.eventStatusFieldId, true);
+const esUpdater = new RankUpdater(AppInfo.esScoringGrid, '', '', '',
+	AppInfo.eventAdjScoreFieldId, AppInfo.eventRankFieldId, AppInfo.eventAdjRankFieldId,
+	'', '', AppInfo.eventStatusFieldId, true);
+const scoremasterEventUpdater = new RankUpdater(AppInfo.scoremasterEventGrid, '', '', '',
+	AppInfo.eventAdjScoreFieldId, AppInfo.eventRankFieldId, AppInfo.eventAdjRankFieldId,
+	'', '', AppInfo.eventStatusFieldId, true);
+const lockEventUpdater = new RankUpdater(AppInfo.lockEventGrid, AppInfo.lockEventSceneId,
+	AppInfo.lockEventSubmitForm, AppInfo.lockEventFinalizeView,
+	AppInfo.eventAdjScoreFieldId, AppInfo.eventRankFieldId, AppInfo.eventAdjRankFieldId,
+	'', '', AppInfo.eventStatusFieldId, true);
 
 const trackOverviewTeamBeforeUpdater = new RankUpdater(
-	appInfo.trackOverviewTeamBeforeGrid, '', '', '', appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', '', '', '', false);
-const trackOverviewSchoolUpdater = new RankUpdater(appInfo.trackOverviewSchoolGrid,
-	'', '', '', appInfo.teamAdjScoreFieldId, appInfo.teamRankFieldId, '',
+	AppInfo.trackOverviewTeamBeforeGrid, '', '', '', AppInfo.teamAdjScoreFieldId,
+	AppInfo.teamRankFieldId, '', '', '', '', false);
+const trackOverviewSchoolUpdater = new RankUpdater(AppInfo.trackOverviewSchoolGrid,
+	'', '', '', AppInfo.teamAdjScoreFieldId, AppInfo.teamRankFieldId, '',
 	'', '', '', false);
-const trackOverviewLockUpdater = new RankUpdater(appInfo.trackOverviewLockGrid,
-	appInfo.trackOverviewLockSceneId, appInfo.trackOverviewSubmitForm,
-	appInfo.trackOverviewFinalizeView, appInfo.teamAdjScoreFieldId,
-	appInfo.teamRankFieldId, '', appInfo.trophyRankFieldId, appInfo.uninvitedRankFieldId,
+const trackOverviewLockUpdater = new RankUpdater(AppInfo.trackOverviewLockGrid,
+	AppInfo.trackOverviewLockSceneId, AppInfo.trackOverviewSubmitForm,
+	AppInfo.trackOverviewFinalizeView, AppInfo.teamAdjScoreFieldId,
+	AppInfo.teamRankFieldId, '', AppInfo.trophyRankFieldId, AppInfo.uninvitedRankFieldId,
 	'', false);
 
 
 
 // ====================================================================
 
-function AwardBackground(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
-	this.awardSceneId = awardSceneId;
-	this.iconViewId = iconViewId;
-	this.iconFieldId = iconFieldId;
-	this.backgroundUrl = backgroundUrl;
+class AwardBackground {
+	#awardSceneId;
+	#iconViewId;
+	#iconFieldId;
+	#backgroundUrl;
 
-	this.setBackground = function(image, repeat, size, position) {
+	constructor(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
+		this.#awardSceneId = awardSceneId;
+		this.#iconViewId = iconViewId;
+		this.#iconFieldId = iconFieldId;
+		this.#backgroundUrl = backgroundUrl;
+
+		if (this.#awardSceneId) {
+			$(document).on(`knack-scene-render.${this.#awardSceneId}`,
+				this.awardSceneRenderHandler.bind(this));
+		}
+	}
+
+	#setBackground(image, repeat, size, position) {
 		const mainDiv = $('div#knack-dist_1 > div.kn-scenes.kn-section');
 		mainDiv.css('background-image', image);
 		mainDiv.css('background-repeat', repeat);
 		mainDiv.css('background-size', size);
 		mainDiv.css('background-position', position);
-	}.bind(this);
+	}
 
-	this.awardSceneRenderHandler = function(/*event, view, record*/) {
-		if (this.iconViewId && this.backgroundUrl) {
-			const rawIconFieldId = this.iconFieldId + '_raw';
-			const eventIconUrl = Knack.models[this.iconViewId].attributes[rawIconFieldId];
-			const cssImageValue = `url("${eventIconUrl}"), url("${this.backgroundUrl}")`;
-			this.setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, cover',
+	awardSceneRenderHandler(/*event, view, record*/) {
+		if (this.#iconViewId && this.#backgroundUrl) {
+			const rawIconFieldId = this.#iconFieldId + '_raw';
+			const eventIconUrl = Knack.models[this.#iconViewId].attributes[rawIconFieldId];
+			const cssImageValue = `url("${eventIconUrl}"), url("${this.#backgroundUrl}")`;
+			this.#setBackground(cssImageValue, 'no-repeat, no-repeat', '150px 150px, cover',
 				'top 40px right 50px, top left');
 
 			// Hide Knack's icon:
-			$(`div#${this.iconViewId} div.${this.iconFieldId}_thumb_1`).hide();
-		} else if (this.backgroundUrl) {
-			const cssImageValue = `url("${this.backgroundUrl}")`;
-			this.setBackground(cssImageValue, 'no-repeat', 'cover', 'top left');
+			$(`div#${this.#iconViewId} div.${this.#iconFieldId}_thumb_1`).hide();
+		} else if (this.#backgroundUrl) {
+			const cssImageValue = `url("${this.#backgroundUrl}")`;
+			this.#setBackground(cssImageValue, 'no-repeat', 'cover', 'top left');
 		} else {
-			this.setBackground('', '', '', '');
+			this.#setBackground('', '', '', '');
 		}
-	}.bind(this);
-
-	if (this.awardSceneId) {
-		$(document).on(`knack-scene-render.${this.awardSceneId}`, this.awardSceneRenderHandler);
 	}
 }
 
 const eventAwardBackground = new AwardBackground(
-	appInfo.presenterEventAwardSceneId, appInfo.presenterEventIconViewId,
-	appInfo.eventIconFieldId, appInfo.awardBackgroundUrl);
+	AppInfo.presenterEventAwardSceneId, AppInfo.presenterEventIconViewId,
+	AppInfo.eventIconFieldId, AppInfo.awardBackgroundUrl);
 const schoolBAwardBackground = new AwardBackground(
-	appInfo.presenterSchoolBAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterSchoolBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const schoolCAwardBackground = new AwardBackground(
-	appInfo.presenterSchoolCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterSchoolCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const schoolBCAwardBackground = new AwardBackground(
-	appInfo.presenterSchoolBCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterSchoolBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const teamBAwardBackground = new AwardBackground(
-	appInfo.presenterTeamBAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterTeamBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const teamCAwardBackground = new AwardBackground(
-	appInfo.presenterTeamCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterTeamCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const teamBCAwardBackground = new AwardBackground(
-	appInfo.presenterTeamBCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterTeamBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const eventSelectionBAwardBackground = new AwardBackground(
-	appInfo.presenterEventSelectionBSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterEventSelectionBSceneId, '', '', AppInfo.awardBackgroundUrl);
 const eventSelectionCAwardBackground = new AwardBackground(
-	appInfo.presenterEventSelectionCSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterEventSelectionCSceneId, '', '', AppInfo.awardBackgroundUrl);
 const eventSelectionAllAwardBackground = new AwardBackground(
-	appInfo.presenterEventSelectionAllSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterEventSelectionAllSceneId, '', '', AppInfo.awardBackgroundUrl);
 const statesBoundBAwardBackground = new AwardBackground(
-	appInfo.presenterStatesBoundBSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterStatesBoundBSceneId, '', '', AppInfo.awardBackgroundUrl);
 const statesBoundCAwardBackground = new AwardBackground(
-	appInfo.presenterStatesBoundCSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterStatesBoundCSceneId, '', '', AppInfo.awardBackgroundUrl);
 const statesBoundAllBAwardBackground = new AwardBackground(
-	appInfo.presenterStatesBoundAllBSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterStatesBoundAllBSceneId, '', '', AppInfo.awardBackgroundUrl);
 const statesBoundAllCAwardBackground = new AwardBackground(
-	appInfo.presenterStatesBoundAllCSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.presenterStatesBoundAllCSceneId, '', '', AppInfo.awardBackgroundUrl);
 const rookieTeamOfTheYearBAwardBackground = new AwardBackground(
-	appInfo.rookieTeamOfTheYearBAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.rookieTeamOfTheYearBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const rookieTeamOfTheYearCAwardBackground = new AwardBackground(
-	appInfo.rookieTeamOfTheYearCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.rookieTeamOfTheYearCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const rookieTeamOfTheYearBCAwardBackground = new AwardBackground(
-	appInfo.rookieTeamOfTheYearBCAwardSceneId, '', '', appInfo.awardBackgroundUrl);
+	AppInfo.rookieTeamOfTheYearBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
 const tournamentSelectionAwardBackground = new AwardBackground(
-	appInfo.presenterTournamentSelectionSceneId, '', '', '');
+	AppInfo.presenterTournamentSelectionSceneId, '', '', '');
 const scoremasterAwardBackground = new AwardBackground(
-	appInfo.scoremasterSceneId, '', '', '');
+	AppInfo.scoremasterSceneId, '', '', '');
 const adminAwardBackground = new AwardBackground(
-	appInfo.adminSceneId, '', '', '');
+	AppInfo.adminSceneId, '', '', '');
 
 
 
@@ -1240,17 +1384,17 @@ function Presenter(presenterParams) {
 	}
 }
 
-const eventPresenter = new Presenter(appInfo.eventPresenterParams);
-const schoolBPresenter = new Presenter(appInfo.schoolBPresenterParams);
-const schoolCPresenter = new Presenter(appInfo.schoolCPresenterParams);
-const schoolBCPresenter = new Presenter(appInfo.schoolBCPresenterParams);
-const teamBPresenter = new Presenter(appInfo.teamBPresenterParams);
-const teamCPresenter = new Presenter(appInfo.teamCPresenterParams);
-const teamBCPresenter = new Presenter(appInfo.teamBCPresenterParams);
-const statesBoundBPresenter = new Presenter(appInfo.statesBoundBPresenterParams);
-const statesBoundCPresenter = new Presenter(appInfo.statesBoundCPresenterParams);
-const statesBoundAllBPresenter = new Presenter(appInfo.statesBoundAllBPresenterParams);
-const statesBoundAllCPresenter = new Presenter(appInfo.statesBoundAllCPresenterParams);
-const rookieTeamOfTheYearBPresenter = new Presenter(appInfo.rookieTeamOfTheYearBPresenterParams);
-const rookieTeamOfTheYearCPresenter = new Presenter(appInfo.rookieTeamOfTheYearCPresenterParams);
-const rookieTeamOfTheYearBCPresenter = new Presenter(appInfo.rookieTeamOfTheYearBCPresenterParams);
+const eventPresenter = new Presenter(AppInfo.eventPresenterParams);
+const schoolBPresenter = new Presenter(AppInfo.schoolBPresenterParams);
+const schoolCPresenter = new Presenter(AppInfo.schoolCPresenterParams);
+const schoolBCPresenter = new Presenter(AppInfo.schoolBCPresenterParams);
+const teamBPresenter = new Presenter(AppInfo.teamBPresenterParams);
+const teamCPresenter = new Presenter(AppInfo.teamCPresenterParams);
+const teamBCPresenter = new Presenter(AppInfo.teamBCPresenterParams);
+const statesBoundBPresenter = new Presenter(AppInfo.statesBoundBPresenterParams);
+const statesBoundCPresenter = new Presenter(AppInfo.statesBoundCPresenterParams);
+const statesBoundAllBPresenter = new Presenter(AppInfo.statesBoundAllBPresenterParams);
+const statesBoundAllCPresenter = new Presenter(AppInfo.statesBoundAllCPresenterParams);
+const rookieTeamOfTheYearBPresenter = new Presenter(AppInfo.rookieTeamOfTheYearBPresenterParams);
+const rookieTeamOfTheYearCPresenter = new Presenter(AppInfo.rookieTeamOfTheYearCPresenterParams);
+const rookieTeamOfTheYearBCPresenter = new Presenter(AppInfo.rookieTeamOfTheYearBCPresenterParams);
