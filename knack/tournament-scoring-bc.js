@@ -542,40 +542,65 @@ const coachLoginLogger = new LoginLogger(AppInfo.coachLoginViewId,
 // score that this event/score earns. If exhibition teams are participating,
 // for example, this may not equal the rank. It could also be thought of as
 // the number of points earned when there are exhibition teams.
-function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
-		scoreFieldId, rankFieldId, adjRankFieldId, trophyRankFieldId,
-		uninvitedRankFieldId, statusFieldId, isEventRanker) {
-	this.gridId = gridId;
-	this.sceneId = sceneId;
-	this.lockSubmitForm = lockSubmitForm;
-	this.finalizeBtnViewId = finalizeBtnViewId;
-	this.scoreFieldId = scoreFieldId;
-	this.rankFieldId = rankFieldId;
-	this.rawRankFieldId = this.rankFieldId + '_raw';
-	this.adjRankFieldId = adjRankFieldId;
-	this.rawAdjRankFieldId = this.adjRankFieldId + '_raw';
-	this.trophyRankFieldId = trophyRankFieldId;
-	this.rawTrophyRankFieldId = this.trophyRankFieldId + '_raw';
-	this.uninvitedRankFieldId = uninvitedRankFieldId;
-	this.rawUninvitedRankFieldId = this.uninvitedRankFieldId + '_raw';
-	this.statusFieldId = statusFieldId;
-	this.isEventRanker = isEventRanker;
-	this.scoreInfos = null;
-	this.rankStorageInProgress = false;
+class RankUpdater {
+	#gridId;
+	#sceneId;
+	#lockSubmitForm;
+	#finalizeBtnViewId;
+	#scoreFieldId;
+	#rankFieldId;
+	#adjRankFieldId;
+	#trophyRankFieldId;
+	#uninvitedRankFieldId;
+	#statusFieldId;
+	#isEventRanker;
+	#scoreInfos;
+	#rankStorageInProgress;
 
-	this.getStatus = function(model) {
-		if (this.statusFieldId) {
-			const statusField = model.attributes[this.statusFieldId + '_raw'];
+	constructor(gridId, sceneId, lockSubmitForm, finalizeBtnViewId, scoreFieldId,
+			rankFieldId, adjRankFieldId, trophyRankFieldId, uninvitedRankFieldId,
+			statusFieldId, isEventRanker) {
+		this.#gridId = gridId;
+		this.#sceneId = sceneId;
+		this.#lockSubmitForm = lockSubmitForm;
+		this.#finalizeBtnViewId = finalizeBtnViewId;
+		this.#scoreFieldId = scoreFieldId;
+		this.#rankFieldId = rankFieldId;
+		this.#adjRankFieldId = adjRankFieldId;
+		this.#trophyRankFieldId = trophyRankFieldId;
+		this.#uninvitedRankFieldId = uninvitedRankFieldId;
+		this.#statusFieldId = statusFieldId;
+		this.#isEventRanker = isEventRanker;
+		this.#scoreInfos = null;
+		this.#rankStorageInProgress = false;
+
+		if (this.#gridId) {
+			if (this.#sceneId && this.#lockSubmitForm && this.#finalizeBtnViewId) {
+				$(document).on(`knack-scene-render.${this.#sceneId}`, this.sceneRenderHandler.bind(this));
+			}
+			$(document).on(`knack-view-render.${this.#gridId}`, this.rankUpdateHandler.bind(this));
+			$(document).on(`knack-cell-update.${this.#gridId}`, this.rankUpdateHandler.bind(this));
+		}
+	}
+
+	get #rawRankFieldId() { return this.#rankFieldId + '_raw'; }
+	get #rawAdjRankFieldId() { return this.#adjRankFieldId + '_raw'; }
+	get #rawTrophyRankFieldId() { return this.#trophyRankFieldId + '_raw'; }
+	get #rawUninvitedRankFieldId() { return this.#uninvitedRankFieldId + '_raw'; }
+
+	#getStatus(model) {
+		if (this.#statusFieldId) {
+			const statusField = model.attributes[this.#statusFieldId + '_raw'];
 			return (statusField.length > 0) ? statusField[0].identifier : '';
 		} else {
 			return '';
 		}
-	}.bind(this);
+	}
 
 	// In the BC portal, this really means "is gold bid team,"
 	// but in ScoreScope it means a true exhibition team, e.g.,
 	// a Fairfax team at the Fairfax invitational.
-	this.isExhibitionTeam = function(model) {
+	#isExhibitionTeam(model) {
 		if (!AppInfo.teamIsExhibitionTeamFieldId) {
 			return false;
 		} else if (!Object.hasOwn(model.attributes, AppInfo.teamIsExhibitionTeamFieldId)) {
@@ -589,9 +614,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			const rawFieldId = AppInfo.teamIsExhibitionTeamFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
 		}
-	}.bind(this);
+	}
 
-	this.isTrialEvent = function(model) {
+	#isTrialEvent(model) {
 		if (!AppInfo.eventIsTrialFieldId) {
 			return false;
 		} else if (!Object.hasOwn(model.attributes, AppInfo.eventIsTrialFieldId)) {
@@ -601,11 +626,11 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			const rawFieldId = AppInfo.eventIsTrialFieldId + '_raw';
 			return model.attributes[rawFieldId] === true;
 		}
-	}.bind(this);
+	}
 
 	// True if this team has the best team score among the teams from the same school.
 	// This team serves as the representative of the school when we list school rankings.
-	this.isBestPlacedTrueTeam = function(model) {
+	#isBestPlacedTrueTeam(model) {
 		if (!AppInfo.isBestPlacedTrueTeamFieldId) {
 			return false;
 		} else if (!Object.hasOwn(model.attributes, AppInfo.isBestPlacedTrueTeamFieldId)) {
@@ -614,11 +639,11 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			const rawFieldId = AppInfo.isBestPlacedTrueTeamFieldId + '_raw';
 			return model.attributes[rawFieldId] === 0;
 		}
-	}.bind(this);
+	}
 
 	// True if this school was given an invite to states and accepted
 	// that invite by attending the national-ready regional.
-	this.acceptedInvite = function(model) {
+	#acceptedInvite(model) {
 		if (!AppInfo.acceptedInviteFieldId) {
 			return false;
 		} else if (!Object.hasOwn(model.attributes, AppInfo.acceptedInviteFieldId)) {
@@ -627,92 +652,92 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			const rawFieldId = AppInfo.acceptedInviteFieldId + '_raw';
 			return model.attributes[rawFieldId] !== 0;
 		}
-	}.bind(this);
+	}
 
-	this.hasRank = function(model) {
-		if (!this.rankFieldId) {
-			return false;	// For cases where the field doesn't exist (never?)
+	#hasRank(model) {
+		if (!this.#rankFieldId) {
+			return false; // For cases where the field doesn't exist (never?)
 		} else {
-			return Object.hasOwn(model.attributes, this.rawRankFieldId);
+			return Object.hasOwn(model.attributes, this.#rawRankFieldId);
 		}
-	}.bind(this);
+	}
 
-	this.getRank = function(model) {
-		return this.hasRank(model)
-			? model.attributes[this.rawRankFieldId]
-			: -1;	// for grids w/o a rank column
-	}.bind(this);
+	#getRank(model) {
+		return this.#hasRank(model)
+			? model.attributes[this.#rawRankFieldId]
+			: -1; // for grids w/o a rank column
+	}
 
-	this.hasAdjRank = function(model) {
-		if (!this.adjRankFieldId) {
-			return false;	// For Div. A, where the field doesn't exist
+	#hasAdjRank(model) {
+		if (!this.#adjRankFieldId) {
+			return false; // For Div. A, where the field doesn't exist
 		} else {
-			return Object.hasOwn(model.attributes, this.rawAdjRankFieldId);
+			return Object.hasOwn(model.attributes, this.#rawAdjRankFieldId);
 		}
-	}.bind(this);
+	}
 
-	this.getAdjRank = function(model) {
-		return this.hasAdjRank(model)
-			? model.attributes[this.rawAdjRankFieldId]
-			: -1;	// for grids w/o an adj. rank column
-	}.bind(this);
+	#getAdjRank(model) {
+		return this.#hasAdjRank(model)
+			? model.attributes[this.#rawAdjRankFieldId]
+			: -1; // for grids w/o an adj. rank column
+	}
 
-	this.hasTrophyRank = function(model) {
-		if (!this.trophyRankFieldId) {
+	#hasTrophyRank(model) {
+		if (!this.#trophyRankFieldId) {
 			return false;
 		} else {
-			return Object.hasOwn(model.attributes, this.rawTrophyRankFieldId);
+			return Object.hasOwn(model.attributes, this.#rawTrophyRankFieldId);
 		}
-	}.bind(this);
+	}
 
-	this.getTrophyRank = function(model) {
-		return this.hasTrophyRank(model)
-			? model.attributes[this.rawTrophyRankFieldId]
-			: -1;	// for grids w/o a trophy. rank column
-	}.bind(this);
+	#getTrophyRank(model) {
+		return this.#hasTrophyRank(model)
+			? model.attributes[this.#rawTrophyRankFieldId]
+			: -1; // for grids w/o a trophy. rank column
+	}
 
-	this.hasUninvitedRank = function(model) {
-		if (!this.uninvitedRankFieldId) {
+	#hasUninvitedRank(model) {
+		if (!this.#uninvitedRankFieldId) {
 			return false;
 		} else {
-			return Object.hasOwn(model.attributes, this.rawUninvitedRankFieldId);
+			return Object.hasOwn(model.attributes, this.#rawUninvitedRankFieldId);
 		}
-	}.bind(this);
+	}
 
-	this.getUninvitedRank = function(model) {
-		return this.hasUninvitedRank(model)
-			? model.attributes[this.rawUninvitedRankFieldId]
-			: -1;	// for grids w/o an uninvited. rank column
-	}.bind(this);
+	#getUninvitedRank(model) {
+		return this.#hasUninvitedRank(model)
+			? model.attributes[this.#rawUninvitedRankFieldId]
+			: -1; // for grids w/o an uninvited. rank column
+	}
 
-	this.createScoreInfo = function(model) {
+	#createScoreInfo(model) {
 		return {
 			id: model.attributes.id,
-			adjScore: model.attributes[this.scoreFieldId + '_raw'],
-			status: this.getStatus(model),
-			isExhibition: this.isExhibitionTeam(model),
-			isTrialEvent: this.isTrialEvent(model),
-			isBestPlacedTrueTeam: this.isBestPlacedTrueTeam(model),
-			acceptedInvite: this.acceptedInvite(model),
-			hasRank: this.hasRank(model),
-			oldRank: this.getRank(model),
+			adjScore: model.attributes[this.#scoreFieldId + '_raw'],
+			status: this.#getStatus(model),
+			isExhibition: this.#isExhibitionTeam(model),
+			isTrialEvent: this.#isTrialEvent(model),
+			isBestPlacedTrueTeam: this.#isBestPlacedTrueTeam(model),
+			acceptedInvite: this.#acceptedInvite(model),
+			hasRank: this.#hasRank(model),
+			oldRank: this.#getRank(model),
 			newRank: -1,
-			hasAdjRank: this.hasAdjRank(model),
-			oldAdjRank: this.getAdjRank(model),
+			hasAdjRank: this.#hasAdjRank(model),
+			oldAdjRank: this.#getAdjRank(model),
 			newAdjRank: -1,
-			hasTrophyRank: this.hasTrophyRank(model),
-			oldTrophyRank: this.getTrophyRank(model),
+			hasTrophyRank: this.#hasTrophyRank(model),
+			oldTrophyRank: this.#getTrophyRank(model),
 			newTrophyRank: -1,
-			hasUninvitedRank: this.hasUninvitedRank(model),
-			oldUninvitedRank: this.getUninvitedRank(model),
+			hasUninvitedRank: this.#hasUninvitedRank(model),
+			oldUninvitedRank: this.#getUninvitedRank(model),
 			newUninvitedRank: -1,
 		};
-	}.bind(this);
+	}
 
 	// A cluster in this context is one non-exhibition team together with
 	// any exhibition teams that score better than, and adjacent to, that
 	// non-exhibition team.
-	this.computeRankClusters = function(scoreInfos, adjustForExhibition) {
+	#computeRankClusters(scoreInfos, adjustForExhibition) {
 		const flaggedScores = scoreInfos
 			.map((scoreInfo) => {
 				return {
@@ -720,7 +745,7 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 					isExhibition: (adjustForExhibition && scoreInfo.isExhibition),
 				};
 			})
-			.sort((lhs, rhs) => this.isEventRanker
+			.sort((lhs, rhs) => this.#isEventRanker
 				? (rhs.score - lhs.score)
 				: (lhs.score - rhs.score));
 		const rankClusters = [];
@@ -738,9 +763,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			rankClusters.push(currentCluster);
 		}
 		return rankClusters;
-	}.bind(this);
+	}
 
-	this.countNonExhibitionTeams = function(scoreInfos) {
+	#countNonExhibitionTeams(scoreInfos) {
 		let numNonExhibitionTeams = 0;
 		for (const scoreInfo of scoreInfos) {
 			if (!scoreInfo.isExhibition) {
@@ -748,9 +773,9 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			}
 		}
 		return numNonExhibitionTeams;
-	}.bind(this);
+	}
 
-	this.computeRank = function(scoreInfo, numTeams, clusters) {
+	#computeRank(scoreInfo, numTeams, clusters) {
 		if (scoreInfo.status === 'Participation Points Only') {
 			return numTeams;
 		} else if (scoreInfo.status === 'No Show') {
@@ -764,11 +789,11 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 				}
 			}
 		}
-	}.bind(this);
+	}
 
 	// Takes two ScoreInfo instances and returns neg, 0,
 	// or pos according to their team rank sort order.
-	this.teamRankComparitor = function(lhs, rhs) {
+	#teamRankComparitor(lhs, rhs) {
 		if (lhs.isExhibition && !rhs.isExhibition) {
 			return 1;
 		} else if (!lhs.isExhibition && rhs.isExhibition) {
@@ -776,39 +801,39 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		} else {
 			return lhs.adjScore - rhs.adjScore;
 		}
-	}.bind(this);
+	}
 
 	// Calling
-	//    indexOf(scoreInfos, toFind, predicate)
+	//    #indexOf(scoreInfos, toFind, predicate)
 	// is similar to
-	//    scoreInfos.indexOf(toFind)
+	//    scoreInfos.#indexOf(toFind)
 	// except that rather than using comparison by strict equality, this
-	// indexOf variant is looking for the element x where
+	// #indexOf variant is looking for the element x where
 	//    predicate(x, toFind)
 	// returns true.
-	this.indexOf = function(scoreInfos, toFind, predicate) {
+	#indexOf(scoreInfos, toFind, predicate) {
 		for (let i = 0; i < scoreInfos.length; ++i) {
 			if (predicate(toFind, scoreInfos[i])) {
 				return i;
 			}
 		}
 		return -1;
-	}.bind(this);
+	}
 
-	this.rankTeamsExhibitionAdjusted = function(scoreInfos) {
+	#rankTeamsExhibitionAdjusted(scoreInfos) {
 		// Compute the true ranks, with exhibition teams at the end:
-		const rankOrderedScoreInfos = scoreInfos.toSorted(this.teamRankComparitor);
+		const rankOrderedScoreInfos = scoreInfos.toSorted(this.#teamRankComparitor);
 		for (const si of scoreInfos) {
-			si.newRank = 1 + this.indexOf(rankOrderedScoreInfos, si,
-				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+			si.newRank = 1 + this.#indexOf(rankOrderedScoreInfos, si,
+				(lhs, rhs) => this.#teamRankComparitor(lhs, rhs) == 0);
 		}
 
 		// Compute trophy ranks on school-representative teams:
 		const rankOrderedTrophyScoreInfos = rankOrderedScoreInfos
 			.filter((si) => si.isBestPlacedTrueTeam);
 		for (const si of scoreInfos) {
-			const index = this.indexOf(rankOrderedTrophyScoreInfos, si,
-				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+			const index = this.#indexOf(rankOrderedTrophyScoreInfos, si,
+				(lhs, rhs) => this.#teamRankComparitor(lhs, rhs) == 0);
 			si.newTrophyRank = (!si.isBestPlacedTrueTeam || index < 0)
 				? '' : (index + 1);
 		}
@@ -817,26 +842,26 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 		const rankOrderedUninvitedScoreInfos = rankOrderedTrophyScoreInfos
 			.filter((si) => !si.acceptedInvite);
 		for (const si of scoreInfos) {
-			const index = this.indexOf(rankOrderedUninvitedScoreInfos, si,
-				(lhs, rhs) => this.teamRankComparitor(lhs, rhs) == 0);
+			const index = this.#indexOf(rankOrderedUninvitedScoreInfos, si,
+				(lhs, rhs) => this.#teamRankComparitor(lhs, rhs) == 0);
 			si.newUninvitedRank = (!si.isBestPlacedTrueTeam || si.acceptedInvite || index < 0)
 				? '' : (index + 1);
 		}
-	}.bind(this);
+	}
 
-	this.computeScoreInfoList = function() {
-		const models = Knack.models[this.gridId].data.models;
+	#computeScoreInfoList() {
+		const models = Knack.models[this.#gridId].data.models;
 		console.log('Grid row models:');
 		console.log(models);
 
-		const scoreInfos = models.map((model) => this.createScoreInfo(model));
+		const scoreInfos = models.map((model) => this.#createScoreInfo(model));
 
-		if (this.isEventRanker) {
+		if (this.#isEventRanker) {
 			if (scoreInfos[0].hasRank) {
-				const rankClusters = this.computeRankClusters(scoreInfos, false);
+				const rankClusters = this.#computeRankClusters(scoreInfos, false);
 				const numTeams = scoreInfos.length;
 				for (const scoreInfo of scoreInfos) {
-					scoreInfo.newRank = this.computeRank(scoreInfo, numTeams, rankClusters);
+					scoreInfo.newRank = this.#computeRank(scoreInfo, numTeams, rankClusters);
 				}
 			}
 
@@ -844,24 +869,24 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 				// Exhibition teams may compete in trial events, but
 				// in such cases they are not considered exhibition teams:
 				const adjustForExhibition = !scoreInfos[0].isTrialEvent;
-				const adjRankClusters = this.computeRankClusters(scoreInfos, adjustForExhibition);
+				const adjRankClusters = this.#computeRankClusters(scoreInfos, adjustForExhibition);
 				const numTeams = adjustForExhibition
-					? this.countNonExhibitionTeams(scoreInfos)
+					? this.#countNonExhibitionTeams(scoreInfos)
 					: scoreInfos.length;
 				for (const scoreInfo of scoreInfos) {
-					scoreInfo.newAdjRank = this.computeRank(scoreInfo, numTeams, adjRankClusters);
+					scoreInfo.newAdjRank = this.#computeRank(scoreInfo, numTeams, adjRankClusters);
 				}
 			}
 		} else {
-			this.rankTeamsExhibitionAdjusted(scoreInfos);
+			this.#rankTeamsExhibitionAdjusted(scoreInfos);
 		}
 
 		console.log('Score info list:');
 		console.log(scoreInfos);
 		return scoreInfos;
-	}.bind(this);
+	}
 
-	this.computeRankHistogram = function(scoreInfos) {
+	#computeRankHistogram(scoreInfos) {
 		const rankHistogram = new Map();
 		for (const scoreInfo of scoreInfos) {
 			const rank = scoreInfo.newRank;
@@ -872,141 +897,133 @@ function RankUpdater(gridId, sceneId, lockSubmitForm, finalizeBtnViewId,
 			}
 		}
 		return rankHistogram;
-	}.bind(this);
+	}
 
-	this.getRankCellBackgroundColor = function(scoreInfo, rankHistogram) {
+	#getRankCellBackgroundColor(scoreInfo, rankHistogram) {
 		if (scoreInfo.status) {
-			return '';	// default color for special statuses
+			return ''; // default color for special statuses
 		} else if (rankHistogram.has(scoreInfo.newRank)
-				&& rankHistogram.get(scoreInfo.newRank) > 1) {
-			return '#fbe9c2';	// yellow for ties
+			&& rankHistogram.get(scoreInfo.newRank) > 1) {
+			return '#fbe9c2'; // yellow for ties
 		} else {
-			return '';	// default color otherwise
+			return ''; // default color otherwise
 		}
-	}.bind(this);
+	}
 
-	this.getAdjRankCellBackgroundColor = function(scoreInfo) {
+	#getAdjRankCellBackgroundColor(scoreInfo) {
 		if (scoreInfo.status) {
-			return '';	// default color for special statuses
+			return ''; // default color for special statuses
 		} else if (scoreInfo.isExhibition && !scoreInfo.isTrialEvent) {
-			return '#9db0c5';	// greyish blue for exhibition teams in non-trial events
+			return '#9db0c5'; // greyish blue for exhibition teams in non-trial events
 		} else {
-			return '';	// default color otherwise
+			return ''; // default color otherwise
 		}
-	}.bind(this);
+	}
 
-	this.getDisplayRank = function(scoreInfo, rankProperty) {
+	#getDisplayRank(scoreInfo, rankProperty) {
 		return scoreInfo.status
-			? ''	// Rank of a special status is not meaningful to users
+			? '' // Rank of a special status is not meaningful to users
 			: scoreInfo[rankProperty];
-	}.bind(this);
+	}
 
 	// "Other" ranks are adjusted ranks, trophy ranks, and uninvited ranks
-	this.updateDisplayedOtherRanks = function(scoreInfo, rankFieldId, rankPropName) {
+	#updateDisplayedOtherRanks(scoreInfo, rankFieldId, rankPropName) {
 		if (rankFieldId) {
-			const bg = this.getAdjRankCellBackgroundColor(scoreInfo);
-			const adjRank = this.getDisplayRank(scoreInfo, rankPropName);
-			$(`div#${gridId} tr#${scoreInfo.id} > td.${rankFieldId}`).css('background', bg);
-			$(`div#${gridId} tr#${scoreInfo.id} > td.${rankFieldId} > span`).text(`${adjRank}`);
+			const bg = this.#getAdjRankCellBackgroundColor(scoreInfo);
+			const adjRank = this.#getDisplayRank(scoreInfo, rankPropName);
+			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId}`).css('background', bg);
+			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId} > span`).text(`${adjRank}`);
 		}
-	}.bind(this);
+	}
 
-	this.updateDisplayedRanks = function(scoreInfos) {
+	#updateDisplayedRanks(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
-			if (this.rankFieldId) {
-				const rankHistogram = this.computeRankHistogram(scoreInfos);
-				const bg = this.getRankCellBackgroundColor(scoreInfo, rankHistogram);
-				const rank = this.getDisplayRank(scoreInfo, 'newRank');
-				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId}`).css('background', bg);
-				$(`div#${gridId} tr#${scoreInfo.id} > td.${this.rankFieldId} > span`).text(`${rank}`);
+			if (this.#rankFieldId) {
+				const rankHistogram = this.#computeRankHistogram(scoreInfos);
+				const bg = this.#getRankCellBackgroundColor(scoreInfo, rankHistogram);
+				const rank = this.#getDisplayRank(scoreInfo, 'newRank');
+				$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId}`).css('background', bg);
+				$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId} > span`).text(`${rank}`);
 			}
-			this.updateDisplayedOtherRanks(scoreInfo, this.adjRankFieldId, 'newAdjRank');
-			this.updateDisplayedOtherRanks(scoreInfo, this.trophyRankFieldId, 'newTrophyRank');
-			this.updateDisplayedOtherRanks(scoreInfo, this.uninvitedRankFieldId, 'newUninvitedRank');
+			this.#updateDisplayedOtherRanks(scoreInfo, this.#adjRankFieldId, 'newAdjRank');
+			this.#updateDisplayedOtherRanks(scoreInfo, this.#trophyRankFieldId, 'newTrophyRank');
+			this.#updateDisplayedOtherRanks(scoreInfo, this.#uninvitedRankFieldId, 'newUninvitedRank');
 		}
-	}.bind(this);
+	}
 
-	this.putRanksToDatabase = async function(scoreInfos) {
+	async #putRanksToDatabase(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
 			if (scoreInfo.newRank === scoreInfo.oldRank
-					&& scoreInfo.newAdjRank === scoreInfo.oldAdjRank
-					&& scoreInfo.newTrophyRank === scoreInfo.oldTrophyRank
-					&& scoreInfo.newUninvitedRank === scoreInfo.oldUninvitedRank) {
+				&& scoreInfo.newAdjRank === scoreInfo.oldAdjRank
+				&& scoreInfo.newTrophyRank === scoreInfo.oldTrophyRank
+				&& scoreInfo.newUninvitedRank === scoreInfo.oldUninvitedRank) {
 				continue;
 			}
 			const optionsBody = {};
-			if (this.rankFieldId) {
-				optionsBody[this.rankFieldId] = scoreInfo.newRank;
+			if (this.#rankFieldId) {
+				optionsBody[this.#rankFieldId] = scoreInfo.newRank;
 			}
-			if (this.adjRankFieldId) {
-				optionsBody[this.adjRankFieldId] = scoreInfo.newAdjRank;
+			if (this.#adjRankFieldId) {
+				optionsBody[this.#adjRankFieldId] = scoreInfo.newAdjRank;
 			}
-			if (this.trophyRankFieldId) {
-				optionsBody[this.trophyRankFieldId] = scoreInfo.newTrophyRank;
+			if (this.#trophyRankFieldId) {
+				optionsBody[this.#trophyRankFieldId] = scoreInfo.newTrophyRank;
 			}
-			if (this.uninvitedRankFieldId) {
-				optionsBody[this.uninvitedRankFieldId] = scoreInfo.newUninvitedRank;
+			if (this.#uninvitedRankFieldId) {
+				optionsBody[this.#uninvitedRankFieldId] = scoreInfo.newUninvitedRank;
 			}
-			await ViewBasedApiPut.putWithRetry(this.sceneId, this.gridId, scoreInfo.id, optionsBody);
+			await ViewBasedApiPut.putWithRetry(this.#sceneId, this.#gridId, scoreInfo.id, optionsBody);
 		}
-	}.bind(this);
+	}
 
-	this.finalizeBtnClickHandler = async function() {
-		if (this.rankStorageInProgress) {
+	async finalizeBtnClickHandler() {
+		if (this.#rankStorageInProgress) {
 			return;
 		}
-		$(`#${this.lockSubmitForm} div#kn-input-`).show();	// Result report - Please Wait
+		$(`#${this.#lockSubmitForm} div#kn-input-`).show(); // Result report - Please Wait
 		ViewBasedApiPut.setSpinner();
-		this.rankStorageInProgress = true;
+		this.#rankStorageInProgress = true;
 		try {
 			const startTime = Date.now();
-			await this.putRanksToDatabase(this.scoreInfos);
+			await this.#putRanksToDatabase(this.#scoreInfos);
 			const elapsedTime = (Date.now() - startTime) / 1000.0;
 			console.log(`Database updates for ranking succeeded in ${elapsedTime} sec`);
 
-			$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('Success!');
-			const label = this.isEventRanker ? 'event' : 'tournament';
-			$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
-				The scores and ranks have been finalized. Press the button to<br/>
-				lock the ${label} and submit it for presentation.`);
-			$(`div#${this.finalizeBtnViewId}`).hide();			// Finalize button
-			$(`#${this.lockSubmitForm} div.kn-submit`).show();	// Submit button
+			$(`#${this.#lockSubmitForm} div#kn-input- h3.kn-title`).text('Success!');
+			const label = this.#isEventRanker ? 'event' : 'tournament';
+			$(`#${this.#lockSubmitForm} div#kn-input- p.kn-description`).html(`
+			The scores and ranks have been finalized. Press the button to<br/>
+			lock the ${label} and submit it for presentation.`);
+			$(`div#${this.#finalizeBtnViewId}`).hide(); // Finalize button
+			$(`#${this.#lockSubmitForm} div.kn-submit`).show(); // Submit button
 		} catch (error) {
 			console.log(`Database updates for ranking failed: ${error.message}`);
-			$(`#${this.lockSubmitForm} div#kn-input- h3.kn-title`).text('An error occurred');
-			$(`#${this.lockSubmitForm} div#kn-input- p.kn-description`).html(`
-				Please wait a moment or two and press the Finalize button again.
-				<br/><br/>Error message: ${error.message}`);
+			$(`#${this.#lockSubmitForm} div#kn-input- h3.kn-title`).text('An error occurred');
+			$(`#${this.#lockSubmitForm} div#kn-input- p.kn-description`).html(`
+			Please wait a moment or two and press the Finalize button again.
+			<br/><br/>Error message: ${error.message}`);
 		} finally {
 			ViewBasedApiPut.cancelSpinner();
-			this.rankStorageInProgress = false;
+			this.#rankStorageInProgress = false;
 		}
-	}.bind(this);
+	}
 
-	this.rankUpdateHandler = function(/* event, view, record*/) {
-		this.scoreInfos = this.computeScoreInfoList();
-		this.updateDisplayedRanks(this.scoreInfos);
-	}.bind(this);
+	rankUpdateHandler( /* event, view, record*/) {
+		this.#scoreInfos = this.#computeScoreInfoList();
+		this.#updateDisplayedRanks(this.#scoreInfos);
+	}
 
-	this.sceneRenderHandler = function(/* event, view, record*/) {
-		if (this.isEventRanker) {
+	sceneRenderHandler( /* event, view, record*/) {
+		if (this.#isEventRanker) {
 			// For the event ranker on the lock scores page, the scores table is needed
 			// only to force data retrieval, so we hide it. But on the team lock scores
 			// page, this table is the only way to see all the ranks computed, so we
 			// label it "for programmers only" and leave it showing.
-			$(`#${this.gridId}`).hide();
+			$(`#${this.#gridId}`).hide();
 		}
-		$(`#${this.lockSubmitForm} div#kn-input-`).hide();	// Result report
-		$(`#${this.lockSubmitForm} div.kn-submit`).hide();	// Submit button
-		$(`div#${this.finalizeBtnViewId} svg`).on('click', this.finalizeBtnClickHandler);
-	}.bind(this);
-
-	if (this.gridId) {
-		if (this.sceneId && this.lockSubmitForm && this.finalizeBtnViewId) {
-			$(document).on(`knack-scene-render.${this.sceneId}`, this.sceneRenderHandler);
-		}
-		$(document).on(`knack-view-render.${this.gridId}`, this.rankUpdateHandler);
-		$(document).on(`knack-cell-update.${this.gridId}`, this.rankUpdateHandler);
+		$(`#${this.#lockSubmitForm} div#kn-input-`).hide(); // Result report
+		$(`#${this.#lockSubmitForm} div.kn-submit`).hide(); // Submit button
+		$(`div#${this.#finalizeBtnViewId} svg`).on('click', this.finalizeBtnClickHandler.bind(this));
 	}
 }
 
@@ -1144,39 +1161,60 @@ const adminAwardBackground = new AwardBackground(
 // The Presenter will add the fields 'medals', 'bestRankShowing', 'numRows',
 // and 'isGridShowing' to the grid definition structures dynamically.
 
-function Presenter(presenterParams) {
-	this.nextBtnViewId = presenterParams.nextBtnViewId;
-	this.awardeeNameFieldId = presenterParams.awardeeNameFieldId;
-	this.goldBidIndicatorFieldId = presenterParams.goldBidIndicatorFieldId;
-	this.nextShowsWholeGrid = presenterParams.nextShowsWholeGrid;
-	this.gridDefinitions = presenterParams.gridDefinitions;
+class Presenter {
+	#nextBtnViewId;
+	#awardeeNameFieldId;
+	#goldBidIndicatorFieldId;
+	#nextShowsWholeGrid;
+	#gridDefinitions;
 
-	this.medalLabels = [
-		'0<sup>th</sup>',
-		'1<sup>st</sup>',
-		'2<sup>nd</sup>',
-		'3<sup>rd</sup>',
-		'4<sup>th</sup>',
-		'5<sup>th</sup>',
-		'6<sup>th</sup>',
-		'7<sup>th</sup>',
-		'8<sup>th</sup>',
-		'9<sup>th</sup>',
-		'10<sup>th</sup>',
-		'11<sup>th</sup>',
-		'12<sup>th</sup>',
-		'13<sup>th</sup>',
-		'14<sup>th</sup>',
-		'15<sup>th</sup>',
-		'16<sup>th</sup>',
-		'17<sup>th</sup>',
-		'18<sup>th</sup>',
-		'19<sup>th</sup>',
-		'20<sup>th</sup>',
-	];
+	constructor(presenterParams) {
+		this.#nextBtnViewId = presenterParams.nextBtnViewId;
+		this.#awardeeNameFieldId = presenterParams.awardeeNameFieldId;
+		this.#goldBidIndicatorFieldId = presenterParams.goldBidIndicatorFieldId;
+		this.#nextShowsWholeGrid = presenterParams.nextShowsWholeGrid;
+		this.#gridDefinitions = presenterParams.gridDefinitions;
 
-	this.setGridVisibilities = function() {
-		for (const gridDef of this.gridDefinitions) {
+		for (const gridDef of this.#gridDefinitions) {
+			if (gridDef.awardGrid) {
+				$(document).on(`knack-view-render.${gridDef.awardGrid}`,
+					this.gridRenderHandler.bind(this));
+			}
+		}
+		if (this.#nextBtnViewId) {
+			$(document).on(`knack-view-render.${this.#nextBtnViewId}`,
+				this.nextBtnRenderHandler.bind(this));
+		}
+	}
+
+	get #medalLabels() {
+		return [
+			'0<sup>th</sup>',
+			'1<sup>st</sup>',
+			'2<sup>nd</sup>',
+			'3<sup>rd</sup>',
+			'4<sup>th</sup>',
+			'5<sup>th</sup>',
+			'6<sup>th</sup>',
+			'7<sup>th</sup>',
+			'8<sup>th</sup>',
+			'9<sup>th</sup>',
+			'10<sup>th</sup>',
+			'11<sup>th</sup>',
+			'12<sup>th</sup>',
+			'13<sup>th</sup>',
+			'14<sup>th</sup>',
+			'15<sup>th</sup>',
+			'16<sup>th</sup>',
+			'17<sup>th</sup>',
+			'18<sup>th</sup>',
+			'19<sup>th</sup>',
+			'20<sup>th</sup>',
+		];
+	}
+
+	#setGridVisibilities() {
+		for (const gridDef of this.#gridDefinitions) {
 			const gridDiv = $(`div#${gridDef.awardGrid}`);
 			if (Object.hasOwn(gridDef, 'isGridShowing') && gridDef.isGridShowing) {
 				gridDiv.show();
@@ -1184,9 +1222,9 @@ function Presenter(presenterParams) {
 				gridDiv.hide();
 			}
 		}
-	}.bind(this);
+	}
 
-	this.setGoldBidSpanVisibility = function(viewId, medalId, gbFieldId, setVisible) {
+	#setGoldBidSpanVisibility(viewId, medalId, gbFieldId, setVisible) {
 		if (viewId && medalId && gbFieldId) {
 			const gbSpan = $(`div#${viewId} tr#${medalId} > td.${gbFieldId} > span`);
 			if (setVisible) {
@@ -1195,10 +1233,10 @@ function Presenter(presenterParams) {
 				gbSpan.hide();
 			}
 		}
-	}.bind(this);
+	}
 
-	this.setTeamNameVisibilities = function() {
-		for (const gridDef of this.gridDefinitions) {
+	#setTeamNameVisibilities() {
+		for (const gridDef of this.#gridDefinitions) {
 			if (!(gridDef.medals)) {
 				continue;
 			}
@@ -1207,95 +1245,95 @@ function Presenter(presenterParams) {
 				const medal = gridDef.medals[j];
 				const viewId = gridDef.awardGrid;
 				const rankFieldId = gridDef.rankFieldId;
-				const awardeeFieldId = this.awardeeNameFieldId;
-				const gbFieldId = this.goldBidIndicatorFieldId;
+				const awardeeFieldId = this.#awardeeNameFieldId;
+				const gbFieldId = this.#goldBidIndicatorFieldId;
 				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
 				const nameSpan = $(`div#${viewId} tr#${medal.id} > td.${awardeeFieldId} > span`);
 				if (medal.rank < gridDef.bestRankShowing) {
 					rankSpan.css('color', 'white');
 					nameSpan.hide();
-					this.setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, false);
+					this.#setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, false);
 				} else {
 					const rankSpanColor = visibleRanksAlreadySeen.has(medal.rank) ? 'white' : '';
 					rankSpan.css('color', rankSpanColor);
 					nameSpan.show();
-					this.setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, true);
+					this.#setGoldBidSpanVisibility(viewId, medal.id, gbFieldId, true);
 					visibleRanksAlreadySeen.add(medal.rank);
 				}
 			}
 		}
-	}.bind(this);
+	}
 
 	// Find the first grid whose best visible rank is the worst:
-	this.getFirstGridWithWorstRankShowing = function() {
+	#getFirstGridWithWorstRankShowing() {
 		let worstRankShowing = 0;
 		let gridWithWorstRankShowing = null;
-		for (const gridDef of this.gridDefinitions) {
+		for (const gridDef of this.#gridDefinitions) {
 			if (gridDef.bestRankShowing > worstRankShowing) {
 				worstRankShowing = gridDef.bestRankShowing;
 				gridWithWorstRankShowing = gridDef;
 			}
 		}
 		return gridWithWorstRankShowing;
-	}.bind(this);
+	}
 
-	this.nextBtnClickHandler = function() {
+	nextBtnClickHandler() {
 		// Bail out if gridRenderHandler() has not run already:
-		for (const gridDef of this.gridDefinitions) {
+		for (const gridDef of this.#gridDefinitions) {
 			if (!Object.hasOwn(gridDef, 'isGridShowing')) {
 				return;
 			}
 		}
 
-		if (this.nextShowsWholeGrid) {
-			for (const gridDef of this.gridDefinitions) {
+		if (this.#nextShowsWholeGrid) {
+			for (const gridDef of this.#gridDefinitions) {
 				if (!gridDef.isGridShowing && gridDef.numRows > 0) {
 					gridDef.isGridShowing = true;
 					break;
 				}
 			}
-			this.setGridVisibilities();
+			this.#setGridVisibilities();
 
 			let areAllGridDefsVisible = true;
-			for (const gridDef of this.gridDefinitions) {
+			for (const gridDef of this.#gridDefinitions) {
 				if (!gridDef.isGridShowing && gridDef.numRows > 0) {
 					areAllGridDefsVisible = false;
 					break;
 				}
 			}
 			if (areAllGridDefsVisible) {
-				$(`div#${this.nextBtnViewId} svg`).hide();	// Hide the Next button
+				$(`div#${this.#nextBtnViewId} svg`).hide(); // Hide the Next button
 			}
 		} else {
-			let gridWithWorstRankShowing = this.getFirstGridWithWorstRankShowing();
+			let gridWithWorstRankShowing = this.#getFirstGridWithWorstRankShowing();
 			if (gridWithWorstRankShowing.bestRankShowing > 1) {
 				--(gridWithWorstRankShowing.bestRankShowing);
 			}
 
-			this.setTeamNameVisibilities();
+			this.#setTeamNameVisibilities();
 
-			gridWithWorstRankShowing = this.getFirstGridWithWorstRankShowing();
+			gridWithWorstRankShowing = this.#getFirstGridWithWorstRankShowing();
 			if (gridWithWorstRankShowing.bestRankShowing <= 1) {
-				$(`div#${this.nextBtnViewId} svg`).hide();	// Hide the Next button
+				$(`div#${this.#nextBtnViewId} svg`).hide(); // Hide the Next button
 			}
 		}
 		return false;
-	}.bind(this);
+	}
 
-	this.nextBtnRenderHandler = function(/*event, view, record*/) {
-		$(`div#${this.nextBtnViewId} svg`).on('click', this.nextBtnClickHandler);
-	}.bind(this);
+	nextBtnRenderHandler( /*event, view, record*/) {
+		$(`div#${this.#nextBtnViewId} svg`).on('click', this.nextBtnClickHandler.bind(this));
+	}
 
-	this.getGridDefForView = function(view) {
-		for (const gridDef of this.gridDefinitions) {
+	#getGridDefForView(view) {
+		for (const gridDef of this.#gridDefinitions) {
 			if (gridDef.awardGrid === view.key) {
 				return gridDef;
 			}
 		}
 		return null;
-	}.bind(this);
+	}
 
-	this.setGridAppearance = function(gridViewId) {
+	#setGridAppearance(gridViewId) {
 		// Hide the table page navigation and table header:
 		$(`div#${gridViewId} thead`).hide();
 		$(`div#${gridViewId} div.kn-records-nav`).hide();
@@ -1307,9 +1345,9 @@ function Presenter(presenterParams) {
 			$(`div#${gridViewId} span.col-${i}`).css('font-size', '24px');
 		}
 		$(`div#${gridViewId} td`).css('border-bottom-width', '0px');
-	}.bind(this);
+	}
 
-	this.getMedalList = function(gridDef) {
+	#getMedalList(gridDef) {
 		const models = Knack.models[gridDef.awardGrid].data.models;
 
 		console.log(`Presentation grid row models (awardGrid ${gridDef.awardGrid}):`);
@@ -1322,44 +1360,44 @@ function Presenter(presenterParams) {
 				return {
 					id: model.attributes.id,
 					rank: (rawRank && !isNaN(rank)) ? rank : 0,
-					isGoldBidTeam: model.attributes[this.goldBidIndicatorFieldId],
+					isGoldBidTeam: model.attributes[this.#goldBidIndicatorFieldId],
 				};
 			})
 			.sort((lhs, rhs) => lhs.rank - rhs.rank);
 
 		console.log(`Medal array for awardGrid ${gridDef.awardGrid}:`);
 		console.log(gridDef.medals);
-	}.bind(this);
+	}
 
-	this.getMaxRank = function(gridDef) {
+	#getMaxRank(gridDef) {
 		let maxRank = 0;
 		for (const medal of gridDef.medals) {
 			maxRank = Math.max(maxRank, medal.rank);
 		}
 		return maxRank;
-	}.bind(this);
+	}
 
-	this.gridRenderHandler = function(event, view, record) {
-		const gridDef = this.getGridDefForView(view);
-		this.setGridAppearance(gridDef.awardGrid);
+	gridRenderHandler(event, view, record) {
+		const gridDef = this.#getGridDefForView(view);
+		this.#setGridAppearance(gridDef.awardGrid);
 
-		if (this.nextShowsWholeGrid) {
+		if (this.#nextShowsWholeGrid) {
 			// Hide the grids:
 			gridDef.bestRankShowing = -1;
 			gridDef.isGridShowing = false;
 			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
-			this.setGridVisibilities();
+			this.#setGridVisibilities();
 		} else {
 			// Get the medal data:
-			this.getMedalList(gridDef);
+			this.#getMedalList(gridDef);
 
 			// Replace ranks numbers with place names:
 			const viewId = gridDef.awardGrid;
 			const rankFieldId = gridDef.rankFieldId;
-			const gbFieldId = this.goldBidIndicatorFieldId;
+			const gbFieldId = this.#goldBidIndicatorFieldId;
 			for (const medal of gridDef.medals) {
 				const rankSpan = $(`div#${viewId} tr#${medal.id} > td.${rankFieldId} > span`);
-				rankSpan.html(`${this.medalLabels[medal.rank]}`);
+				rankSpan.html(`${this.#medalLabels[medal.rank]}`);
 				if (gbFieldId) {
 					const gbSpan = $(`div#${viewId} tr#${medal.id} > td.${gbFieldId} > span`);
 					gbSpan.html((medal.isGoldBidTeam === 1) ? '(Gold Bid Team)' : '');
@@ -1367,20 +1405,11 @@ function Presenter(presenterParams) {
 			}
 
 			// Hide the team names:
-			gridDef.bestRankShowing = this.getMaxRank(gridDef) + 1;
+			gridDef.bestRankShowing = this.#getMaxRank(gridDef) + 1;
 			gridDef.isGridShowing = true;
 			gridDef.numRows = Knack.models[gridDef.awardGrid].data.models.length;
-			this.setTeamNameVisibilities();
+			this.#setTeamNameVisibilities();
 		}
-	}.bind(this);
-
-	for (const gridDef of this.gridDefinitions) {
-		if (gridDef.awardGrid) {
-			$(document).on(`knack-view-render.${gridDef.awardGrid}`, this.gridRenderHandler);
-		}
-	}
-	if (this.nextBtnViewId) {
-		$(document).on(`knack-view-render.${this.nextBtnViewId}`, this.nextBtnRenderHandler);
 	}
 }
 
