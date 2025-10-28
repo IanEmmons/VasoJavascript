@@ -40,18 +40,6 @@ class AppInfo {
 	static get teamAdjScoreFieldId() { return 'field_1760'; }	// 'Teams/Tie-Adj Overall Score' column
 	static get teamRankFieldId() { return 'field_1900'; }			// 'Teams/Rank' column
 
-
-
-	/* The first two are no longer used, and the second two are used only in presenters */
-	/* Probably should be deleted after fixing the field IDs used in the presenters */
-	/**/ static get schoolBAdjScoreFieldId() { return 'field_1763'; }	// 'School/Reg: Best B Tie-Adj Score' column
-	/**/ static get schoolCAdjScoreFieldId() { return 'field_1764'; }	// 'School/Reg: Best C Tie-Adj Score' column
-	/**/ static get schoolBRankFieldId() { return 'field_1938'; }		// 'School/Reg: B Rank' column
-	/**/ static get schoolCRankFieldId() { return 'field_1939'; }		// 'School/Reg: C Rank' column
-
-
-
-	/************************************************************************************/
 	// Track Overview RankUpdaters (Division Overview in ScoreScope)
 	static get trackOverviewTeamBeforeGrid() { return AppInfo.#ch('', 'view_2272', 'view_1897'); }
 	static get trackOverviewSchoolGrid() { return AppInfo.#ch('', 'view_2276', 'view_1896'); }
@@ -64,27 +52,22 @@ class AppInfo {
 	static get presenterTournamentSelectionSceneId() { return 'scene_587'; }
 	static get scoremasterSceneId() { return 'scene_546'; }
 	static get adminSceneId() { return 'scene_69'; }
-	static get eventIconFieldId() { return 'field_1712'; }			 	// Events - General/Event Icon
 
 	// Award Background
-	static get presenterEventSelectionBSceneId() { return AppInfo.#ch('', 'scene_638', 'scene_638'); }
-	static get presenterEventSelectionCSceneId() { return AppInfo.#ch('', 'scene_642', 'scene_642'); }
-	static get presenterEventSelectionAllSceneId() { return AppInfo.#ch('scene_616', 'scene_605', 'scene_605'); }
-	static get presenterStatesBoundBSceneId() { return AppInfo.#ch('', 'scene_641', ''); }
-	static get presenterStatesBoundCSceneId() { return AppInfo.#ch('', 'scene_645', ''); }
-	static get presenterStatesBoundAllBSceneId() { return AppInfo.#ch('', 'scene_646', ''); }
-	static get presenterStatesBoundAllCSceneId() { return AppInfo.#ch('', 'scene_647', ''); }
 	static get presenterEventAwardSceneId() { return AppInfo.#ch('scene_617', 'scene_606', 'scene_606'); }
-	static get presenterEventIconViewId() { return AppInfo.#ch('view_1538', 'view_1521', 'view_1521'); }
-	static get presenterSchoolBAwardSceneId() { return AppInfo.#ch('', 'scene_640', 'scene_640'); }
-	static get presenterSchoolCAwardSceneId() { return AppInfo.#ch('', 'scene_643', 'scene_643'); }
-	static get presenterSchoolBCAwardSceneId() { return AppInfo.#ch('', 'scene_613', 'scene_613'); }
-	static get presenterTeamBAwardSceneId() { return AppInfo.#ch('', 'scene_692', 'scene_693'); }
-	static get presenterTeamCAwardSceneId() { return AppInfo.#ch('', 'scene_693', 'scene_694'); }
-	static get presenterTeamBCAwardSceneId() { return AppInfo.#ch('', 'scene_615', 'scene_615'); }
-	static get rookieTeamOfTheYearBAwardSceneId() { return AppInfo.#ch('', 'scene_715', ''); }
-	static get rookieTeamOfTheYearCAwardSceneId() { return AppInfo.#ch('', 'scene_714', ''); }
-	static get rookieTeamOfTheYearBCAwardSceneId() { return AppInfo.#ch('', 'scene_716', ''); }
+	static get presenterEventIconViewId() { return AppInfo.#ch('view_1538', 'view_1521', ''); }
+	static get eventIconFieldId() { return 'field_1712'; }			 		// Events - General/Event Icon
+	static get presenterEventSelectionBSceneId() { return AppInfo.#ch('', 'scene_638', 'scene_638'); }
+	static get oneBTrackBtnGrid() { return AppInfo.#ch('', 'view_2311', 'view_1909'); }	// "1 B Track" Tournament Trophies on "Present B Results" page
+	static get presenterEventSelectionCSceneId() { return AppInfo.#ch('', 'scene_642', 'scene_642'); }
+	static get oneCTrackBtnGrid() { return AppInfo.#ch('', 'view_2323', 'view_1916'); }	// "1 C Track" Tournament Trophies on "Present C Results" page
+	static get presenterEventSelectionAllSceneId() { return AppInfo.#ch('scene_616', 'scene_605', 'scene_605'); }
+	static get threeTracksBtnGrid() { return AppInfo.#ch('', 'view_2308', ''); }	// "3 tracks" Tournament Trophies on "Present Tournament" page
+	static get oneTrackTrophySceneId() { return AppInfo.#ch('', 'scene_794', 'scene_704'); }
+	static get twoTrackTrophySceneId() { return AppInfo.#ch('', 'scene_797', 'scene_705'); }
+	static get statesBoundBSceneId() { return AppInfo.#ch('', 'scene_799', ''); }
+	static get statesBoundCSceneId() { return AppInfo.#ch('', 'scene_800', ''); }
+
 	static get awardBackgroundUrl() {
 		return AppInfo.#ch(
 			'https://static.wixstatic.com/shapes/78a71f_cec2dec5b7db45ae83baeda4b35b8da1.svg',
@@ -93,15 +76,16 @@ class AppInfo {
 	}
 
 	// Presenter
-	static get teamNameFieldId() { return 'field_1202'; }				 	// 'Teams/Award Ceremony Team Name' column
-	static get schoolNameFieldId() { return 'field_1862'; }			 	// 'School/Award Ceremony Name' column in BC portal
-																							// 'School/School Name' column in ScoreScope
-																							// Not used in Div. A portal
+	static get teamNameFieldId() { return 'field_1202'; }			// 'Teams/Award Ceremony Team Name' column
+	static get awardCeremonyTrophyNameFieldId() { return AppInfo.#ch('', 'field_1862', 'field_2069'); }
+																					// 'School/Award Ceremony Name' column in BC portal
+																					// 'Teams/Award Ceremony Trophy Name' column in ScoreScope
+																					// Not used in Div. A portal
 
 	static get eventPresenterParams() {
 		return {
 			nextBtnViewId: AppInfo.#ch('view_1542', 'view_1545', 'view_1545'),
-			awardeeNameFieldId: this.teamNameFieldId,
+			awardeeNameFieldId: AppInfo.teamNameFieldId,
 			goldBidIndicatorFieldId: AppInfo.#ch('', 'field_2028', ''),
 			nextShowsWholeGrid: false,
 			gridDefinitions: [
@@ -111,225 +95,79 @@ class AppInfo {
 					// no gold bids there. In ScoreScope, the Knack-based logic removes
 					// all the exhibition teams from the list, but we must use AdjRank
 					// so we don't end up with skipped medals.
-					rankFieldId: AppInfo.#ch(this.eventRankFieldId, this.eventAdjRankFieldId,
-						this.eventAdjRankFieldId),
+					rankFieldId: AppInfo.#ch(AppInfo.eventRankFieldId, AppInfo.eventAdjRankFieldId,
+						AppInfo.eventAdjRankFieldId),
 				}
 			]
 		};
 	}
 
-	// School Winners Presenters
-	static get schoolBPresenterParams() {
+	// Trophy Presenters
+	static get oneTrackTrophyPresenterParams() {
 		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1675', 'view_1675'),
-			awardeeNameFieldId: this.schoolNameFieldId,
+			nextBtnViewId: AppInfo.#ch('', 'view_2316', 'view_1915'),
+			awardeeNameFieldId: AppInfo.awardCeremonyTrophyNameFieldId,
 			goldBidIndicatorFieldId: '',
 			nextShowsWholeGrid: false,
 			gridDefinitions: [
 				{
-					awardGrid: AppInfo.#ch('', 'view_1673', 'view_1852'),
-					rankFieldId: this.schoolBRankFieldId,
+					awardGrid: AppInfo.#ch('', 'view_2313', 'view_1913'),
+					rankFieldId: AppInfo.trophyRankFieldId,
 				}
 			]
 		};
 	}
-	static get schoolCPresenterParams() {
+	static get twoTrackTrophyPresenterParams() {
 		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1686', 'view_1686'),
-			awardeeNameFieldId: this.schoolNameFieldId,
+			nextBtnViewId: AppInfo.#ch('', 'view_2334', 'view_1924'),
+			awardeeNameFieldId: AppInfo.awardCeremonyTrophyNameFieldId,
 			goldBidIndicatorFieldId: '',
 			nextShowsWholeGrid: false,
 			gridDefinitions: [
 				{
-					awardGrid: AppInfo.#ch('', 'view_1684', 'view_1853'),
-					rankFieldId: this.schoolCRankFieldId,
-				}
-			]
-		};
-	}
-	static get schoolBCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1558', 'view_1558'),
-			awardeeNameFieldId: this.schoolNameFieldId,
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: false,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1555', 'view_1854'),
-					rankFieldId: this.schoolBRankFieldId,
+					awardGrid: AppInfo.#ch('', 'view_2331', 'view_1921'),
+					rankFieldId: AppInfo.trophyRankFieldId,
 				},
 				{
-					awardGrid: AppInfo.#ch('', 'view_1556', 'view_1855'),
-					rankFieldId: this.schoolCRankFieldId,
+					awardGrid: AppInfo.#ch('', 'view_2332', 'view_1922'),
+					rankFieldId: AppInfo.trophyRankFieldId,
 				}
 			]
 		};
 	}
 
-	// Team Winners Presenters
-	static get teamBPresenterParams() {
+	// States-bound schools presenters
+	static get divBStatesBoundSchoolsPresenterParams() {
 		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1861', 'view_1861'),
-			awardeeNameFieldId: this.teamNameFieldId,
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: false,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1863', 'view_1862'),
-					rankFieldId: this.teamRankFieldId,
-				}
-			]
-		};
-	}
-	static get teamCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1867', 'view_1867'),
-			awardeeNameFieldId: this.teamNameFieldId,
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: false,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1866', 'view_1866'),
-					rankFieldId: this.teamRankFieldId,
-				}
-			]
-		};
-	}
-	static get teamBCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1873', 'view_1870'),
-			awardeeNameFieldId: this.teamNameFieldId,
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: false,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1560', 'view_1560'),
-					rankFieldId: this.teamRankFieldId,
-				},
-				{
-					awardGrid: AppInfo.#ch('', 'view_1561', 'view_1561'),
-					rankFieldId: this.teamRankFieldId,
-				}
-			]
-		};
-	}
-
-	// States-Bound Presenters
-	static get statesBoundBPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1895', ''),
+			nextBtnViewId: AppInfo.#ch('', 'view_2378', ''),
 			awardeeNameFieldId: '',
 			goldBidIndicatorFieldId: '',
 			nextShowsWholeGrid: true,
 			gridDefinitions: [
 				{
-					awardGrid: AppInfo.#ch('', 'view_1678', ''),
+					awardGrid: AppInfo.#ch('', 'view_2341', ''),
 					rankFieldId: '',
 				},
 				{
-					awardGrid: AppInfo.#ch('', 'view_1695', ''),
+					awardGrid: AppInfo.#ch('', 'view_2371', ''),
 					rankFieldId: '',
 				}
 			]
 		};
 	}
-	static get statesBoundCPresenterParams() {
+	static get divCStatesBoundSchoolsPresenterParams() {
 		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1894', ''),
+			nextBtnViewId: AppInfo.#ch('', 'view_2379', ''),
 			awardeeNameFieldId: '',
 			goldBidIndicatorFieldId: '',
 			nextShowsWholeGrid: true,
 			gridDefinitions: [
 				{
-					awardGrid: AppInfo.#ch('', 'view_1694', ''),
+					awardGrid: AppInfo.#ch('', 'view_2374', ''),
 					rankFieldId: '',
 				},
 				{
-					awardGrid: AppInfo.#ch('', 'view_1696', ''),
-					rankFieldId: '',
-				}
-			]
-		};
-	}
-	static get statesBoundAllBPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1893', ''),
-			awardeeNameFieldId: '',
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: true,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1698', ''),
-					rankFieldId: '',
-				},
-				{
-					awardGrid: AppInfo.#ch('', 'view_1702', ''),
-					rankFieldId: '',
-				}
-			]
-		};
-	}
-	static get statesBoundAllCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1892', ''),
-			awardeeNameFieldId: '',
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: true,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_1700', ''),
-					rankFieldId: '',
-				},
-				{
-					awardGrid: AppInfo.#ch('', 'view_1701', ''),
-					rankFieldId: '',
-				}
-			]
-		};
-	}
-
-	// Rookie Team of the Year Presenters
-	static get rookieTeamOfTheYearBPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1964', ''),
-			awardeeNameFieldId: '',
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: true,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_2144', ''),
-					rankFieldId: '',
-				}
-			]
-		};
-	}
-	static get rookieTeamOfTheYearCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1965', ''),
-			awardeeNameFieldId: '',
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: true,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_2145', ''),
-					rankFieldId: '',
-				}
-			]
-		};
-	}
-	static get rookieTeamOfTheYearBCPresenterParams() {
-		return {
-			nextBtnViewId: AppInfo.#ch('', 'view_1966', ''),
-			awardeeNameFieldId: '',
-			goldBidIndicatorFieldId: '',
-			nextShowsWholeGrid: true,
-			gridDefinitions: [
-				{
-					awardGrid: AppInfo.#ch('', 'view_2146', ''),
-					rankFieldId: '',
-				},
-				{
-					awardGrid: AppInfo.#ch('', 'view_2147', ''),
+					awardGrid: AppInfo.#ch('', 'view_2375', ''),
 					rankFieldId: '',
 				}
 			]
@@ -583,11 +421,6 @@ class RankUpdater {
 		}
 	}
 
-	get #rawRankFieldId() { return this.#rankFieldId + '_raw'; }
-	get #rawAdjRankFieldId() { return this.#adjRankFieldId + '_raw'; }
-	get #rawTrophyRankFieldId() { return this.#trophyRankFieldId + '_raw'; }
-	get #rawUninvitedRankFieldId() { return this.#uninvitedRankFieldId + '_raw'; }
-
 	#getStatus(model) {
 		if (this.#statusFieldId) {
 			const statusField = model.attributes[this.#statusFieldId + '_raw'];
@@ -654,60 +487,15 @@ class RankUpdater {
 		}
 	}
 
-	#hasRank(model) {
-		if (!this.#rankFieldId) {
-			return false; // For cases where the field doesn't exist (never?)
+	#getRankFieldValue(model, rankFieldId) {
+		const rawRankFieldId = rankFieldId + '_raw'
+		if (!rankFieldId) {
+			return -1;
+		} else if (!Object.hasOwn(model.attributes, rawRankFieldId)) {
+			return -1; // for grids w/o this rank column
 		} else {
-			return Object.hasOwn(model.attributes, this.#rawRankFieldId);
+			return model.attributes[rawRankFieldId];
 		}
-	}
-
-	#getRank(model) {
-		return this.#hasRank(model)
-			? model.attributes[this.#rawRankFieldId]
-			: -1; // for grids w/o a rank column
-	}
-
-	#hasAdjRank(model) {
-		if (!this.#adjRankFieldId) {
-			return false; // For Div. A, where the field doesn't exist
-		} else {
-			return Object.hasOwn(model.attributes, this.#rawAdjRankFieldId);
-		}
-	}
-
-	#getAdjRank(model) {
-		return this.#hasAdjRank(model)
-			? model.attributes[this.#rawAdjRankFieldId]
-			: -1; // for grids w/o an adj. rank column
-	}
-
-	#hasTrophyRank(model) {
-		if (!this.#trophyRankFieldId) {
-			return false;
-		} else {
-			return Object.hasOwn(model.attributes, this.#rawTrophyRankFieldId);
-		}
-	}
-
-	#getTrophyRank(model) {
-		return this.#hasTrophyRank(model)
-			? model.attributes[this.#rawTrophyRankFieldId]
-			: -1; // for grids w/o a trophy. rank column
-	}
-
-	#hasUninvitedRank(model) {
-		if (!this.#uninvitedRankFieldId) {
-			return false;
-		} else {
-			return Object.hasOwn(model.attributes, this.#rawUninvitedRankFieldId);
-		}
-	}
-
-	#getUninvitedRank(model) {
-		return this.#hasUninvitedRank(model)
-			? model.attributes[this.#rawUninvitedRankFieldId]
-			: -1; // for grids w/o an uninvited. rank column
 	}
 
 	#createScoreInfo(model) {
@@ -719,17 +507,13 @@ class RankUpdater {
 			isTrialEvent: this.#isTrialEvent(model),
 			isBestPlacedTrueTeam: this.#isBestPlacedTrueTeam(model),
 			acceptedInvite: this.#acceptedInvite(model),
-			hasRank: this.#hasRank(model),
-			oldRank: this.#getRank(model),
+			oldRank: this.#getRankFieldValue(model, this.#rankFieldId),
 			newRank: -1,
-			hasAdjRank: this.#hasAdjRank(model),
-			oldAdjRank: this.#getAdjRank(model),
+			oldAdjRank: this.#getRankFieldValue(model, this.#adjRankFieldId),
 			newAdjRank: -1,
-			hasTrophyRank: this.#hasTrophyRank(model),
-			oldTrophyRank: this.#getTrophyRank(model),
+			oldTrophyRank: this.#getRankFieldValue(model, this.#trophyRankFieldId),
 			newTrophyRank: -1,
-			hasUninvitedRank: this.#hasUninvitedRank(model),
-			oldUninvitedRank: this.#getUninvitedRank(model),
+			oldUninvitedRank: this.#getRankFieldValue(model, this.#uninvitedRankFieldId),
 			newUninvitedRank: -1,
 		};
 	}
@@ -857,7 +641,7 @@ class RankUpdater {
 		const scoreInfos = models.map((model) => this.#createScoreInfo(model));
 
 		if (this.#isEventRanker) {
-			if (scoreInfos[0].hasRank) {
+			if (scoreInfos[0].oldRank !== -1) {	// -1 means there is no true rank in this grid
 				const rankClusters = this.#computeRankClusters(scoreInfos, false);
 				const numTeams = scoreInfos.length;
 				for (const scoreInfo of scoreInfos) {
@@ -865,7 +649,7 @@ class RankUpdater {
 				}
 			}
 
-			if (scoreInfos[0].hasAdjRank) {
+			if (scoreInfos[0].oldAdjRank !== -1) {	// -1 means there is no adjusted rank in this grid
 				// Exhibition teams may compete in trial events, but
 				// in such cases they are not considered exhibition teams:
 				const adjustForExhibition = !scoreInfos[0].isTrialEvent;
@@ -903,14 +687,14 @@ class RankUpdater {
 		if (scoreInfo.status) {
 			return ''; // default color for special statuses
 		} else if (rankHistogram.has(scoreInfo.newRank)
-			&& rankHistogram.get(scoreInfo.newRank) > 1) {
+				&& rankHistogram.get(scoreInfo.newRank) > 1) {
 			return '#fbe9c2'; // yellow for ties
 		} else {
 			return ''; // default color otherwise
 		}
 	}
 
-	#getAdjRankCellBackgroundColor(scoreInfo) {
+	#getOtherRankCellBackgroundColor(scoreInfo) {
 		if (scoreInfo.status) {
 			return ''; // default color for special statuses
 		} else if (scoreInfo.isExhibition && !scoreInfo.isTrialEvent) {
@@ -928,20 +712,20 @@ class RankUpdater {
 
 	// "Other" ranks are adjusted ranks, trophy ranks, and uninvited ranks
 	#updateDisplayedOtherRanks(scoreInfo, rankFieldId, rankPropName) {
-		if (rankFieldId) {
-			const bg = this.#getAdjRankCellBackgroundColor(scoreInfo);
-			const adjRank = this.#getDisplayRank(scoreInfo, rankPropName);
-			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId}`).css('background', bg);
-			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId} > span`).text(`${adjRank}`);
+		const rank = this.#getDisplayRank(scoreInfo, rankPropName);
+		if (rankFieldId && rank >= 0) {
+			const bg = this.#getOtherRankCellBackgroundColor(scoreInfo);
+			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${rankFieldId}`).css('background', bg);
+			$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${rankFieldId} > span`).text(`${rank}`);
 		}
 	}
 
 	#updateDisplayedRanks(scoreInfos) {
 		for (const scoreInfo of scoreInfos) {
-			if (this.#rankFieldId) {
+			const rank = this.#getDisplayRank(scoreInfo, 'newRank');
+			if (this.#rankFieldId && rank >= 0) {
 				const rankHistogram = this.#computeRankHistogram(scoreInfos);
 				const bg = this.#getRankCellBackgroundColor(scoreInfo, rankHistogram);
-				const rank = this.#getDisplayRank(scoreInfo, 'newRank');
 				$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId}`).css('background', bg);
 				$(`div#${this.#gridId} tr#${scoreInfo.id} > td.${this.#rankFieldId} > span`).text(`${rank}`);
 			}
@@ -1058,12 +842,14 @@ class AwardBackground {
 	#awardSceneId;
 	#iconViewId;
 	#iconFieldId;
+	#buttonGridViewId;
 	#backgroundUrl;
 
-	constructor(awardSceneId, iconViewId, iconFieldId, backgroundUrl) {
+	constructor(awardSceneId, iconViewId, iconFieldId, buttonGridViewId, backgroundUrl) {
 		this.#awardSceneId = awardSceneId;
 		this.#iconViewId = iconViewId;
 		this.#iconFieldId = iconFieldId;
+		this.#buttonGridViewId = buttonGridViewId;
 		this.#backgroundUrl = backgroundUrl;
 
 		if (this.#awardSceneId) {
@@ -1081,6 +867,15 @@ class AwardBackground {
 	}
 
 	awardSceneRenderHandler(/*event, view, record*/) {
+		// Hide "Showing i - j of k" everywhere it appears in the scene:
+		$(`div.kn-entries-summary`).hide();
+
+		// Certain grid views containing buttons have unwanted borders:
+		if (this.#buttonGridViewId) {
+			const buttonGridCells = $(`div#${this.#buttonGridViewId} > div.kn-table-wrapper > table th,td`);
+			buttonGridCells.css('border-bottom-width', '0px');
+		}
+
 		if (this.#iconViewId && this.#backgroundUrl) {
 			const rawIconFieldId = this.#iconFieldId + '_raw';
 			const eventIconUrl = Knack.models[this.#iconViewId].attributes[rawIconFieldId];
@@ -1099,47 +894,29 @@ class AwardBackground {
 	}
 }
 
+const adminAwardBackground = new AwardBackground(
+	AppInfo.adminSceneId, '', '', '', '');
+const scoremasterAwardBackground = new AwardBackground(
+	AppInfo.scoremasterSceneId, '', '', '', '');
+const tournamentSelectionAwardBackground = new AwardBackground(
+	AppInfo.presenterTournamentSelectionSceneId, '', '', '', '');
+const eventSelectionBAwardBackground = new AwardBackground(
+	AppInfo.presenterEventSelectionBSceneId, '', '', AppInfo.oneBTrackBtnGrid, AppInfo.awardBackgroundUrl);
+const oneTrackTrophyAwardBackground = new AwardBackground(
+	AppInfo.oneTrackTrophySceneId, '', '', '', AppInfo.awardBackgroundUrl);
+const eventSelectionCAwardBackground = new AwardBackground(
+	AppInfo.presenterEventSelectionCSceneId, '', '', AppInfo.oneCTrackBtnGrid, AppInfo.awardBackgroundUrl);
+const eventSelectionAllAwardBackground = new AwardBackground(
+	AppInfo.presenterEventSelectionAllSceneId, '', '', AppInfo.threeTracksBtnGrid, AppInfo.awardBackgroundUrl);
 const eventAwardBackground = new AwardBackground(
 	AppInfo.presenterEventAwardSceneId, AppInfo.presenterEventIconViewId,
-	AppInfo.eventIconFieldId, AppInfo.awardBackgroundUrl);
-const schoolBAwardBackground = new AwardBackground(
-	AppInfo.presenterSchoolBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const schoolCAwardBackground = new AwardBackground(
-	AppInfo.presenterSchoolCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const schoolBCAwardBackground = new AwardBackground(
-	AppInfo.presenterSchoolBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const teamBAwardBackground = new AwardBackground(
-	AppInfo.presenterTeamBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const teamCAwardBackground = new AwardBackground(
-	AppInfo.presenterTeamCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const teamBCAwardBackground = new AwardBackground(
-	AppInfo.presenterTeamBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const eventSelectionBAwardBackground = new AwardBackground(
-	AppInfo.presenterEventSelectionBSceneId, '', '', AppInfo.awardBackgroundUrl);
-const eventSelectionCAwardBackground = new AwardBackground(
-	AppInfo.presenterEventSelectionCSceneId, '', '', AppInfo.awardBackgroundUrl);
-const eventSelectionAllAwardBackground = new AwardBackground(
-	AppInfo.presenterEventSelectionAllSceneId, '', '', AppInfo.awardBackgroundUrl);
+	AppInfo.eventIconFieldId, '', AppInfo.awardBackgroundUrl);
+const twoTrackTrophyAwardBackground = new AwardBackground(
+	AppInfo.twoTrackTrophySceneId, '', '', '', AppInfo.awardBackgroundUrl);
 const statesBoundBAwardBackground = new AwardBackground(
-	AppInfo.presenterStatesBoundBSceneId, '', '', AppInfo.awardBackgroundUrl);
+	AppInfo.statesBoundBSceneId, '', '', '', AppInfo.awardBackgroundUrl);
 const statesBoundCAwardBackground = new AwardBackground(
-	AppInfo.presenterStatesBoundCSceneId, '', '', AppInfo.awardBackgroundUrl);
-const statesBoundAllBAwardBackground = new AwardBackground(
-	AppInfo.presenterStatesBoundAllBSceneId, '', '', AppInfo.awardBackgroundUrl);
-const statesBoundAllCAwardBackground = new AwardBackground(
-	AppInfo.presenterStatesBoundAllCSceneId, '', '', AppInfo.awardBackgroundUrl);
-const rookieTeamOfTheYearBAwardBackground = new AwardBackground(
-	AppInfo.rookieTeamOfTheYearBAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const rookieTeamOfTheYearCAwardBackground = new AwardBackground(
-	AppInfo.rookieTeamOfTheYearCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const rookieTeamOfTheYearBCAwardBackground = new AwardBackground(
-	AppInfo.rookieTeamOfTheYearBCAwardSceneId, '', '', AppInfo.awardBackgroundUrl);
-const tournamentSelectionAwardBackground = new AwardBackground(
-	AppInfo.presenterTournamentSelectionSceneId, '', '', '');
-const scoremasterAwardBackground = new AwardBackground(
-	AppInfo.scoremasterSceneId, '', '', '');
-const adminAwardBackground = new AwardBackground(
-	AppInfo.adminSceneId, '', '', '');
+	AppInfo.statesBoundCSceneId, '', '', '', AppInfo.awardBackgroundUrl);
 
 
 
@@ -1414,16 +1191,7 @@ class Presenter {
 }
 
 const eventPresenter = new Presenter(AppInfo.eventPresenterParams);
-const schoolBPresenter = new Presenter(AppInfo.schoolBPresenterParams);
-const schoolCPresenter = new Presenter(AppInfo.schoolCPresenterParams);
-const schoolBCPresenter = new Presenter(AppInfo.schoolBCPresenterParams);
-const teamBPresenter = new Presenter(AppInfo.teamBPresenterParams);
-const teamCPresenter = new Presenter(AppInfo.teamCPresenterParams);
-const teamBCPresenter = new Presenter(AppInfo.teamBCPresenterParams);
-const statesBoundBPresenter = new Presenter(AppInfo.statesBoundBPresenterParams);
-const statesBoundCPresenter = new Presenter(AppInfo.statesBoundCPresenterParams);
-const statesBoundAllBPresenter = new Presenter(AppInfo.statesBoundAllBPresenterParams);
-const statesBoundAllCPresenter = new Presenter(AppInfo.statesBoundAllCPresenterParams);
-const rookieTeamOfTheYearBPresenter = new Presenter(AppInfo.rookieTeamOfTheYearBPresenterParams);
-const rookieTeamOfTheYearCPresenter = new Presenter(AppInfo.rookieTeamOfTheYearCPresenterParams);
-const rookieTeamOfTheYearBCPresenter = new Presenter(AppInfo.rookieTeamOfTheYearBCPresenterParams);
+const oneTrackTrophyPresenter = new Presenter(AppInfo.oneTrackTrophyPresenterParams);
+const twoTrackTrophyPresenter = new Presenter(AppInfo.twoTrackTrophyPresenterParams);
+const divBStatesBoundSchoolsPresenter = new Presenter(AppInfo.divBStatesBoundSchoolsPresenterParams);
+const divCStatesBoundSchoolsPresenter = new Presenter(AppInfo.divCStatesBoundSchoolsPresenterParams);
