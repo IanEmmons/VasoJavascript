@@ -183,6 +183,8 @@ class AppInfo {
 				return bcValue;
 			case '652ead5e0d05db00275daab7': // ScoreScope
 				return ssValue;
+			case '69245019ba2963d92c559076': // Alt. ScoreScope
+				return ssValue;
 			default:
 				throw new Error('Unrecognized portal: Not Div A, Div BC, or ScoreScope');
 		}
